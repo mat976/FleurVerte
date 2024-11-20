@@ -60,6 +60,13 @@ Encore
     //.enableTypeScriptLoader()
 
     // uncomment if you use React
+    // ...
+    .enableStimulusBridge('./assets/controllers.json')
+
+    // Ajoutez cette ligne
+    .enableStimulusBridge('./assets/controllers.json')
+
+    // ...
     //.enableReactPreset()
 
     // uncomment to get integrity="..." attributes on your script & link tags
