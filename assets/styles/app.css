@@ -1,3 +1,45 @@
-body {
-    background-color: skyblue;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Vos styles personnalisés */
+@layer base {
+    body {
+        background: linear-gradient(135deg, #a8e063, #56ab2f);
+        background-attachment: fixed;
+    }
+}
+
+@layer components {
+    .content-container {
+        @apply bg-white bg-opacity-90 rounded-lg shadow-lg;
+    }
+
+    .card {
+        @apply bg-green-50 rounded-lg shadow-md overflow-hidden;
+    }
+
+    .card-header {
+        @apply bg-green-600 text-white p-4;
+    }
+
+    .card-body {
+        @apply p-6 text-green-900;
+    }
+
+    .card-footer {
+        @apply bg-green-100 p-4;
+    }
+
+    .btn {
+        @apply px-4 py-2 rounded-md text-white font-semibold transition-colors duration-300;
+    }
+
+    .btn-primary {
+        @apply bg-green-700 hover:bg-green-800;
+    }
+
+    .btn-secondary {
+        @apply bg-yellow-600 hover:bg-yellow-700;
+    }
 }

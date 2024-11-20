@@ -1,4 +1,6 @@
+import './styles/app.css';
 import './bootstrap.js';
+// ... le reste de votre code
 /*
  * Welcome to your app's main JavaScript file!
  *

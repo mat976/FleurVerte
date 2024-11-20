@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil - FleurVerte
+{% endblock %}
+{% block body %}
+	<div class="container mx-auto px-4 mt-8">
+		<h1 class="text-4xl font-bold mb-4 text-center text-green-900">Bienvenue chez FleurVerte</h1>
+		<p class="text-xl mb-8 text-center text-green-800">Découvrez notre sélection de fleurs exotiques pour élever votre esprit et apaiser votre intérieur.</p>
+
+		{% set images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg', 'flower7.jpg', 'flower8.jpg', 'flower9.jpg', 'flower10.jpg', 'flower11.jpg', 'flower12.jpg'] %}
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
+				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Nos variétés" class="w-full h-64 object-cover">
+				<div class="card-body p-6">
+					<h2 class="text-2xl font-semibold mb-2 text-green-800">Nos variétés</h2>
+					<p class="mb-4 text-gray-600">Explorez notre vaste gamme de fleurs aux arômes enivrants et aux effets relaxants.</p>
+					<a href="{{ path('app_product') }}" class="btn btn-primary bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Voir nos variétés</a>
+				</div>
+			</div>
+
+			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
+				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Conseils de culture" class="w-full h-64 object-cover">
+				<div class="card-body p-6">
+					<h2 class="text-2xl font-semibold mb-2 text-green-800">Conseils de culture</h2>
+					<p class="mb-4 text-gray-600">Apprenez à cultiver vos propres fleurs avec nos guides de croissance naturelle.</p>
+					<a href="#" class="btn btn-secondary bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Lire nos conseils</a>
+				</div>
+			</div>
+
+			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
+				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Notre philosophie" class="w-full h-64 object-cover">
+				<div class="card-body p-6">
+					<h2 class="text-2xl font-semibold mb-2 text-green-800">Notre philosophie</h2>
+					<p class="mb-4 text-gray-600">Découvrez notre passion pour la culture responsable et le respect de la nature.</p>
+					<a href="#" class="btn btn-primary bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">En savoir plus</a>
+				</div>
+			</div>
+
+			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
+				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Nos engagements" class="w-full h-64 object-cover">
+				<div class="card-body p-6">
+					<h2 class="text-2xl font-semibold mb-2 text-green-800">Nos engagements</h2>
+					<ul class="list-disc pl-5 mb-4 text-gray-600">
+						<li>Culture 100% naturelle et biologique</li>
+						<li>Respect des cycles naturels de croissance</li>
+						<li>Sélection minutieuse de nos graines</li>
+						<li>Récolte à maturité pour des arômes optimaux</li>
+						<li>Séchage lent pour préserver les propriétés de nos fleurs</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<!-- Nouvelle section après les cartes -->
+		<div class="bg-green-100 p-8 rounded-lg shadow-md mb-16">
+			<h2 class="text-3xl font-bold mb-4 text-green-800 text-center">Pourquoi choisir FleurVerte ?</h2>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<div class="text-center">
+					<i class="fas fa-leaf text-4xl text-green-500 mb-2"></i>
+					<h3 class="text-xl font-semibold mb-2 text-green-700">Qualité Premium</h3>
+					<p class="text-gray-600">Nous sélectionnons soigneusement chaque fleur pour garantir une expérience exceptionnelle.</p>
+				</div>
+				<div class="text-center">
+					<i class="fas fa-shipping-fast text-4xl text-green-500 mb-2"></i>
+					<h3 class="text-xl font-semibold mb-2 text-green-700">Livraison Rapide</h3>
+					<p class="text-gray-600">Profitez de nos fleurs fraîches grâce à notre service de livraison express.</p>
+				</div>
+				<div class="text-center">
+					<i class="fas fa-heart text-4xl text-green-500 mb-2"></i>
+					<h3 class="text-xl font-semibold mb-2 text-green-700">Service Client Dévoué</h3>
+					<p class="text-gray-600">Notre équipe est là pour vous conseiller et répondre à toutes vos questions.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

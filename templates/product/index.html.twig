@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nos Fleurs - FleurVerte
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto px-4 mt-8">
+		<h1 class="text-4xl font-bold mb-8">Nos Fleurs Exotiques</h1>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+			{% for fleur in fleurs %}
+				<div class="bg-white rounded-lg shadow-md overflow-hidden">
+					{% set images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg','flower7.jpg','flower8.jpg','flower9.jpg','flower10.jpg','flower11.jpg','flower12.jpg' ] %}
+					{% set randomImage = random(images) %}
+					<img src="{{ asset('img/flowerimg/' ~ randomImage) }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover">
+					<div class="p-4">
+						<h2 class="text-xl font-semibold mb-2">{{ fleur.nom }}</h2>
+						<p class="text-gray-600 mb-4">{{ fleur.description|slice(0, 100) }}
+							{% if fleur.description|length > 100 %}...
+							{% endif %}
+						</p>
+						<div class="flex justify-between items-center">
+							<span class="text-lg font-bold text-green-600">{{ fleur.prix }}
+								€</span>
+							<span class="text-sm text-gray-500">Stock:
+								{{ fleur.stock }}</span>
+						</div>
+						<p class="text-sm text-gray-500 mt-2">THC:
+							{{ fleur.thc }}%</p>
+						<button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+							Ajouter au panier
+						</button>
+					</div>
+				</div>
+			{% else %}
+				<p class="col-span-full text-center text-gray-500">Aucune fleur disponible pour le moment.</p>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

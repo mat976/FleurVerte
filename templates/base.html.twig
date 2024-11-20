@@ -1,17 +1,83 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>
+			{% block title %}Welcome!
+			{% endblock %}
+		</title>
+		{% block stylesheets %}
+			{{ encore_entry_link_tags('app') }}
+		{% endblock %}
 
-        {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+		{% block javascripts %}
+			{{ encore_entry_script_tags('app') }}
+		{% endblock %}
+	</head>
+	<body>
+		<nav class="bg-green-600">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="flex items-center justify-between h-20">
+					<div class="flex items-center">
+						<a href="{{ path('app_home') }}" class="flex items-center">
+							<img src="{{ asset('img/logo/logo_last.png') }}" alt="FleurVerte Logo" class="h-16 w-auto mr-4">
+						</a>
+					</div>
+					<div class="hidden md:block">
+						<div class="ml-10 flex items-baseline space-x-4">
+							<a href="{{ path('app_home') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Accueil</a>
+							<a href="{{ path('app_product') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Nos Variétés</a>
+							<a href="#" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Conseils de Culture</a>
+							<a href="#" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Notre Philosophie</a>
+							<a href="{{ path('app_panier') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Panier</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<main>
+			{% block body %}{% endblock %}
+		</main>
+
+		<footer class="bg-green-800 text-white py-8">
+			<div class="container mx-auto px-4">
+				<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+					<div>
+						<h3 class="text-lg font-semibold mb-4">À propos de FleurVerte</h3>
+						<p class="text-sm">FleurVerte est votre destination pour des fleurs exotiques de qualité, cultivées avec passion et respect pour la nature.</p>
+					</div>
+					<div>
+						<h3 class="text-lg font-semibold mb-4">Liens rapides</h3>
+						<ul class="space-y-2">
+							<li>
+								<a href="{{ path('app_home') }}" class="text-sm hover:text-green-300">Accueil</a>
+							</li>
+							<li>
+								<a href="{{ path('app_product') }}" class="text-sm hover:text-green-300">Nos Variétés</a>
+							</li>
+							<li>
+								<a href="#" class="text-sm hover:text-green-300">Conseils de Culture</a>
+							</li>
+							<li>
+								<a href="#" class="text-sm hover:text-green-300">Notre Philosophie</a>
+							</li>
+						</ul>
+					</div>
+					<div>
+						<h3 class="text-lg font-semibold mb-4">Contact</h3>
+						<p class="text-sm">Email: contact@fleurverte.com</p>
+						<p class="text-sm">Téléphone: +33 1 23 45 67 89</p>
+						<p class="text-sm">Adresse: 123 Rue des Fleurs, 75000 Paris</p>
+					</div>
+				</div>
+				<div class="mt-8 text-center text-sm">
+					<p>&copy;
+						{{ "now"|date("Y") }}
+						FleurVerte. Tous droits réservés.</p>
+				</div>
+			</div>
+		</footer>
+	</body>
 </html>
