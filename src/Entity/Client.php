@@ -17,8 +17,6 @@ class Client
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    // ... autres propriétés et méthodes
-
     public function getUser(): ?User
     {
         return $this->user;

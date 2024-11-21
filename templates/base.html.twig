@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="icon" type="image/x-icon" href="{{ asset('build/img/logo/favicon.ico') }}">
 		<title>
 			{% block title %}Welcome!
 			{% endblock %}
@@ -30,6 +31,7 @@
 							<a href="{{ path('app_product') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Nos Variétés</a>
 							<a href="{{ path('app_conseils_culture') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Conseils de Culture</a>
 							<a href="{{ path('app_fleuriste_index')}}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Nos Fleuristes
+
 							</a>
 							<a href="{{ path('app_panier') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Panier</a>
 						</div>
@@ -73,4 +75,5 @@
 </div></div><div class="mt-8 text-center text-sm">
 <p>&copy;
 	{{ "now"|date("Y") }}
-	FleurVerte. Tous droits réservés.</p></div></div></footer></body></html>
+	FleurVerte. Tous droits réservés.
+</p></div></div></footer></body></html>
