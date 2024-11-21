@@ -23,10 +23,7 @@ class LoginFormType extends AbstractType
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Connexion',
-            ])
-
-
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)

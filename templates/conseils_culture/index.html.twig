@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conseils de Culture - FleurVerte
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto px-4 mt-8">
+		<h1 class="text-4xl font-bold mb-8">Conseils de Culture</h1>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+			<div class="bg-white p-6 rounded-lg shadow-md">
+				<h2 class="text-2xl font-semibold mb-4">Choisir le bon emplacement</h2>
+				<p>La plupart de nos fleurs exotiques préfèrent un endroit lumineux mais pas en plein soleil. Assurez-vous de leur offrir une lumière indirecte ou filtrée.</p>
+			</div>
+
+			<div class="bg-white p-6 rounded-lg shadow-md">
+				<h2 class="text-2xl font-semibold mb-4">Arrosage adapté</h2>
+				<p>L'arrosage dépend de chaque espèce. En général, laissez le sol sécher légèrement entre les arrosages. Évitez l'excès d'eau qui peut causer la pourriture des racines.</p>
+			</div>
+
+			<div class="bg-white p-6 rounded-lg shadow-md">
+				<h2 class="text-2xl font-semibold mb-4">Maintenir une bonne humidité</h2>
+				<p>Les fleurs exotiques apprécient souvent une humidité élevée. Vous pouvez utiliser un brumisateur ou placer un plateau rempli de billes d'argile et d'eau sous le pot.</p>
+			</div>
+
+			<div class="bg-white p-6 rounded-lg shadow-md">
+				<h2 class="text-2xl font-semibold mb-4">Fertilisation</h2>
+				<p>Utilisez un engrais équilibré pour plantes d'intérieur pendant la période de croissance (printemps et été). Suivez les instructions sur l'emballage pour le dosage.</p>
+			</div>
+		</div>
+
+		<div class="mt-12">
+			<h2 class="text-3xl font-semibold mb-6">Conseils spécifiques par espèce</h2>
+			<p class="mb-4">Pour des conseils plus détaillés sur chaque espèce de fleur que nous proposons, consultez nos fiches individuelles dans la section "Nos Variétés".</p>
+			<a href="{{ path('app_product') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Voir nos variétés</a>
+		</div>
+	</div>
+{% endblock %}
