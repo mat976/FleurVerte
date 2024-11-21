@@ -27,9 +27,9 @@
 						</div>
 						<p class="text-sm text-gray-500 mt-2">THC:
 							{{ fleur.thc }}%</p>
-						<button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-							Ajouter au panier
-						</button>
+						<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded text-center inline-block">
+							Voir détails
+						</a>
 					</div>
 				</div>
 			{% else %}

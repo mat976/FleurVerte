@@ -13,11 +13,28 @@ class Fleuriste
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\Column(length: 255)]
+    private ?string $nom = null;
+
+    #[ORM\OneToOne(inversedBy: 'fleuriste')]
+    #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
-    // ... autres propriétés et méthodes
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
+        return $this;
+    }
 
     public function getUser(): ?User
     {

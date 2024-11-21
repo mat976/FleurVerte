@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Fleuristes - FleurVerte
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto px-4 mt-8">
+		<h1 class="text-4xl font-bold mb-8">Liste des Fleuristes</h1>
+
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+			{% for fleuriste in fleuristes %}
+				<div class="bg-white shadow-lg rounded-lg overflow-hidden">
+					<div class="p-6">
+						<h2 class="text-2xl font-bold mb-2">{{ fleuriste.nom }}</h2>
+						{% if fleuriste.user %}
+							<p class="text-gray-600 mb-4">Email:
+								{{ fleuriste.user.email }}</p>
+							<p class="text-gray-600 mb-4">Type:
+								{{ fleuriste.user.userType }}</p>
+						{% else %}
+							<p class="text-gray-600 mb-4">Aucun utilisateur associé</p>
+						{% endif %}
+						<a href="{{ path('app_fleuriste_detail', {'id': fleuriste.id}) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+							Voir détails
+						</a>
+					</div>
+				</div>
+			{% else %}
+				<p class="col-span-3 text-center text-gray-600">Aucun fleuriste trouvé.</p>
+			{% endfor %}
+		</div>
+	</div>
+{% endblock %}

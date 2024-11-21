@@ -25,8 +25,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Fleuriste $fleuriste = null;
+
     #[ORM\Column(length: 255)]
     private ?string $userType = null;
+
+
+
 
     public function getId(): ?int
     {
@@ -86,6 +92,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserType(string $userType): static
     {
         $this->userType = $userType;
+        return $this;
+    }
+    public function getFleuriste(): ?Fleuriste
+    {
+        return $this->fleuriste;
+    }
+
+    public function setFleuriste(?Fleuriste $fleuriste): self
+    {
+        $this->fleuriste = $fleuriste;
         return $this;
     }
 }
