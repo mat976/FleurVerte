@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use App\Form\LoginFormType;
 
 class SecurityController extends AbstractController
 {
@@ -17,19 +18,23 @@ class SecurityController extends AbstractController
         //     return $this->redirectToRoute('target_path');
         // }
 
+        $form = $this->createForm(LoginFormType::class);
+
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route(path: '/register', name: 'app_register')]
     public function register(Request $request): Response
     {
-        // Here you would handle the registration logic, such as creating a form, processing it, and saving the user.
-        // For now, we'll just render the registration template.
 
         return $this->render('security/register.html.twig');
     }
