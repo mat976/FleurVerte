@@ -8,6 +8,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Form\LoginFormType;
+use App\Form\RegisterFormType;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class SecurityController extends AbstractController
 {
@@ -33,11 +37,42 @@ class SecurityController extends AbstractController
     }
 
     #[Route(path: '/register', name: 'app_register')]
-    public function register(Request $request): Response
+    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
     {
+        $form = $this->createForm(RegisterFormType::class);
 
-        return $this->render('security/register.html.twig');
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Create a new User entity
+            $user = new User();
+
+            // Set user properties from form data
+            $user->setEmail($form->get('email')->getData());
+
+            // Set the username from form data
+            $user->setUsername($form->get('username')->getData());
+
+            // Set userType to "client" by default
+            $user->setUserType('client');
+
+            // Encode the password
+            $plainPassword = $form->get('plainPassword')->getData();
+            $encodedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+            $user->setPassword($encodedPassword);
+
+            // Persist the user entity
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            // Redirect to a different page after successful registration
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('security/register.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
+
 
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
