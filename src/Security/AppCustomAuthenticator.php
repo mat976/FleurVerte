@@ -21,21 +21,24 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(private UrlGeneratorInterface $urlGenerator)
-    {
-    }
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
 
     public function authenticate(Request $request): Passport
     {
-        $email = $request->getPayload()->getString('email');
+        $username = $request->request->get('_username', '');
+        $password = $request->request->get('_password', '');
 
-        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $email);
+        // Ajoutez ces lignes pour le débogage
+        error_log('Username: ' . $username);
+        error_log('Password: ' . $password);
 
+        $request->getSession()->set(SecurityRequestAttributes::LAST_USERNAME, $username);
         return new Passport(
-            new UserBadge($email),
-            new PasswordCredentials($request->getPayload()->getString('password')),
+            new UserBadge($username),
+            new PasswordCredentials($password),
             [
-                new CsrfTokenBadge('authenticate', $request->getPayload()->getString('_csrf_token')),            ]
+                new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
+            ]
         );
     }
 
@@ -45,9 +48,9 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // For example:
-        // return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        // Rediriger vers la page d'accueil ou le tableau de bord après la connexion
+        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+        // Si vous n'avez pas de route 'app_home', remplacez-la par une route existante dans votre application
     }
 
     protected function getLoginUrl(Request $request): string
