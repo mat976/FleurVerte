@@ -46,6 +46,12 @@ class ProfileController extends AbstractController
             $newRole = $form->get('role')->getData();
             $validRoles = ['ROLE_USER', 'ROLE_FLEURISTE'];
 
+            // Gestion de l'avatar
+            $avatarFile = $form->get('avatarFile')->getData();
+            if ($avatarFile) {
+                $user->setAvatarFile($avatarFile);
+            }
+
             if (in_array($newRole, $validRoles) && !in_array($newRole, $user->getRoles())) {
                 $user->setRoles([$newRole]);
 
@@ -77,6 +83,10 @@ class ProfileController extends AbstractController
             } else {
                 $this->addFlash('info', 'Aucun changement n\'a été effectué sur votre rôle d\'utilisateur.');
             }
+
+            // Persister les changements de l'utilisateur (y compris l'avatar)
+            $entityManager->persist($user);
+            $entityManager->flush();
 
             return $this->redirectToRoute('app_profile');
         }
