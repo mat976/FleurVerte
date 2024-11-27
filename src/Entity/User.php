@@ -31,8 +31,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
     private ?Client $client = null;
-    #[ORM\Column(length: 255)]
-    private ?string $userType = null;
 
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
@@ -93,16 +91,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
     }
 
-    public function getUserType(): ?string
-    {
-        return $this->userType;
-    }
-
-    public function setUserType(string $userType): static
-    {
-        $this->userType = $userType;
-        return $this;
-    }
     public function getFleuriste(): ?Fleuriste
     {
         return $this->fleuriste;

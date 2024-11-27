@@ -12,14 +12,13 @@ class FleuristeController extends AbstractController
     #[Route('/fleuriste', name: 'app_fleuriste_index')]
     public function index(FleuristeRepository $fleuristeRepository): Response
     {
-        $fleuristes = $fleuristeRepository->findAll();
+        $fleuristes = $fleuristeRepository->findFleuristesWithAddress();
 
         return $this->render('fleuriste/index.html.twig', [
             'fleuristes' => $fleuristes,
         ]);
     }
 
-    // Vous pouvez ajouter une méthode pour les détails si nécessaire
     #[Route('/fleuriste/{id}', name: 'app_fleuriste_detail')]
     public function detail(int $id, FleuristeRepository $fleuristeRepository): Response
     {
@@ -33,4 +32,6 @@ class FleuristeController extends AbstractController
             'fleuriste' => $fleuriste,
         ]);
     }
+
+    // Vous pouvez ajouter d'autres méthodes ici si nécessaire, comme 'app_fleuriste_add'
 }

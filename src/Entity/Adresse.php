@@ -22,6 +22,9 @@ class Adresse
     #[ORM\Column(type: 'integer')]
     private ?int $CodePost = null;
 
+    #[ORM\OneToOne(mappedBy: 'adresse', targetEntity: Fleuriste::class)]
+    private ?Fleuriste $fleuriste = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,7 +38,6 @@ class Adresse
     public function setNumRue(int $NumRue): static
     {
         $this->NumRue = $NumRue;
-
         return $this;
     }
 
@@ -47,7 +49,6 @@ class Adresse
     public function setNomRue(string $NomRue): static
     {
         $this->NomRue = $NomRue;
-
         return $this;
     }
 
@@ -59,7 +60,17 @@ class Adresse
     public function setCodePost(int $CodePost): static
     {
         $this->CodePost = $CodePost;
+        return $this;
+    }
 
+    public function getFleuriste(): ?Fleuriste
+    {
+        return $this->fleuriste;
+    }
+
+    public function setFleuriste(?Fleuriste $fleuriste): self
+    {
+        $this->fleuriste = $fleuriste;
         return $this;
     }
 }

@@ -45,7 +45,6 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Set default user type and roles
-            $user->setUserType('client');
             $user->setRoles(['ROLE_USER']);
 
             // encode the plain password

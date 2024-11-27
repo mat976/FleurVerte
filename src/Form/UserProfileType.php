@@ -17,12 +17,13 @@ class UserProfileType extends AbstractType
         $builder
             ->add('email', EmailType::class)
             ->add('username', TextType::class)
-            ->add('userType', ChoiceType::class, [
+            ->add('role', ChoiceType::class, [
                 'choices' => [
-                    'Client' => 'client',
-                    'Fleuriste' => 'fleuriste',
+                    'Client' => 'ROLE_USER',
+                    'Fleuriste' => 'ROLE_FLEURISTE',
                 ],
-                'label' => 'Type d\'utilisateur',
+                'mapped' => false,
+                'data' => in_array('ROLE_FLEURISTE', $options['data']->getRoles()) ? 'ROLE_FLEURISTE' : 'ROLE_USER',
             ]);
     }
 

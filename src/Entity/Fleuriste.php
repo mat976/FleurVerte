@@ -20,6 +20,10 @@ class Fleuriste
     #[ORM\JoinColumn(nullable: true)]
     private ?User $user = null;
 
+    #[ORM\OneToOne(targetEntity: Adresse::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Adresse $adresse = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -44,6 +48,17 @@ class Fleuriste
     public function setUser(User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    public function getAdresse(): ?Adresse
+    {
+        return $this->adresse;
+    }
+
+    public function setAdresse(?Adresse $adresse): self
+    {
+        $this->adresse = $adresse;
         return $this;
     }
 }

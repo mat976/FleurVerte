@@ -6,9 +6,6 @@ use App\Entity\Fleuriste;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-/**
- * @extends ServiceEntityRepository<Fleuriste>
- */
 class FleuristeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,28 +13,13 @@ class FleuristeRepository extends ServiceEntityRepository
         parent::__construct($registry, Fleuriste::class);
     }
 
-//    /**
-//     * @return Fleuriste[] Returns an array of Fleuriste objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findFleuristesWithAddress(): array
+    {
+        return $this->createQueryBuilder('f')
+            ->innerJoin('f.adresse', 'a')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Fleuriste
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    // Vous pouvez conserver les autres méthodes commentées si vous pensez les utiliser plus tard
 }
