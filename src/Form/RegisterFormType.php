@@ -12,6 +12,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+
 
 class RegisterFormType extends AbstractType
 {
@@ -59,7 +61,9 @@ class RegisterFormType extends AbstractType
                     ]),
                 ],
             ])
-        ;
+            ->add('avatarName', HiddenType::class, [
+                'data' => $this->getRandomAvatar(),
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -67,5 +71,10 @@ class RegisterFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => User::class,
         ]);
+    }
+
+    private function getRandomAvatar(): string
+    {
+        return rand(1, 10) . '.png';
     }
 }
