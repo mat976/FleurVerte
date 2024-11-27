@@ -55,6 +55,13 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $this->save($user, true);
     }
+    public function findFleuristes(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->innerJoin('u.fleuriste', 'f')
+            ->getQuery()
+            ->getResult();
+    }
 
     //    /**
     //     * @return User[] Returns an array of User objects

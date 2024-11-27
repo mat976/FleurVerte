@@ -1,0 +1,59 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Fleuriste -
+	{{ fleuriste.nom }}
+{% endblock %}
+
+{% block body %}
+	<div class="container mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold mb-6">{{ fleuriste.nom }}</h1>
+
+		<div class="bg-white shadow-md rounded-lg overflow-hidden p-6">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<div>
+					<h2 class="text-xl font-semibold mb-4">Informations du Fleuriste</h2>
+					<p>
+						<strong>Nom :</strong>
+						{{ fleuriste.nom }}</p>
+					<p>
+						<strong>Email :</strong>
+						{{ fleuriste.user.email }}</p>
+
+					{% if fleuriste.adresse %}
+						<h3 class="text-lg font-semibold mt-4 mb-2">Adresse</h3>
+						<p>
+							{{ fleuriste.adresse.numRue }}
+							{{ fleuriste.adresse.nomRue }}<br>
+							{{ fleuriste.adresse.codePost }}
+						</p>
+					{% else %}
+						<p class="mt-4 text-yellow-600">Aucune adresse renseignée</p>
+					{% endif %}
+				</div>
+
+				<div>
+					<h2 class="text-xl font-semibold mb-4">Services</h2>
+					<!-- Ajoutez ici des informations sur les services offerts par le fleuriste -->
+					<ul class="list-disc list-inside">
+						<li>Livraison à domicile</li>
+						<li>Compositions florales sur mesure</li>
+						<li>Conseil en botanique</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="mt-8">
+				<h2 class="text-xl font-semibold mb-4">Galerie de photos</h2>
+				<!-- Ajoutez ici une galerie de photos ou d'autres informations pertinentes -->
+				<p class="text-gray-600">Galerie à venir...</p>
+			</div>
+
+			<div class="mt-8 flex justify-between items-center">
+				<a href="{{ path('app_fleuriste_index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
+					Retour à la liste
+				</a>
+				<!-- Ajoutez d'autres actions si nécessaire -->
+			</div>
+		</div>
+	</div>
+{% endblock %}

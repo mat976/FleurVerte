@@ -16,12 +16,11 @@ class Fleuriste
     #[ORM\Column(length: 255)]
     private ?string $nom = null;
 
-    #[ORM\OneToOne(inversedBy: 'fleuriste')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(targetEntity: User::class, inversedBy: 'fleuriste')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToOne(targetEntity: Adresse::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Adresse $adresse = null;
 
     public function getId(): ?int
@@ -34,9 +33,10 @@ class Fleuriste
         return $this->nom;
     }
 
-    public function setNom(string $nom): self
+    public function setNom(string $nom): static
     {
         $this->nom = $nom;
+
         return $this;
     }
 
@@ -45,7 +45,7 @@ class Fleuriste
         return $this->user;
     }
 
-    public function setUser(User $user): static
+    public function setUser(?User $user): self
     {
         $this->user = $user;
         return $this;
@@ -56,9 +56,10 @@ class Fleuriste
         return $this->adresse;
     }
 
-    public function setAdresse(?Adresse $adresse): self
+    public function setAdresse(?Adresse $adresse): static
     {
         $this->adresse = $adresse;
+
         return $this;
     }
 }

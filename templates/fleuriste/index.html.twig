@@ -4,45 +4,47 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mx-auto px-4 mt-8">
-		<h1 class="text-4xl font-bold mb-8">Liste des Fleuristes</h1>
+	<div class="container mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold mb-6">Liste des Fleuristes</h1>
 
-		{% if is_granted('ROLE_FLEURISTE') and not app.user.fleuriste %}
-			<div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-8" role="alert">
-				<p class="font-bold">Vous êtes un fleuriste !</p>
-				<p>Vous n'avez pas encore ajouté votre magasin. Cliquez ci-dessous pour l'ajouter.</p>
-				<a href="{{ path('app_fleuriste_add') }}" class="mt-2 inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-					Ajouter mon magasin
-				</a>
+		{% if adresseForm is defined and adresseForm %}
+			<div class="mb-8 bg-white shadow-md rounded-lg p-6">
+				<h2 class="text-xl font-semibold mb-4">Ajouter votre adresse</h2>
+				{{ form_start(adresseForm) }}
+				{{ form_widget(adresseForm) }}
+				<button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+					Ajouter l'adresse
+				</button>
+				{{ form_end(adresseForm) }}
 			</div>
 		{% endif %}
 
 		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{% for fleuriste in fleuristes %}
-				<div class="bg-white shadow-lg rounded-lg overflow-hidden">
-					<div class="p-6">
-						<h2 class="text-2xl font-bold mb-2">{{ fleuriste.nom }}</h2>
-						{% if fleuriste.user %}
-							<p class="text-gray-600 mb-4">Email:
-								{{ fleuriste.user.email }}</p>
-						{% else %}
-							<p class="text-gray-600 mb-4">Aucun utilisateur associé</p>
-						{% endif %}
-						{% if fleuriste.adresse %}
-							<p class="text-gray-600 mb-4">
-								Adresse:
-								{{ fleuriste.adresse.numRue }}
-								{{ fleuriste.adresse.nomRue }},
-								{{ fleuriste.adresse.codePost }}
-							</p>
-						{% endif %}
-						<a href="{{ path('app_fleuriste_detail', {'id': fleuriste.id}) }}" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
-							Voir détails
-						</a>
+			{% for user in fleuristes %}
+				{% if user.fleuriste %}
+					<div class="bg-white shadow-md rounded-lg overflow-hidden">
+						<div class="px-6 py-4">
+							<div class="font-bold text-xl mb-2">{{ user.fleuriste.nom }}</div>
+							<p class="text-gray-700 text-base mb-2">Email:
+								{{ user.email }}</p>
+							{% if user.fleuriste.adresse %}
+								<p class="text-gray-700 text-base">
+									Adresse:
+									{{ user.fleuriste.adresse.numRue }}
+									{{ user.fleuriste.adresse.nomRue }},
+									{{ user.fleuriste.adresse.codePost }}
+								</p>
+							{% else %}
+								<p class="text-gray-700 text-base">Adresse non renseignée</p>
+							{% endif %}
+						</div>
+						<div class="px-6 pt-4 pb-2">
+							<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+								Voir détails
+							</a>
+						</div>
 					</div>
-				</div>
-			{% else %}
-				<p class="col-span-3 text-center text-gray-600">Aucun fleuriste avec adresse trouvé.</p>
+				{% endif %}
 			{% endfor %}
 		</div>
 	</div>
