@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FleuristeRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FleuristeRepository::class)]
@@ -25,6 +27,14 @@ class Fleuriste
 
     #[ORM\Column(type: 'boolean')]
     private bool $actif = true;
+
+    #[ORM\OneToMany(mappedBy: 'fleuriste', targetEntity: Fleur::class, orphanRemoval: true)]
+    private Collection $fleurs;
+
+    public function __construct()
+    {
+        $this->fleurs = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -74,6 +84,36 @@ class Fleuriste
     public function setActif(bool $actif): self
     {
         $this->actif = $actif;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Fleur>
+     */
+    public function getFleurs(): Collection
+    {
+        return $this->fleurs;
+    }
+
+    public function addFleur(Fleur $fleur): self
+    {
+        if (!$this->fleurs->contains($fleur)) {
+            $this->fleurs->add($fleur);
+            $fleur->setFleuriste($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFleur(Fleur $fleur): self
+    {
+        if ($this->fleurs->removeElement($fleur)) {
+            // set the owning side to null (unless already changed)
+            if ($fleur->getFleuriste() === $this) {
+                $fleur->setFleuriste(null);
+            }
+        }
+
         return $this;
     }
 }

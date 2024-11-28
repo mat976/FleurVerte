@@ -27,6 +27,10 @@ class Fleur
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
 
+    #[ORM\ManyToOne(targetEntity: Fleuriste::class, inversedBy: 'fleurs')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Fleuriste $fleuriste = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -84,6 +88,17 @@ class Fleur
     public function setStock(?int $stock): static
     {
         $this->stock = $stock;
+        return $this;
+    }
+
+    public function getFleuriste(): ?Fleuriste
+    {
+        return $this->fleuriste;
+    }
+
+    public function setFleuriste(?Fleuriste $fleuriste): self
+    {
+        $this->fleuriste = $fleuriste;
         return $this;
     }
 }

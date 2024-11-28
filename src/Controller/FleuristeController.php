@@ -44,7 +44,7 @@ class FleuristeController extends AbstractController
         ]);
     }
 
-    #[Route('/fleuriste/{id}', name: 'app_fleuriste_detail')]
+    #[Route('/fleuriste/{id}', name: 'app_fleuriste_detail', requirements: ['id' => '\d+'])]
     public function detail(int $id, UserRepository $userRepository): Response
     {
         $user = $userRepository->find($id);
@@ -53,8 +53,12 @@ class FleuristeController extends AbstractController
             throw $this->createNotFoundException('Fleuriste non trouvé');
         }
 
+        $fleuriste = $user->getFleuriste();
+        $fleurs = $fleuriste->getFleurs();
+
         return $this->render('fleuriste/detail.html.twig', [
-            'fleuriste' => $user->getFleuriste(),
+            'fleuriste' => $fleuriste,
+            'fleurs' => $fleurs,
         ]);
     }
 }
