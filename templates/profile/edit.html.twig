@@ -36,31 +36,38 @@
                 </div>
             </div>
 
-            <div>
-                {{ form_label(form.avatarName, 'Choisissez votre avatar', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
-                <div class="grid grid-cols-5 gap-2">
-                    {% for choice in form.avatarName %}
-                        <div class="avatar-option">
-                            <label for="{{ choice.vars.id }}" class="cursor-pointer block">
-                                <img src="{{ asset('basic_avatar/' ~ choice.vars.value) }}" alt="Avatar {{ loop.index }}" 
-                                     class="w-10 h-10 rounded-full transition-all duration-200 {% if form.avatarName.vars.value == choice.vars.value %}ring-2 ring-green-500{% else %}hover:ring-2 hover:ring-green-300{% endif %}">
-                                {{ form_widget(choice, {'attr': {'class': 'sr-only'}}) }}
-                            </label>
-                        </div>
-                    {% endfor %}
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Avatar actuel</label>
+                    <img src="{{ asset('uploads/avatars/' ~ app.user.avatarName) }}" alt="Avatar actuel" class="w-20 h-20 rounded-full">
                 </div>
-            </div>
 
-            <div>
-                {{ form_label(form.avatarName, 'Ou téléchargez votre propre avatar', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                <div class="mt-1">
-                    {{ form_widget(form.avatarFile, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-500
-                        file:mr-4 file:py-2 file:px-4
-                        file:rounded-md file:border-0
-                        file:text-sm file:font-semibold
-                        file:bg-green-50 file:text-green-700
-                        hover:file:bg-green-100
-                    '}}) }}
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Choisir un nouvel avatar</label>
+                    <div class="grid grid-cols-5 gap-4">
+                        {% for i in 1..10 %}
+                            <label class="cursor-pointer block">
+                                <input type="radio" name="{{ form.avatarName.vars.full_name }}" value="{{ i }}.png" class="sr-only" 
+                                       {% if app.user.avatarName == i ~ '.png' %}checked{% endif %}>
+                                <img src="{{ asset('uploads/avatars/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
+                                     class="w-12 h-12 rounded-full transition-all duration-200 hover:ring-2 hover:ring-green-300 
+                                            {% if app.user.avatarName == i ~ '.png' %}ring-2 ring-green-500{% endif %}">
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div>
+                    {{ form_label(form.avatarFile, 'Ou téléchargez votre propre avatar', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                    <div class="mt-1">
+                        {{ form_widget(form.avatarFile, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-green-50 file:text-green-700
+                            hover:file:bg-green-100
+                        '}}) }}
+                    </div>
                 </div>
             </div>
 
