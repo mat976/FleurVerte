@@ -21,15 +21,15 @@
 									<i class="fas fa-envelope mr-2 text-green-600"></i>
 									{{ user.email }}
 								</p>
-								{% if user.fleuriste.adresses is not empty %}
+								{% if user.adresses is not empty %}
 									{% set principale_adresse = null %}
-									{% for adresse in user.fleuriste.adresses %}
+									{% for adresse in user.adresses %}
 										{% if adresse.principale %}
 											{% set principale_adresse = adresse %}
 										{% endif %}
 									{% endfor %}
 									{% if principale_adresse is null %}
-										{% set principale_adresse = user.fleuriste.adresses|first %}
+										{% set principale_adresse = user.adresses|first %}
 									{% endif %}
 									<p class="text-gray-700 text-base">
 										<i class="fas fa-map-marker-alt mr-2 text-green-600"></i>

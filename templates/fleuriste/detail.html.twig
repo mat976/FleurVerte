@@ -19,9 +19,9 @@
 						<strong>Email :</strong>
 						{{ fleuriste.user.email }}</p>
 
-					{% if fleuriste.adresses|length > 0 %}
+					{% if fleuriste.user.adresses|length > 0 %}
 						<h3 class="text-lg font-semibold mt-4 mb-2">Adresses</h3>
-						{% for adresse in fleuriste.adresses %}
+						{% for adresse in fleuriste.user.adresses %}
 							<div class="mb-4 p-3 border rounded {% if adresse.principale %}border-green-500{% endif %}">
 								<p class="mb-1">{{ adresse.adresseComplete }}</p>
 								{% if adresse.principale %}

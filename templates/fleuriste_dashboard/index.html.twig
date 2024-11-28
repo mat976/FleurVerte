@@ -40,6 +40,20 @@
                                 <div class="mt-4 flex justify-end space-x-2">
                                     <a href="{{ path('app_adresse_edit', {'id': adresse.id}) }}" 
                                        class="text-green-600 hover:text-green-900">Modifier</a>
+                                    {% if not adresse.principale %}
+                                        <form method="post" action="{{ path('app_adresse_set_principale', {'id': adresse.id}) }}" class="inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('set-principale' ~ adresse.id) }}">
+                                            <button type="submit" class="text-blue-600 hover:text-blue-900">
+                                                Définir comme principale
+                                            </button>
+                                        </form>
+                                        <form method="post" action="{{ path('app_adresse_delete', {'id': adresse.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ adresse.id) }}">
+                                            <button type="submit" class="text-red-600 hover:text-red-900">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    {% endif %}
                                 </div>
                             </div>
                         {% endfor %}

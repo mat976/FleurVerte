@@ -22,9 +22,6 @@ class Fleuriste
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\OneToMany(mappedBy: 'fleuriste', targetEntity: Adresse::class, orphanRemoval: true, cascade: ['persist', 'remove'])]
-    private Collection $adresses;
-
     #[ORM\Column(type: 'boolean')]
     private bool $actif = true;
 
@@ -34,7 +31,6 @@ class Fleuriste
     public function __construct()
     {
         $this->fleurs = new ArrayCollection();
-        $this->adresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -62,44 +58,6 @@ class Fleuriste
     {
         $this->user = $user;
         return $this;
-    }
-
-    /**
-     * @return Collection<int, Adresse>
-     */
-    public function getAdresses(): Collection
-    {
-        return $this->adresses;
-    }
-
-    public function addAdresse(Adresse $adresse): self
-    {
-        if (!$this->adresses->contains($adresse)) {
-            $this->adresses->add($adresse);
-            $adresse->setFleuriste($this);
-        }
-        return $this;
-    }
-
-    public function removeAdresse(Adresse $adresse): self
-    {
-        if ($this->adresses->removeElement($adresse)) {
-            // set the owning side to null (unless already changed)
-            if ($adresse->getFleuriste() === $this) {
-                $adresse->setFleuriste(null);
-            }
-        }
-        return $this;
-    }
-
-    public function getPrincipaleAdresse(): ?Adresse
-    {
-        foreach ($this->adresses as $adresse) {
-            if ($adresse->isPrincipale()) {
-                return $adresse;
-            }
-        }
-        return $this->adresses->isEmpty() ? null : $this->adresses->first();
     }
 
     public function isActif(): bool
