@@ -32,7 +32,7 @@ class Adresse
 
     #[ORM\ManyToOne(inversedBy: 'adresses')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Fleuriste $fleuriste = null;
+    private ?User $user = null;
 
     #[ORM\Column]
     private ?bool $principale = false;
@@ -86,14 +86,14 @@ class Adresse
         return $this;
     }
 
-    public function getFleuriste(): ?Fleuriste
+    public function getUser(): ?User
     {
-        return $this->fleuriste;
+        return $this->user;
     }
 
-    public function setFleuriste(?Fleuriste $fleuriste): static
+    public function setUser(?User $user): static
     {
-        $this->fleuriste = $fleuriste;
+        $this->user = $user;
         return $this;
     }
 

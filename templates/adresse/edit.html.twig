@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'adresse{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-100 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Modifier l'adresse</h1>
+        </div>
+
+        <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
+            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        {{ form_label(form.rue, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.rue, {'attr': {'class': 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'}}) }}
+                        </div>
+                        {{ form_errors(form.rue) }}
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            {{ form_label(form.codePostal, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                            <div class="mt-1">
+                                {{ form_widget(form.codePostal, {'attr': {'class': 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'}}) }}
+                            </div>
+                            {{ form_errors(form.codePostal) }}
+                        </div>
+
+                        <div>
+                            {{ form_label(form.ville, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                            <div class="mt-1">
+                                {{ form_widget(form.ville, {'attr': {'class': 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'}}) }}
+                            </div>
+                            {{ form_errors(form.ville) }}
+                        </div>
+                    </div>
+
+                    <div>
+                        {{ form_label(form.complement, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        <div class="mt-1">
+                            {{ form_widget(form.complement, {'attr': {'class': 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'}}) }}
+                        </div>
+                        {{ form_errors(form.complement) }}
+                    </div>
+
+                    <div class="flex items-center">
+                        <div class="flex items-center h-5">
+                            {{ form_widget(form.principale, {'attr': {'class': 'h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'}}) }}
+                        </div>
+                        <div class="ml-3 text-sm">
+                            {{ form_label(form.principale, null, {'label_attr': {'class': 'font-medium text-gray-700'}}) }}
+                            <p class="text-gray-500">Cette adresse sera utilisée par défaut pour les livraisons</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <form action="{{ path('app_adresse_delete', {'id': adresse.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ adresse.id) }}">
+                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            Supprimer l'adresse
+                        </button>
+                    </form>
+                    
+                    <div class="flex space-x-3">
+                        <a href="{{ path('app_fleuriste_dashboard') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded">
+                            Annuler
+                        </a>
+                        <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                            Enregistrer les modifications
+                        </button>
+                    </div>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

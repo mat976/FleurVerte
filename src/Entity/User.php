@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -47,6 +49,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Adresse::class, orphanRemoval: true)]
+    private Collection $adresses;
+
+    public function __construct()
+    {
+        $this->adresses = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -103,8 +113,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
         return $this->fleuriste;
     }
 
-    public function setFleuriste(?Fleuriste $fleuriste): self
+    public function setFleuriste(?Fleuriste $fleuriste): static
     {
+        // unset the owning side of the relation if necessary
+        if ($fleuriste === null && $this->fleuriste !== null) {
+            $this->fleuriste->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($fleuriste !== null && $fleuriste->getUser() !== $this) {
+            $fleuriste->setUser($this);
+        }
+
         $this->fleuriste = $fleuriste;
         return $this;
     }
@@ -114,8 +134,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
         return $this->client;
     }
 
-    public function setClient(?Client $client): self
+    public function setClient(?Client $client): static
     {
+        // unset the owning side of the relation if necessary
+        if ($client === null && $this->client !== null) {
+            $this->client->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($client !== null && $client->getUser() !== $this) {
+            $client->setUser($this);
+        }
+
         $this->client = $client;
         return $this;
     }
@@ -131,17 +161,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
         return $this;
     }
 
-    public function setAvatarFile(?File $avatarFile = null): void
+    public function getAvatarName(): ?string
     {
-        $this->avatarFile = $avatarFile;
+        return $this->avatarName;
+    }
 
-        if ($avatarFile) {
-            $this->updatedAt = new \DateTimeImmutable();
-
-            if ($avatarFile instanceof UploadedFile) {
-                $this->avatarName = $avatarFile->getClientOriginalName();
-            }
-        }
+    public function setAvatarName(?string $avatarName): static
+    {
+        $this->avatarName = $avatarName;
+        return $this;
     }
 
     public function getAvatarFile(): ?File
@@ -149,14 +177,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
         return $this->avatarFile;
     }
 
-    public function setAvatarName(?string $avatarName): void
+    public function setAvatarFile(?File $avatarFile = null): void
     {
-        $this->avatarName = $avatarName;
-    }
+        $this->avatarFile = $avatarFile;
 
-    public function getAvatarName(): ?string
-    {
-        return $this->avatarName;
+        if ($avatarFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
     public function getUpdatedAt(): ?\DateTimeInterface
@@ -164,34 +191,59 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
         return $this;
     }
 
-    /** @see \Serializable::serialize() */
     public function serialize()
     {
         return serialize([
             $this->id,
-            $this->email,
             $this->username,
+            $this->email,
             $this->password,
-            $this->avatarName,
-            // Ne pas sérialiser le fichier lui-même
         ]);
     }
 
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
+    public function unserialize($data)
     {
-        list(
+        [
             $this->id,
-            $this->email,
             $this->username,
+            $this->email,
             $this->password,
-            $this->avatarName,
-        ) = unserialize($serialized);
+        ] = unserialize($data);
+    }
+
+    /**
+     * @return Collection<int, Adresse>
+     */
+    public function getAdresses(): Collection
+    {
+        return $this->adresses;
+    }
+
+    public function addAdresse(Adresse $adresse): static
+    {
+        if (!$this->adresses->contains($adresse)) {
+            $this->adresses->add($adresse);
+            $adresse->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAdresse(Adresse $adresse): static
+    {
+        if ($this->adresses->removeElement($adresse)) {
+            // set the owning side to null (unless already changed)
+            if ($adresse->getUser() === $this) {
+                $adresse->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
