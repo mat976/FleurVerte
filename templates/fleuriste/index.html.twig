@@ -4,48 +4,45 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mx-auto px-4 py-8">
-		<h1 class="text-3xl font-bold mb-6">Liste des Fleuristes</h1>
+	<div class="bg-gray-100 min-h-screen">
+		<div class="container mx-auto px-4 py-8">
+			<h1 class="text-4xl font-bold mb-8 text-center text-green-800">Liste des Fleuristes</h1>
 
-		{% if adresseForm is defined and adresseForm %}
-			<div class="mb-8 bg-white shadow-md rounded-lg p-6">
-				<h2 class="text-xl font-semibold mb-4">Ajouter votre adresse</h2>
-				{{ form_start(adresseForm) }}
-				{{ form_widget(adresseForm) }}
-				<button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-					Ajouter l'adresse
-				</button>
-				{{ form_end(adresseForm) }}
-			</div>
-		{% endif %}
-
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-			{% for user in fleuristes %}
-				{% if user.fleuriste %}
-					<div class="bg-white shadow-md rounded-lg overflow-hidden">
-						<div class="px-6 py-4">
-							<div class="font-bold text-xl mb-2">{{ user.fleuriste.nom }}</div>
-							<p class="text-gray-700 text-base mb-2">Email:
-								{{ user.email }}</p>
-							{% if user.fleuriste.adresse %}
-								<p class="text-gray-700 text-base">
-									Adresse:
-									{{ user.fleuriste.adresse.numRue }}
-									{{ user.fleuriste.adresse.nomRue }},
-									{{ user.fleuriste.adresse.codePost }}
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{% for user in fleuristes %}
+					{% if user.fleuriste %}
+						<div class="bg-white shadow-lg rounded-lg overflow-hidden transition duration-300 hover:shadow-xl">
+							<div class="px-6 py-4">
+								<div class="flex items-center mb-4">
+									<img src="{{ user.avatarName ? asset('uploads/avatars/' ~ user.avatarName) : asset('basic_avatar/1.png') }}" alt="{{ user.avatarName ? 'Avatar de ' ~ user.fleuriste.nom : 'Avatar par défaut' }}" class="w-16 h-16 rounded-full mr-4 object-cover">
+									<div class="font-bold text-xl text-green-800">{{ user.fleuriste.nom }}</div>
+								</div>
+								<p class="text-gray-700 text-base mb-2">
+									<i class="fas fa-envelope mr-2 text-green-600"></i>
+									{{ user.email }}
 								</p>
-							{% else %}
-								<p class="text-gray-700 text-base">Adresse non renseignée</p>
-							{% endif %}
+								{% if user.fleuriste.adresse %}
+									<p class="text-gray-700 text-base">
+										<i class="fas fa-map-marker-alt mr-2 text-green-600"></i>
+										{{ user.fleuriste.adresse.numRue }}
+										{{ user.fleuriste.adresse.nomRue }},
+										{{ user.fleuriste.adresse.codePost }}
+									</p>
+								{% else %}
+									<p class="text-yellow-600 text-base">
+										<i class="fas fa-exclamation-triangle mr-2"></i>Adresse non renseignée
+									</p>
+								{% endif %}
+							</div>
+							<div class="px-6 pt-4 pb-2">
+								<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+									Voir détails
+								</a>
+							</div>
 						</div>
-						<div class="px-6 pt-4 pb-2">
-							<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-								Voir détails
-							</a>
-						</div>
-					</div>
-				{% endif %}
-			{% endfor %}
+					{% endif %}
+				{% endfor %}
+			</div>
 		</div>
 	</div>
 {% endblock %}

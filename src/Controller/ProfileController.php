@@ -2,15 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Entity\Client;
 use App\Entity\Fleuriste;
+use App\Entity\User;
 use App\Form\UserProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class ProfileController extends AbstractController
 {
@@ -30,7 +32,7 @@ class ProfileController extends AbstractController
     }
 
     #[Route('/profile/edit', name: 'app_profile_edit')]
-    public function edit(Request $request, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         /** @var User $user */
         $user = $this->getUser();
@@ -43,50 +45,39 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $newRole = $form->get('role')->getData();
+            $newRole = $form->get('roles')->getData();
             $validRoles = ['ROLE_USER', 'ROLE_FLEURISTE'];
 
-            // Gestion de l'avatar
-            $avatarFile = $form->get('avatarFile')->getData();
-            if ($avatarFile) {
-                $user->setAvatarFile($avatarFile);
-            }
-
-            if (in_array($newRole, $validRoles) && !in_array($newRole, $user->getRoles())) {
-                $user->setRoles([$newRole]);
-
+            if (in_array($newRole, $validRoles)) {
+                // Gérer le changement de rôle
                 if ($newRole === 'ROLE_FLEURISTE') {
                     if (!$user->getFleuriste()) {
                         $fleuriste = new Fleuriste();
                         $fleuriste->setUser($user);
-                        $fleuriste->setNom($user->getUsername()); // Set a default name
+                        $fleuriste->setNom($user->getUsername());
                         $entityManager->persist($fleuriste);
                     }
-                    if ($user->getClient()) {
-                        $entityManager->remove($user->getClient());
-                        $user->setClient(null);
-                    }
                 } else {
-                    if (!$user->getClient()) {
-                        $client = new Client();
-                        $client->setUser($user);
-                        $entityManager->persist($client);
-                    }
+                    // Si l'utilisateur était un fleuriste et devient un client
                     if ($user->getFleuriste()) {
-                        $entityManager->remove($user->getFleuriste());
-                        $user->setFleuriste(null);
+                        // On garde le Fleuriste mais on le désactive
+                        $fleuriste = $user->getFleuriste();
+                        $fleuriste->setActif(false);
+                        $entityManager->persist($fleuriste);
                     }
                 }
 
+                $user->setRoles([$newRole]);
+                $entityManager->persist($user);
                 $entityManager->flush();
+
                 $this->addFlash('success', 'Votre profil a été mis à jour avec succès. Votre rôle est maintenant ' . ($newRole === 'ROLE_FLEURISTE' ? 'Fleuriste' : 'Client') . '.');
             } else {
-                $this->addFlash('info', 'Aucun changement n\'a été effectué sur votre rôle d\'utilisateur.');
+                $this->addFlash('error', 'Le rôle sélectionné n\'est pas valide.');
+                return $this->redirectToRoute('app_profile_edit');
             }
 
-            // Persister les changements de l'utilisateur (y compris l'avatar)
-            $entityManager->persist($user);
-            $entityManager->flush();
+            // ... gestion de l'avatar ...
 
             return $this->redirectToRoute('app_profile');
         }

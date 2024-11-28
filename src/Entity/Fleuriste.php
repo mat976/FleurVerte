@@ -23,6 +23,9 @@ class Fleuriste
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     private ?Adresse $adresse = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $actif = true;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,6 +63,17 @@ class Fleuriste
     {
         $this->adresse = $adresse;
 
+        return $this;
+    }
+
+    public function isActif(): bool
+    {
+        return $this->actif;
+    }
+
+    public function setActif(bool $actif): self
+    {
+        $this->actif = $actif;
         return $this;
     }
 }
