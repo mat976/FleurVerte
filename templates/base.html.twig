@@ -31,8 +31,12 @@
 							<a href="{{ path('app_product') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Nos Variétés</a>
 							<a href="{{ path('app_conseils_culture') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Conseils de Culture</a>
 							<a href="{{ path('app_fleuriste_index')}}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Nos Fleuristes</a>
-							<a href="{{ path('app_panier') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">Panier</a>
-						</div>
+							{% if is_granted('ROLE_USER') %}
+								<a href="{{ path('app_cart_index') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">
+									<i class="fas fa-shopping-cart"></i> Panier
+								</a>
+							{% endif %}
+							</div>
 					</div>
 					<div class="flex items-center space-x-4">
 						{% if app.user %}
