@@ -21,16 +21,16 @@ class FleuristeController extends AbstractController
         $user = $this->getUser();
 
         $adresseForm = null;
-        if ($user instanceof User && $user->getFleuriste() && !$user->getFleuriste()->getAdresse()) {
+        if ($user instanceof User && $user->getFleuriste() && $user->getFleuriste()->getAdresses()->isEmpty()) {
             $adresse = new Adresse();
+            $adresse->setPrincipale(true);
             $adresseForm = $this->createForm(AdresseType::class, $adresse);
             $adresseForm->handleRequest($request);
 
             if ($adresseForm->isSubmitted() && $adresseForm->isValid()) {
                 $fleuriste = $user->getFleuriste();
-                $fleuriste->setAdresse($adresse);
+                $adresse->setFleuriste($fleuriste);
                 $entityManager->persist($adresse);
-                $entityManager->persist($fleuriste);
                 $entityManager->flush();
 
                 $this->addFlash('success', 'Votre adresse a été ajoutée avec succès.');

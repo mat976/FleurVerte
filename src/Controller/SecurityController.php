@@ -56,11 +56,8 @@ class SecurityController extends AbstractController
             );
 
             // Attribuer un avatar aléatoire
-            $avatarName = $this->getRandomAvatar();
+            $avatarName = rand(1, 10) . '.png';
             $user->setAvatarName($avatarName);
-
-            // Copier l'avatar de base vers le dossier des avatars utilisateur
-            $this->copyAvatarFile($avatarName);
 
             $entityManager->persist($user);
             $entityManager->flush();
@@ -72,24 +69,5 @@ class SecurityController extends AbstractController
         return $this->render('security/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
-    }
-
-    private function getRandomAvatar(): string
-    {
-        return rand(1, 10) . '.png';
-    }
-
-    private function copyAvatarFile(string $avatarName): void
-    {
-        $publicDir = $this->getParameter('kernel.project_dir') . '/public';
-        $sourceFile = $publicDir . '/basic_avatar/' . $avatarName;
-        $targetDir = $publicDir . '/uploads/avatars/';
-        $targetFile = $targetDir . $avatarName;
-
-        if (!is_dir($targetDir)) {
-            mkdir($targetDir, 0777, true);
-        }
-
-        copy($sourceFile, $targetFile);
     }
 }

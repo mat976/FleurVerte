@@ -19,13 +19,16 @@
 						<strong>Email :</strong>
 						{{ fleuriste.user.email }}</p>
 
-					{% if fleuriste.adresse %}
-						<h3 class="text-lg font-semibold mt-4 mb-2">Adresse</h3>
-						<p>
-							{{ fleuriste.adresse.numRue }}
-							{{ fleuriste.adresse.nomRue }}<br>
-							{{ fleuriste.adresse.codePost }}
-						</p>
+					{% if fleuriste.adresses|length > 0 %}
+						<h3 class="text-lg font-semibold mt-4 mb-2">Adresses</h3>
+						{% for adresse in fleuriste.adresses %}
+							<div class="mb-4 p-3 border rounded {% if adresse.principale %}border-green-500{% endif %}">
+								<p class="mb-1">{{ adresse.adresseComplete }}</p>
+								{% if adresse.principale %}
+									<span class="text-sm text-green-600">Adresse principale</span>
+								{% endif %}
+							</div>
+						{% endfor %}
 					{% else %}
 						<p class="mt-4 text-yellow-600">Aucune adresse renseignée</p>
 					{% endif %}
