@@ -32,6 +32,7 @@
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THC</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
@@ -42,14 +43,44 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.description|slice(0, 50) }}{% if fleur.description|length > 50 %}...{% endif %}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.thc }}%</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.prix }}€</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.stock }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" class="text-green-600 hover:text-green-900">Modifier</a>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span class="{% if fleur.stock <= 10 %}text-orange-600 font-semibold{% endif %}">
+                                    {{ fleur.stock }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
+                                    {% if fleur.stockStatus == 'out_of_stock' %}
+                                        bg-red-100 text-red-800
+                                    {% elseif fleur.stockStatus == 'low_stock' %}
+                                        bg-orange-100 text-orange-800
+                                    {% elseif fleur.stockStatus == 'medium_stock' %}
+                                        bg-yellow-100 text-yellow-800
+                                    {% elseif fleur.stockStatus == 'in_stock' %}
+                                        bg-green-100 text-green-800
+                                    {% else %}
+                                        bg-gray-100 text-gray-800
+                                    {% endif %}">
+                                    {{ fleur.stockLabel }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                <a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" 
+                                   class="text-green-600 hover:text-green-900">Modifier</a>
+                                {% if fleur.stock <= 10 %}
+                                    <a href="#" 
+                                       class="text-orange-600 hover:text-orange-900"
+                                       title="Stock faible">
+                                        Réapprovisionner
+                                    </a>
+                                {% endif %}
                             </td>
                         </tr>
                     {% else %}
                         <tr>
-                            <td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">Aucune fleur n'a été ajoutée pour le moment.</td>
+                            <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                Aucune fleur n'a été ajoutée pour le moment.
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

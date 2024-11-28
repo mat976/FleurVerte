@@ -8,6 +8,8 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -30,7 +32,20 @@ class FleurType extends AbstractType
                 'label' => 'Taux THC',
                 'scale' => 2,
             ])
-            // Add other fields as needed
+            ->add('stock', IntegerType::class, [
+                'label' => 'Stock disponible',
+                'attr' => [
+                    'min' => 0,
+                    'placeholder' => 'Entrez la quantité en stock'
+                ]
+            ])
+            ->add('isPinned', CheckboxType::class, [
+                'label' => 'Épingler ce produit',
+                'required' => false,
+                'attr' => [
+                    'class' => 'h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'
+                ]
+            ])
         ;
     }
 

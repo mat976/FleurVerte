@@ -18,6 +18,7 @@ class Fleur
 
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
+    
     #[ORM\Column]
     private ?float $thc = null;
 
@@ -26,6 +27,9 @@ class Fleur
 
     #[ORM\Column(nullable: true)]
     private ?int $stock = null;
+
+    #[ORM\Column(type: "boolean", options: ["default" => false])]
+    private bool $isPinned = false;
 
     #[ORM\ManyToOne(targetEntity: Fleuriste::class, inversedBy: 'fleurs')]
     #[ORM\JoinColumn(nullable: true)]
@@ -91,6 +95,17 @@ class Fleur
         return $this;
     }
 
+    public function getIsPinned(): bool
+    {
+        return $this->isPinned;
+    }
+
+    public function setIsPinned(bool $isPinned): static
+    {
+        $this->isPinned = $isPinned;
+        return $this;
+    }
+
     public function getFleuriste(): ?Fleuriste
     {
         return $this->fleuriste;
@@ -100,5 +115,40 @@ class Fleur
     {
         $this->fleuriste = $fleuriste;
         return $this;
+    }
+
+    public function getStockStatus(): string
+    {
+        if ($this->stock === 0) {
+            return 'out_of_stock';
+        } elseif ($this->stock <= 10) {
+            return 'low_stock';
+        } elseif ($this->stock <= 50) {
+            return 'medium_stock';
+        } else {
+            return 'in_stock';
+        }
+    }
+
+    public function getStockLabel(): string
+    {
+        return match($this->getStockStatus()) {
+            'out_of_stock' => 'Rupture de stock',
+            'low_stock' => 'Stock faible',
+            'medium_stock' => 'Stock moyen',
+            'in_stock' => 'En stock',
+            default => 'Statut inconnu'
+        };
+    }
+
+    public function getStockColor(): string
+    {
+        return match($this->getStockStatus()) {
+            'out_of_stock' => 'red',
+            'low_stock' => 'orange',
+            'medium_stock' => 'yellow',
+            'in_stock' => 'green',
+            default => 'gray',
+        };
     }
 }
