@@ -1,90 +1,93 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Détails du Fleuriste -
-	{{ fleuriste.nom }}
-{% endblock %}
+{% block title %}{{ fleuriste.nom }} - FleurVerte{% endblock %}
 
 {% block body %}
-	<div class="container mx-auto px-4 py-8">
-		<h1 class="text-3xl font-bold mb-6">{{ fleuriste.nom }}</h1>
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <div class="p-6">
+                    <h1 class="text-3xl font-bold mb-4">{{ fleuriste.nom }}</h1>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div>
+                            <h2 class="text-xl font-semibold mb-4">Informations de contact</h2>
+                            <div class="space-y-3">
+                                {% if fleuriste.adresse %}
+                                    <p class="flex items-center">
+                                        <span class="material-icons mr-2">location_on</span>
+                                        {{ fleuriste.adresse }}
+                                    </p>
+                                {% endif %}
+                                
+                                {% if fleuriste.telephone %}
+                                    <p class="flex items-center">
+                                        <span class="material-icons mr-2">phone</span>
+                                        {{ fleuriste.telephone }}
+                                    </p>
+                                {% endif %}
+                                
+                                {% if fleuriste.email %}
+                                    <p class="flex items-center">
+                                        <span class="material-icons mr-2">email</span>
+                                        {{ fleuriste.email }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h2 class="text-xl font-semibold mb-4">À propos</h2>
+                            {% if fleuriste.description %}
+                                <p class="text-gray-600">{{ fleuriste.description }}</p>
+                            {% else %}
+                                <p class="text-gray-500 italic">Aucune description disponible</p>
+                            {% endif %}
+                        </div>
+                    </div>
 
-		<div class="bg-white shadow-md rounded-lg overflow-hidden p-6">
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-				<div>
-					<h2 class="text-xl font-semibold mb-4">Informations du Fleuriste</h2>
-					<p>
-						<strong>Nom :</strong>
-						{{ fleuriste.nom }}</p>
-					<p>
-						<strong>Email :</strong>
-						{{ fleuriste.user.email }}</p>
+                    {% if fleuriste.images|length > 0 %}
+                        <div class="mt-8">
+                            <h2 class="text-2xl font-bold mb-6">Notre magasin en images</h2>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                {% for image in fleuriste.images %}
+                                    <div class="relative group">
+                                        <img src="{{ vich_uploader_asset(image, 'imageFile') }}" 
+                                             alt="{{ image.caption|default(fleuriste.nom) }}"
+                                             class="w-full h-48 object-cover rounded-lg">
+                                        {% if image.caption %}
+                                            <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2 rounded-b-lg">
+                                                <p class="text-sm">{{ image.caption }}</p>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
 
-					{% if fleuriste.user.adresses|length > 0 %}
-						<h3 class="text-lg font-semibold mt-4 mb-2">Adresses</h3>
-						{% for adresse in fleuriste.user.adresses %}
-							<div class="mb-4 p-3 border rounded {% if adresse.principale %}border-green-500{% endif %}">
-								<p class="mb-1">{{ adresse.adresseComplete }}</p>
-								{% if adresse.principale %}
-									<span class="text-sm text-green-600">Adresse principale</span>
-								{% endif %}
-							</div>
-						{% endfor %}
-					{% else %}
-						<p class="mt-4 text-yellow-600">Aucune adresse renseignée</p>
-					{% endif %}
-				</div>
-
-				<div>
-					<h2 class="text-xl font-semibold mb-4">Services</h2>
-					<!-- Ajoutez ici des informations sur les services offerts par le fleuriste -->
-					<ul class="list-disc list-inside">
-						<li>Livraison à domicile</li>
-						<li>Compositions florales sur mesure</li>
-						<li>Conseil en botanique</li>
-					</ul>
-				</div>
-			</div>
-
-			<div class="mt-8">
-				<h2 class="text-xl font-semibold mb-4">Galerie de photos</h2>
-				<!-- Ajoutez ici une galerie de photos ou d'autres informations pertinentes -->
-				<p class="text-gray-600">Galerie à venir...</p>
-			</div>
-
-			<div class="mt-8">
-				<h2 class="text-xl font-semibold mb-4">Nos Fleurs</h2>
-				{% if fleurs|length > 0 %}
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-						{% for fleur in fleurs %}
-							<div class="bg-white rounded-lg shadow-md overflow-hidden">
-								<div class="p-4">
-									<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover mb-4">
-									<h3 class="text-lg font-semibold mb-2">{{ fleur.nom }}</h3>
-									<p class="text-gray-600 mb-2">{{ fleur.description|slice(0, 100) }}{% if fleur.description|length > 100 %}...{% endif %}</p>
-									<div class="flex justify-between items-center mt-4">
-										<span class="text-green-600 font-bold">{{ fleur.prix }}€</span>
-										<span class="text-sm text-gray-500">THC: {{ fleur.thc }}%</span>
-									</div>
-									{% if fleur.stock is not null %}
-										<div class="mt-2 text-sm text-gray-500">
-											Stock: {{ fleur.stock }} disponible{{ fleur.stock > 1 ? 's' : '' }}
-										</div>
-									{% endif %}
-								</div>
-							</div>
-						{% endfor %}
-					</div>
-				{% else %}
-					<p class="text-gray-600">Aucune fleur disponible pour le moment.</p>
-				{% endif %}
-			</div>
-
-			<div class="mt-8 flex justify-between items-center">
-				<a href="{{ path('app_fleuriste_index') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded">
-					Retour à la liste
-				</a>
-				<!-- Ajoutez d'autres actions si nécessaire -->
-			</div>
-		</div>
-	</div>
+                    <div class="mt-8">
+                        <h2 class="text-2xl font-bold mb-6">Nos fleurs</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {% for fleur in fleuriste.fleurs %}
+                                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                                    <img src="{{ fleur.imageUrl }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover">
+                                    <div class="p-4">
+                                        <h3 class="text-lg font-semibold mb-2">{{ fleur.nom }}</h3>
+                                        <p class="text-gray-600">{{ fleur.prix }}€</p>
+                                        <a href="{{ path('product_detail', {'id': fleur.id}) }}" 
+                                           class="mt-4 inline-block bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                                            Voir détails
+                                        </a>
+                                    </div>
+                                </div>
+                            {% else %}
+                                <p class="text-gray-500 italic col-span-3 text-center">Aucune fleur disponible pour le moment</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

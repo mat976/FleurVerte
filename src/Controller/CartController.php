@@ -45,10 +45,10 @@ class CartController extends AbstractController
      * @param Fleur $fleur Le produit à ajouter
      * @param Request $request La requête HTTP contenant la quantité
      */
-    #[Route('/add/{id}', name: 'app_cart_add')]
+    #[Route('/add/{id}', name: 'app_cart_add', methods: ['POST'])]
     public function add(Fleur $fleur, Request $request): Response
     {
-        $quantity = max(1, $request->query->getInt('quantity', 1));
+        $quantity = max(1, $request->request->getInt('quantity', 1));
         
         try {
             $this->cartService->addToCart($fleur, $quantity);

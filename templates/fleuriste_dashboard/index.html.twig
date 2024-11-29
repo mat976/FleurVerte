@@ -72,8 +72,11 @@
         {# Section des fleurs #}
         <div class="mb-8">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Mes Fleurs</h2>
+                <h1 class="text-2xl font-bold">Tableau de bord</h1>
                 <div class="space-x-4">
+                    <a href="{{ path('app_fleuriste_profile_edit') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                        Modifier mon profil
+                    </a>
                     <a href="{{ path('app_catalogue') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                         Catalogue de Fleurs
                     </a>

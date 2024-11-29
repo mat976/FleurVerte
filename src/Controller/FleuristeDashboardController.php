@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Fleur;
+use App\Entity\Fleuriste;
 use App\Form\FleurType;
+use App\Form\FleuristeType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,6 +92,28 @@ class FleuristeDashboardController extends AbstractController
         return $this->render('fleuriste_dashboard/edit.html.twig', [
             'form' => $form->createView(),
             'fleur' => $fleur,
+        ]);
+    }
+
+    /**
+     * Modifie le profil du fleuriste
+     */
+    #[Route('/profile/edit', name: 'app_fleuriste_profile_edit')]
+    public function editProfile(Request $request): Response
+    {
+        $fleuriste = $this->getUser()->getFleuriste();
+        $form = $this->createForm(FleuristeType::class, $fleuriste);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
+            return $this->redirectToRoute('app_fleuriste_dashboard');
+        }
+
+        return $this->render('fleuriste_dashboard/edit_profile.html.twig', [
+            'form' => $form->createView(),
+            'fleuriste' => $fleuriste,
         ]);
     }
 

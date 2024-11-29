@@ -1,5 +1,7 @@
 vich_uploader:
     db_driver: orm
+    metadata:
+        type: attribute
     mappings:
         user_avatars:
             uri_prefix: /uploads/avatars
@@ -8,4 +10,8 @@ vich_uploader:
         fleur_images:
             uri_prefix: /uploads/fleurs
             upload_destination: '%kernel.project_dir%/public/uploads/fleurs'
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+        fleuriste_images:
+            uri_prefix: /uploads/fleuristes
+            upload_destination: '%kernel.project_dir%/public/uploads/fleuristes'
             namer: Vich\UploaderBundle\Naming\SmartUniqueNamer

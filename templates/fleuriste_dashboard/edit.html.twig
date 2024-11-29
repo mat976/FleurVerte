@@ -2,6 +2,43 @@
 
 {% block title %}Modifier une fleur{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const addImageButton = document.querySelector('.add-image');
+            const imagesCollectionHolder = document.querySelector('#images-collection');
+            let index = imagesCollectionHolder.querySelectorAll('.image-item').length;
+
+            addImageButton.addEventListener('click', function() {
+                const prototype = imagesCollectionHolder.dataset.prototype;
+                const newForm = prototype.replace(/__name__/g, index);
+                const div = document.createElement('div');
+                div.innerHTML = newForm;
+                div.classList.add('image-item', 'mb-4');
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = 'Supprimer';
+                deleteButton.classList.add('bg-red-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mt-2');
+                deleteButton.onclick = function() {
+                    div.remove();
+                };
+                
+                div.appendChild(deleteButton);
+                imagesCollectionHolder.appendChild(div);
+                index++;
+            });
+
+            // Gestion des boutons de suppression existants
+            document.querySelectorAll('.delete-image').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.image-item').remove();
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
 <div class="min-h-screen bg-gray-100 py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -66,6 +103,25 @@
                             <p class="text-gray-500">Les produits épinglés apparaîtront en premier dans le catalogue</p>
                         </div>
                     </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="text-lg font-medium">Images du produit</h3>
+                    <div id="images-collection" 
+                         data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}"
+                         class="space-y-4">
+                        {% for imageField in form.images %}
+                            <div class="image-item bg-gray-50 p-4 rounded">
+                                {{ form_widget(imageField) }}
+                                <button type="button" class="delete-image bg-red-500 text-white px-4 py-2 rounded mt-2">
+                                    Supprimer
+                                </button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="add-image bg-green-500 text-white px-4 py-2 rounded">
+                        Ajouter une image
+                    </button>
                 </div>
 
                 <div class="flex justify-end space-x-3">
