@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 /**
  * Formulaire de gestion des produits (fleurs)
@@ -66,6 +67,15 @@ class FleurType extends AbstractType
                 'attr' => [
                     'class' => 'h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'
                 ]
+            ])
+            ->add('imageFile', VichImageType::class, [
+                'label' => 'Image du produit',
+                'required' => false,
+                'allow_delete' => true,
+                'delete_label' => 'Supprimer l\'image',
+                'download_uri' => false,
+                'image_uri' => true,
+                'asset_helper' => true,
             ])
         ;
     }

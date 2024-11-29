@@ -3,14 +3,11 @@
 {% block title %}{{ fleur.nom }} - FleurVerte{% endblock %}
 
 {% block body %}
-    {% set images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg', 'flower7.jpg', 'flower8.jpg', 'flower9.jpg', 'flower10.jpg', 'flower11.jpg', 'flower12.jpg'] %}
-    {% set randomImage = random(images) %}
-
     <div class="container mx-auto px-4 mt-8">
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
             <div class="md:flex">
                 <div class="md:w-1/2">
-                    <img src="{{ asset('img/flowerimg/' ~ randomImage) }}" alt="{{ fleur.nom }}" class="w-full h-full object-cover">
+                    <img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-96 object-cover rounded-lg shadow-md">
                 </div>
                 <div class="md:w-1/2 p-8">
                     <div class="flex justify-between items-start mb-4">

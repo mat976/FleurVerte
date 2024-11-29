@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\FleurRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * Entité représentant une fleur
@@ -12,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * incluant leurs caractéristiques, prix, stock et relation avec le fleuriste.
  */
 #[ORM\Entity(repositoryClass: FleurRepository::class)]
+#[Vich\Uploadable]
 class Fleur
 {
     /**
@@ -78,6 +81,24 @@ class Fleur
     #[ORM\ManyToOne(targetEntity: Fleuriste::class, inversedBy: 'fleurs')]
     #[ORM\JoinColumn(nullable: true)]
     private ?Fleuriste $fleuriste = null;
+
+    /**
+     * Fichier image téléchargé
+     */
+    #[Vich\UploadableField(mapping: 'fleur_images', fileNameProperty: 'imageName')]
+    private ?File $imageFile = null;
+
+    /**
+     * Nom du fichier image
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageName = null;
+
+    /**
+     * Date de dernière mise à jour
+     */
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
 
     /**
      * Récupère l'identifiant de la fleur
@@ -218,6 +239,56 @@ class Fleur
     {
         $this->fleuriste = $fleuriste;
         return $this;
+    }
+
+    /**
+     * Définit le fichier image
+     */
+    public function setImageFile(?File $imageFile = null): void
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new \DateTime();
+        }
+    }
+
+    /**
+     * Obtient le fichier image
+     */
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    /**
+     * Définit le nom de l'image
+     */
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    /**
+     * Obtient le nom de l'image
+     */
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    /**
+     * Obtient l'URL de l'image
+     */
+    public function getImageUrl(): string
+    {
+        if ($this->imageName) {
+            return '/uploads/fleurs/' . $this->imageName;
+        }
+
+        // Image aléatoire par défaut
+        $images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg', 'flower7.jpg', 'flower8.jpg', 'flower9.jpg', 'flower10.jpg', 'flower11.jpg', 'flower12.jpg'];
+        return '/img/flowerimg/' . $images[array_rand($images)];
     }
 
     /**

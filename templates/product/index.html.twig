@@ -9,9 +9,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {% for fleur in fleurs %}
                 <div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-                    {% set images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg','flower7.jpg','flower8.jpg','flower9.jpg','flower10.jpg','flower11.jpg','flower12.jpg' ] %}
-                    {% set randomImage = random(images) %}
-                    <img src="{{ asset('img/flowerimg/' ~ randomImage) }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover">
+                    <img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover">
                     
                     {# Badge de stock #}
                     <div class="absolute top-2 right-2">
