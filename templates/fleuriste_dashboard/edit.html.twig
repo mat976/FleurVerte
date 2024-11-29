@@ -1,40 +1,30 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier une fleur{% endblock %}
+{% block title %}Modifier un produit{% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const addImageButton = document.querySelector('.add-image');
-            const imagesCollectionHolder = document.querySelector('#images-collection');
-            let index = imagesCollectionHolder.querySelectorAll('.image-item').length;
+            // Image preview
+            const imageInput = document.querySelector('#{{ form.imageFile.vars.id }}');
+            const imagePreview = document.querySelector('#image-preview');
+            const currentImage = document.querySelector('#current-image');
 
-            addImageButton.addEventListener('click', function() {
-                const prototype = imagesCollectionHolder.dataset.prototype;
-                const newForm = prototype.replace(/__name__/g, index);
-                const div = document.createElement('div');
-                div.innerHTML = newForm;
-                div.classList.add('image-item', 'mb-4');
-                
-                const deleteButton = document.createElement('button');
-                deleteButton.innerHTML = 'Supprimer';
-                deleteButton.classList.add('bg-red-500', 'text-white', 'px-4', 'py-2', 'rounded', 'mt-2');
-                deleteButton.onclick = function() {
-                    div.remove();
-                };
-                
-                div.appendChild(deleteButton);
-                imagesCollectionHolder.appendChild(div);
-                index++;
-            });
-
-            // Gestion des boutons de suppression existants
-            document.querySelectorAll('.delete-image').forEach(button => {
-                button.addEventListener('click', function() {
-                    this.closest('.image-item').remove();
+            if (imageInput && imagePreview) {
+                imageInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            imagePreview.src = e.target.result;
+                            imagePreview.classList.remove('hidden');
+                            if (currentImage) currentImage.classList.add('hidden');
+                        };
+                        reader.readAsDataURL(file);
+                    }
                 });
-            });
+            }
         });
     </script>
 {% endblock %}
@@ -49,7 +39,7 @@
         <div class="bg-white shadow overflow-hidden sm:rounded-lg p-6">
             {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
                 <div>
-                    {{ form_label(form.nom, 'Nom', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                    {{ form_label(form.nom, 'Nom du produit', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
                     <div class="mt-1">
                         {{ form_widget(form.nom, {'attr': {'class': 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'}}) }}
                     </div>
@@ -106,22 +96,25 @@
                 </div>
 
                 <div class="space-y-4">
-                    <h3 class="text-lg font-medium">Images du produit</h3>
-                    <div id="images-collection" 
-                         data-prototype="{{ form_widget(form.images.vars.prototype)|e('html_attr') }}"
-                         class="space-y-4">
-                        {% for imageField in form.images %}
-                            <div class="image-item bg-gray-50 p-4 rounded">
-                                {{ form_widget(imageField) }}
-                                <button type="button" class="delete-image bg-red-500 text-white px-4 py-2 rounded mt-2">
-                                    Supprimer
-                                </button>
+                    <h3 class="text-lg font-medium">Image du produit</h3>
+                    <div class="grid grid-cols-1 gap-4">
+                        {% if fleur.imageName %}
+                            <div class="relative">
+                                <img src="{{ vich_uploader_asset(fleur, 'imageFile') }}" 
+                                     alt="{{ fleur.nom }}" 
+                                     id="current-image"
+                                     class="max-w-xs rounded-lg shadow-md">
                             </div>
-                        {% endfor %}
+                        {% endif %}
+                        <img id="image-preview" class="max-w-xs rounded-lg shadow-md hidden" alt="Aperçu">
+                        {{ form_widget(form.imageFile, {'attr': {'class': 'mt-1 block w-full text-sm text-gray-500
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-md file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-green-50 file:text-green-700
+                            hover:file:bg-green-100'}}) }}
+                        {{ form_errors(form.imageFile) }}
                     </div>
-                    <button type="button" class="add-image bg-green-500 text-white px-4 py-2 rounded">
-                        Ajouter une image
-                    </button>
                 </div>
 
                 <div class="flex justify-end space-x-3">

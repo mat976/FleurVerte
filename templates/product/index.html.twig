@@ -47,10 +47,11 @@
                                     Détails
                                 </a>
                                 {% if is_granted('ROLE_USER') %}
-                                    <a href="{{ path('app_cart_add', {'id': fleur.id}) }}" 
-                                       class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-                                        <i class="fas fa-cart-plus mr-1"></i> Ajouter
-                                    </a>
+                                    <form action="{{ path('app_cart_add', {'id': fleur.id}) }}" method="POST" class="inline">
+                                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                            <i class="fas fa-cart-plus mr-1"></i> Ajouter
+                                        </button>
+                                    </form>
                                 {% endif %}
                             </div>
                         </div>

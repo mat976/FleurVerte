@@ -417,4 +417,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
 
         return $this;
     }
+
+    /**
+     * Vérifie si l'utilisateur a un profil fleuriste
+     * 
+     * @return bool True si l'utilisateur est un fleuriste
+     */
+    public function isFleuriste(): bool
+    {
+        return $this->fleuriste !== null;
+    }
+
+    /**
+     * Vérifie si l'utilisateur a un profil client
+     * 
+     * @return bool True si l'utilisateur est un client
+     */
+    public function isClient(): bool
+    {
+        return $this->client !== null;
+    }
 }
