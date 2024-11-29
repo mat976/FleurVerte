@@ -9,8 +9,21 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Formulaire de gestion des adresses
+ * 
+ * Ce formulaire permet la création et la modification d'adresses utilisateur,
+ * incluant les informations de rue, code postal, ville et complément d'adresse.
+ * Il offre également la possibilité de définir une adresse comme principale.
+ */
 class AdresseType extends AbstractType
 {
+    /**
+     * Configure le formulaire avec les champs nécessaires
+     * 
+     * @param FormBuilderInterface $builder Le constructeur de formulaire
+     * @param array $options Les options du formulaire
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -37,6 +50,11 @@ class AdresseType extends AbstractType
             ]);
     }
 
+    /**
+     * Configure les options par défaut du formulaire
+     * 
+     * @param OptionsResolver $resolver Le résolveur d'options
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

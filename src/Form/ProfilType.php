@@ -12,8 +12,28 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 
-class UserProfileType extends AbstractType
+/**
+ * Formulaire de gestion du profil utilisateur
+ * 
+ * Ce formulaire permet aux utilisateurs de modifier leurs informations personnelles,
+ * incluant l'email, le nom d'utilisateur, le rôle et l'avatar.
+ * Il gère également le téléchargement d'avatars personnalisés avec validation.
+ */
+class ProfilType extends AbstractType
 {
+    /**
+     * Configure le formulaire avec tous les champs du profil
+     * 
+     * Inclut :
+     * - Email
+     * - Nom d'utilisateur
+     * - Sélection du rôle
+     * - Choix d'avatar prédéfini
+     * - Upload d'avatar personnalisé
+     * 
+     * @param FormBuilderInterface $builder Le constructeur de formulaire
+     * @param array $options Les options du formulaire
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -73,6 +93,11 @@ class UserProfileType extends AbstractType
             ]);
     }
 
+    /**
+     * Configure les options par défaut du formulaire
+     * 
+     * @param OptionsResolver $resolver Le résolveur d'options
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

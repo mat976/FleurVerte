@@ -11,34 +11,52 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * Contrôleur gérant le tableau de bord des fleuristes
+ * Permet la gestion des produits (fleurs) par le fleuriste
+ */
+#[Route('/fleuriste')]
 #[IsGranted('ROLE_FLEURISTE')]
 class FleuristeDashboardController extends AbstractController
 {
-    #[Route('/fleuriste/dashboard', name: 'app_fleuriste_dashboard')]
-    public function index(EntityManagerInterface $entityManager): Response
-    {
-        $fleuriste = $this->getUser()->getFleuriste();
-        $fleurs = $fleuriste->getFleurs();
+    private const MESSAGE_ADDED = 'La fleur a été ajoutée avec succès.';
+    private const MESSAGE_EDITED = 'La fleur a été modifiée avec succès.';
+    private const MESSAGE_ACCESS_DENIED = 'Vous n\'êtes pas autorisé à modifier cette fleur.';
 
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager
+    ) {}
+
+    /**
+     * Affiche le tableau de bord du fleuriste avec la liste de ses produits
+     */
+    #[Route('/dashboard', name: 'app_fleuriste_dashboard')]
+    public function index(): Response
+    {
         return $this->render('fleuriste_dashboard/index.html.twig', [
-            'fleurs' => $fleurs,
+            'fleurs' => $this->getUser()->getFleuriste()->getFleurs(),
         ]);
     }
 
-    #[Route('/fleuriste/fleur/new', name: 'app_fleuriste_fleur_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    /**
+     * Crée un nouveau produit (fleur)
+     * 
+     * @param Request $request La requête HTTP contenant les données du formulaire
+     */
+    #[Route('/fleur/new', name: 'app_fleuriste_fleur_new')]
+    public function new(Request $request): Response
     {
-        $fleur = new Fleur();
-        $fleur->setFleuriste($this->getUser()->getFleuriste());
+        $fleur = (new Fleur())
+            ->setFleuriste($this->getUser()->getFleuriste());
 
         $form = $this->createForm(FleurType::class, $fleur);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($fleur);
-            $entityManager->flush();
+            $this->entityManager->persist($fleur);
+            $this->entityManager->flush();
 
-            $this->addFlash('success', 'La fleur a été ajoutée avec succès.');
+            $this->addFlash('success', self::MESSAGE_ADDED);
             return $this->redirectToRoute('app_fleuriste_dashboard');
         }
 
@@ -47,21 +65,25 @@ class FleuristeDashboardController extends AbstractController
         ]);
     }
 
-    #[Route('/fleuriste/fleur/{id}/edit', name: 'app_fleuriste_fleur_edit')]
-    public function edit(Request $request, Fleur $fleur, EntityManagerInterface $entityManager): Response
+    /**
+     * Modifie un produit (fleur) existant
+     * 
+     * @param Request $request La requête HTTP contenant les données du formulaire
+     * @param Fleur $fleur La fleur à modifier
+     * @throws AccessDeniedException Si le fleuriste n'est pas propriétaire de la fleur
+     */
+    #[Route('/fleur/{id}/edit', name: 'app_fleuriste_fleur_edit')]
+    public function edit(Request $request, Fleur $fleur): Response
     {
-        // Vérifier que la fleur appartient bien au fleuriste connecté
-        if ($fleur->getFleuriste() !== $this->getUser()->getFleuriste()) {
-            throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à modifier cette fleur.');
-        }
+        $this->checkFlowerOwnership($fleur);
 
         $form = $this->createForm(FleurType::class, $fleur);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $this->entityManager->flush();
 
-            $this->addFlash('success', 'La fleur a été modifiée avec succès.');
+            $this->addFlash('success', self::MESSAGE_EDITED);
             return $this->redirectToRoute('app_fleuriste_dashboard');
         }
 
@@ -69,5 +91,18 @@ class FleuristeDashboardController extends AbstractController
             'form' => $form->createView(),
             'fleur' => $fleur,
         ]);
+    }
+
+    /**
+     * Vérifie que le fleuriste est bien propriétaire de la fleur
+     * 
+     * @param Fleur $fleur La fleur à vérifier
+     * @throws AccessDeniedException Si le fleuriste n'est pas propriétaire
+     */
+    private function checkFlowerOwnership(Fleur $fleur): void
+    {
+        if ($fleur->getFleuriste() !== $this->getUser()->getFleuriste()) {
+            throw $this->createAccessDeniedException(self::MESSAGE_ACCESS_DENIED);
+        }
     }
 }

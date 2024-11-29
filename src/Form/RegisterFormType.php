@@ -14,9 +14,27 @@ use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-
+/**
+ * Formulaire d'inscription des utilisateurs
+ * 
+ * Ce formulaire gère l'inscription des nouveaux utilisateurs avec validation
+ * des champs et attribution automatique d'un avatar. Il inclut les contraintes
+ * de sécurité nécessaires pour le mot de passe et la validation des données.
+ */
 class RegisterFormType extends AbstractType
 {
+    /**
+     * Configure le formulaire d'inscription avec validation
+     * 
+     * Inclut :
+     * - Nom d'utilisateur (2-50 caractères)
+     * - Email (avec validation)
+     * - Mot de passe (min 6 caractères, avec confirmation)
+     * - Avatar aléatoire (champ caché)
+     * 
+     * @param FormBuilderInterface $builder Le constructeur de formulaire
+     * @param array $options Les options du formulaire
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -66,6 +84,11 @@ class RegisterFormType extends AbstractType
             ]);
     }
 
+    /**
+     * Configure les options par défaut du formulaire
+     * 
+     * @param OptionsResolver $resolver Le résolveur d'options
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -73,6 +96,11 @@ class RegisterFormType extends AbstractType
         ]);
     }
 
+    /**
+     * Génère un nom d'avatar aléatoire
+     * 
+     * @return string Nom du fichier avatar (format: [1-10].png)
+     */
     private function getRandomAvatar(): string
     {
         return rand(1, 10) . '.png';
