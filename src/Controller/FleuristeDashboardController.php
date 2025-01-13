@@ -118,14 +118,40 @@ class FleuristeDashboardController extends AbstractController
     }
 
     /**
-     * Vérifie que le fleuriste est bien propriétaire de la fleur
+     * Réapprovisionne une fleur en ajoutant une quantité
+     * 
+     * @param Request $request La requête HTTP contenant la quantité à ajouter
+     * @param Fleur $fleur La fleur à réapprovisionner
+     * @throws AccessDeniedException Si le fleuriste n'est pas propriétaire de la fleur
+     */
+    #[Route('/fleur/{id}/reapprovisionner', name: 'app_fleuriste_reapprovisionner', methods: ['POST'])]
+    public function reapprovisionner(Request $request, Fleur $fleur): Response
+    {
+        $this->checkFlowerOwnership($fleur);
+
+        $quantite = $request->request->getInt('quantite');
+        
+        if ($quantite > 0) {
+            $fleur->setStock($fleur->getStock() + $quantite);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', "La fleur a été réapprovisionnée de {$quantite} unités.");
+        }
+
+        return $this->redirectToRoute('app_fleuriste_dashboard');
+    }
+
+    /**
+     * Vérifie que le fleuriste connecté est bien propriétaire de la fleur
      * 
      * @param Fleur $fleur La fleur à vérifier
      * @throws AccessDeniedException Si le fleuriste n'est pas propriétaire
      */
     private function checkFlowerOwnership(Fleur $fleur): void
     {
-        if ($fleur->getFleuriste() !== $this->getUser()->getFleuriste()) {
+        $currentFleuriste = $this->getUser()->getFleuriste();
+        
+        if ($fleur->getFleuriste() !== $currentFleuriste) {
             throw $this->createAccessDeniedException(self::MESSAGE_ACCESS_DENIED);
         }
     }
