@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Fleur;
 use App\Entity\Fleuriste;
+use App\Entity\User;
 use App\Form\FleurType;
 use App\Form\FleuristeType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -33,10 +35,25 @@ class FleuristeDashboardController extends AbstractController
      * Affiche le tableau de bord du fleuriste avec la liste de ses produits
      */
     #[Route('/dashboard', name: 'app_fleuriste_dashboard')]
-    public function index(): Response
+    public function index(EntityManagerInterface $entityManager): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        
+        // Vérifier si l'utilisateur a un profil fleuriste associé
+        if ($user->getFleuriste() === null) {
+            // Créer un nouveau profil fleuriste pour l'utilisateur
+            $fleuriste = new Fleuriste();
+            $fleuriste->setUser($user);
+            $entityManager->persist($fleuriste);
+            $entityManager->flush();
+            
+            $this->addFlash('info', 'Votre profil fleuriste a été créé. Veuillez compléter vos informations.');
+            return $this->redirectToRoute('app_fleuriste_profile_edit');
+        }
+        
         return $this->render('fleuriste_dashboard/index.html.twig', [
-            'fleurs' => $this->getUser()->getFleuriste()->getFleurs(),
+            'fleurs' => $user->getFleuriste()->getFleurs(),
         ]);
     }
 
@@ -48,8 +65,25 @@ class FleuristeDashboardController extends AbstractController
     #[Route('/fleur/new', name: 'app_fleuriste_fleur_new')]
     public function new(Request $request): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+        $fleuriste = $user->getFleuriste();
+        
+        if (!$fleuriste) {
+            // Créer une nouvelle entité Fleuriste pour l'utilisateur
+            $fleuriste = new Fleuriste();
+            $fleuriste->setUser($user);
+            $fleuriste->setNom('Mon magasin');
+            $fleuriste->setEmail($user->getEmail());
+            
+            $this->entityManager->persist($fleuriste);
+            $this->entityManager->flush();
+            
+            $this->addFlash('info', 'Votre profil fleuriste a été créé. Veuillez compléter vos informations.');
+        }
+        
         $fleur = (new Fleur())
-            ->setFleuriste($this->getUser()->getFleuriste());
+            ->setFleuriste($fleuriste);
 
         $form = $this->createForm(FleurType::class, $fleur);
         $form->handleRequest($request);
@@ -101,7 +135,23 @@ class FleuristeDashboardController extends AbstractController
     #[Route('/profile/edit', name: 'app_fleuriste_profile_edit')]
     public function editProfile(Request $request): Response
     {
-        $fleuriste = $this->getUser()->getFleuriste();
+        /** @var User $user */
+        $user = $this->getUser();
+        $fleuriste = $user->getFleuriste();
+        
+        if (!$fleuriste) {
+            // Créer une nouvelle entité Fleuriste pour l'utilisateur
+            $fleuriste = new Fleuriste();
+            $fleuriste->setUser($user);
+            $fleuriste->setNom('Mon magasin');
+            $fleuriste->setEmail($user->getEmail());
+            
+            $this->entityManager->persist($fleuriste);
+            $this->entityManager->flush();
+            
+            $this->addFlash('info', 'Votre profil fleuriste a été créé. Veuillez compléter vos informations.');
+        }
+        
         $form = $this->createForm(FleuristeType::class, $fleuriste);
         $form->handleRequest($request);
 
@@ -149,7 +199,13 @@ class FleuristeDashboardController extends AbstractController
      */
     private function checkFlowerOwnership(Fleur $fleur): void
     {
-        $currentFleuriste = $this->getUser()->getFleuriste();
+        /** @var User $user */
+        $user = $this->getUser();
+        $currentFleuriste = $user->getFleuriste();
+        
+        if (!$currentFleuriste) {
+            throw $this->createAccessDeniedException('Vous devez avoir un profil fleuriste pour accéder à cette ressource.');
+        }
         
         if ($fleur->getFleuriste() !== $currentFleuriste) {
             throw $this->createAccessDeniedException(self::MESSAGE_ACCESS_DENIED);
