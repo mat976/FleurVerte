@@ -34,7 +34,20 @@ class FleuristeController extends AbstractController
     #[Route('', name: 'app_fleuriste_index')]
     public function index(Request $request): Response
     {
-        $fleuristes = $this->userRepository->findFleuristes();
+        $query = $request->query->get('q', '');
+        
+        if ($query) {
+            // Recherche de fleuristes par nom
+            $fleuristes = $this->userRepository->createQueryBuilder('u')
+                ->join('u.fleuriste', 'f')
+                ->where('f.nom LIKE :query')
+                ->setParameter('query', '%' . $query . '%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            $fleuristes = $this->userRepository->findFleuristes();
+        }
+        
         $adresseForm = $this->handleNewUserAddress($request);
 
         return $this->render('fleuriste/index.html.twig', [
@@ -91,7 +104,7 @@ class FleuristeController extends AbstractController
             $this->entityManager->flush();
 
             $this->addFlash('success', self::MESSAGE_ADDRESS_ADDED);
-            return $this->redirectToRoute('app_fleuriste_index');
+            return null;
         }
 
         return $form;

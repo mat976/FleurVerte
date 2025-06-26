@@ -13,7 +13,7 @@
 
 	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+			{{ form_start(form, {'attr': {'class': 'space-y-6', 'data-controller': 'avatar'}}) }}
 
 			<div>
 				{{ form_label(form.email, 'Adresse e-mail', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
@@ -48,8 +48,10 @@
                         {% for i in 1..10 %}
                             <label class="cursor-pointer block">
                                 <input type="radio" name="{{ form.avatarName.vars.full_name }}" value="{{ i }}.png" class="sr-only" 
+                                       data-avatar-target="avatarRadio"
                                        {% if app.user.avatarName == i ~ '.png' %}checked{% endif %}>
                                 <img src="{{ asset('uploads/avatars/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
+                                     data-avatar-target="avatarImage"
                                      class="w-12 h-12 rounded-full transition-all duration-200 hover:ring-2 hover:ring-green-300 
                                             {% if app.user.avatarName == i ~ '.png' %}ring-2 ring-green-500{% endif %}">
                             </label>
@@ -60,13 +62,15 @@
                 <div>
                     {{ form_label(form.avatarFile, 'Ou téléchargez votre propre avatar', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
                     <div class="mt-1">
-                        {{ form_widget(form.avatarFile, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-500
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-md file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-green-50 file:text-green-700
-                            hover:file:bg-green-100
-                        '}}) }}
+                        {{ form_widget(form.avatarFile, {'attr': {
+                            'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-green-50 file:text-green-700
+                                hover:file:bg-green-100',
+                            'data-avatar-target': 'fileInput'
+                        }}) }}
                     </div>
                 </div>
             </div>
@@ -76,7 +80,7 @@
                     Mettre à jour le profil
                 </button>
             </div>
-            {{ form_end(form) }}
+            {{ form_end(form, {'render_rest': false}) }}
         </div>
     </div>
 </div>

@@ -6,8 +6,26 @@
 {% block body %}
 	<div class="bg-gray-100 min-h-screen">
 		<div class="container mx-auto px-4 py-8">
-			<h1 class="text-4xl font-bold mb-8 text-center text-green-800">Liste des Fleuristes</h1>
+			<h1 class="text-4xl font-bold mb-4 text-center text-green-800">Liste des Fleuristes</h1>
+			
+			<div class="max-w-md mx-auto mb-8">
+				<form action="{{ path('app_fleuriste_index') }}" method="get" class="flex items-center">
+					<input type="text" name="q" placeholder="Rechercher un fleuriste..." class="px-4 py-2 rounded-l-md border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 w-full" value="{{ app.request.query.get('q') }}">
+					<button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-r-md">
+						<i class="fas fa-search"></i>
+					</button>
+				</form>
+			</div>
 
+			{% if fleuristes is empty and app.request.query.get('q') %}
+			<div class="bg-white p-6 rounded-lg shadow-md text-center">
+				<p class="text-xl text-gray-700 mb-2">Aucun fleuriste trouvé pour "{{ app.request.query.get('q') }}"</p>
+				<p class="text-gray-600">Essayez avec d'autres termes de recherche</p>
+				<a href="{{ path('app_fleuriste_index') }}" class="inline-block mt-4 text-green-600 hover:text-green-800">
+					<i class="fas fa-arrow-left mr-2"></i>Voir tous les fleuristes
+				</a>
+			</div>
+			{% else %}
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				{% for user in fleuristes %}
 					{% if user.fleuriste %}
@@ -50,6 +68,7 @@
 					{% endif %}
 				{% endfor %}
 			</div>
+			{% endif %}
 		</div>
 	</div>
 {% endblock %}
