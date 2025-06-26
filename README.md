@@ -1,55 +1,38 @@
-# FleurVerte - Configuration Docker
+# FleurVerte - Configuration MySQL avec Docker
 
-Ce projet est configuré pour fonctionner avec Docker, ce qui facilite la mise en place de l'environnement de développement.
+Ce fichier explique comment utiliser Docker pour configurer rapidement une base de données MySQL correspondant à la configuration du projet.
 
 ## Prérequis
 
 - Docker
 - Docker Compose
 
-## Installation
+## Démarrage de la base de données
 
-1. Clonez le dépôt :
-   ```bash
-   git clone <url-du-repo>
-   cd FleurVerte
-   ```
+Pour lancer la base de données MySQL :
 
-2. Lancez les conteneurs Docker :
-   ```bash
-   docker-compose up -d
-   ```
-
-3. Accédez à l'application :
-   - L'application web sera disponible à l'adresse : http://localhost:8080
-   - La base de données MySQL est accessible sur le port 3306
+```bash
+docker-compose up -d
+```
 
 ## Configuration de la base de données
 
 La base de données est configurée avec les paramètres suivants :
-- **Hôte** : database (dans le réseau Docker) ou localhost:3306 (depuis votre machine)
+- **Hôte** : localhost
+- **Port** : 3306
 - **Nom de la base de données** : fleurverte
 - **Utilisateur** : root
 - **Mot de passe** : (aucun)
+- **Version** : MySQL 5.7
+
+Ces paramètres correspondent exactement à la configuration dans le fichier .env :
+```
+DATABASE_URL="mysql://root:@127.0.0.1:3306/fleurverte?serverVersion=5.7&charset=utf8mb4"
+```
 
 ## Commandes utiles
 
-- Démarrer les conteneurs : `docker-compose up -d`
-- Arrêter les conteneurs : `docker-compose down`
-- Voir les logs : `docker-compose logs`
-- Accéder au shell du conteneur web : `docker exec -it fleurverte_web bash`
+- Démarrer la base de données : `docker-compose up -d`
+- Arrêter la base de données : `docker-compose down`
+- Voir les logs : `docker-compose logs database`
 - Accéder au shell MySQL : `docker exec -it fleurverte_mysql mysql -u root fleurverte`
-
-## Structure du projet
-
-Le projet est configuré avec :
-- Un conteneur **web** basé sur PHP 8.1 avec Apache
-- Un conteneur **database** avec MySQL 5.7
-
-## Migrations de base de données
-
-Pour exécuter les migrations Symfony :
-
-```bash
-docker exec -it fleurverte_web php bin/console doctrine:migrations:migrate
-```
