@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Fleur;
 use App\Form\FleurType;
+use App\Form\SearchProductType;
 use App\Repository\FleurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,13 +28,62 @@ class ProductController extends AbstractController
     ) {}
 
     /**
-     * Affiche la liste de tous les produits
+     * Affiche la liste de tous les produits avec options de recherche et tri
+     * 
+     * @param Request $request La requête HTTP contenant les paramètres de recherche et tri
      */
     #[Route('', name: 'app_product')]
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $searchForm = $this->createForm(SearchProductType::class, null, [
+            'action' => $this->generateUrl('app_product')
+        ]);
+        
+        $searchForm->handleRequest($request);
+        $formData = $searchForm->getData() ?: [];
+        
+        $search = $request->query->get('search', $formData['search'] ?? '');
+        $sort = $request->query->get('sort', $formData['sort'] ?? 'name_asc');
+        
+        $queryBuilder = $this->fleurRepository->createQueryBuilder('f');
+        
+        // Appliquer le filtre de recherche si présent
+        if (!empty($search)) {
+            $queryBuilder
+                ->where('f.nom LIKE :search OR f.description LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+        
+        // Appliquer le tri
+        switch ($sort) {
+            case 'name_desc':
+                $queryBuilder->orderBy('f.nom', 'DESC');
+                break;
+            case 'price_asc':
+                $queryBuilder->orderBy('f.prix', 'ASC');
+                break;
+            case 'price_desc':
+                $queryBuilder->orderBy('f.prix', 'DESC');
+                break;
+            case 'thc_asc':
+                $queryBuilder->orderBy('f.thc', 'ASC');
+                break;
+            case 'thc_desc':
+                $queryBuilder->orderBy('f.thc', 'DESC');
+                break;
+            case 'name_asc':
+            default:
+                $queryBuilder->orderBy('f.nom', 'ASC');
+                break;
+        }
+        
+        $fleurs = $queryBuilder->getQuery()->getResult();
+        
         return $this->render('product/index.html.twig', [
-            'fleurs' => $this->fleurRepository->findAll(),
+            'fleurs' => $fleurs,
+            'search' => $search,
+            'currentSort' => $sort,
+            'searchForm' => $searchForm->createView()
         ]);
     }
 

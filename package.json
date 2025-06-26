@@ -19,5 +19,8 @@
     "watch": "encore dev --watch",
     "build": "encore production --progress",
     "start": "concurrently \"npm run watch\" \"symfony serve\""
+  },
+  "dependencies": {
+    "@symfony/ux-autocomplete": "^2.27.0"
   }
 }

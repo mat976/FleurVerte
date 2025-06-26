@@ -33,8 +33,12 @@
 							<a href="{{ path('app_conseils_culture') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium"><i class="fas fa-book mr-2"></i>Conseils de Culture</a>
 							<a href="{{ path('app_fleuriste_index')}}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium"><i class="fas fa-store mr-2"></i>Nos Fleuristes</a>
 							{% if is_granted('ROLE_USER') %}
-								<a href="{{ path('app_cart_index') }}" class="text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium">
+								<a href="{{ path('app_cart_index') }}" class="cart-link text-white hover:bg-green-700 px-3 py-2 rounded-md text-sm font-medium relative">
 									<i class="fas fa-shopping-cart"></i> Panier
+									{# Badge du panier avec animation et couleur dynamique #}
+									{% if app.session.get('cart_count') is defined and app.session.get('cart_count') > 0 %}
+										<span class="cart-badge">{{ app.session.get('cart_count') }}</span>
+									{% endif %}
 								</a>
 							{% endif %}
 							</div>
@@ -62,12 +66,88 @@
 			</div>
 		</nav>
 
-		<main>
+		<main class="mb-16">
 			{% block body %}{% endblock %}
 		</main>
 
-		<footer
-			class="bg-green-800 text-white py-8"><!-- Footer content remains the same -->
+		<footer class="bg-green-800 text-white py-12">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+					<!-- Colonne 1: À propos -->
+					<div>
+						<h3 class="text-lg font-semibold mb-4 border-b border-green-600 pb-2">À propos de FleurVerte</h3>
+						<div class="flex items-center mb-4">
+							<img src="{{ asset('img/logo/logo_last.png') }}" alt="FleurVerte Logo" class="h-12 w-auto mr-2">
+						</div>
+						<p class="text-sm text-gray-300 mb-4">FleurVerte est votre boutique en ligne spécialisée dans les fleurs exotiques de qualité, avec un réseau de fleuristes professionnels à travers toute la France.</p>
+						<div class="flex space-x-4 mt-4">
+							<a href="#" class="text-white hover:text-green-300"><i class="fab fa-facebook-f"></i></a>
+							<a href="#" class="text-white hover:text-green-300"><i class="fab fa-twitter"></i></a>
+							<a href="#" class="text-white hover:text-green-300"><i class="fab fa-instagram"></i></a>
+							<a href="#" class="text-white hover:text-green-300"><i class="fab fa-linkedin-in"></i></a>
+						</div>
+					</div>
+
+					<!-- Colonne 2: Liens rapides -->
+					<div>
+						<h3 class="text-lg font-semibold mb-4 border-b border-green-600 pb-2">Liens rapides</h3>
+						<ul class="space-y-2">
+							<li><a href="{{ path('app_home') }}" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Accueil</a></li>
+							<li><a href="{{ path('app_product') }}" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Nos Variétés</a></li>
+							<li><a href="{{ path('app_conseils_culture') }}" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Conseils de Culture</a></li>
+							<li><a href="{{ path('app_fleuriste_index') }}" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Nos Fleuristes</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Blog</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>FAQ</a></li>
+						</ul>
+					</div>
+
+					<!-- Colonne 3: Informations légales -->
+					<div>
+						<h3 class="text-lg font-semibold mb-4 border-b border-green-600 pb-2">Informations légales</h3>
+						<ul class="space-y-2">
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Conditions générales</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Politique de confidentialité</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Mentions légales</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Livraisons & Retours</a></li>
+							<li><a href="#" class="text-gray-300 hover:text-white hover:underline flex items-center"><i class="fas fa-chevron-right text-xs mr-2 text-green-400"></i>Paiement sécurisé</a></li>
+						</ul>
+					</div>
+
+					<!-- Colonne 4: Contact -->
+					<div>
+						<h3 class="text-lg font-semibold mb-4 border-b border-green-600 pb-2">Contactez-nous</h3>
+						<ul class="space-y-3">
+							<li class="flex items-start">
+								<i class="fas fa-map-marker-alt mt-1 mr-3 text-green-400"></i>
+								<span class="text-gray-300">123 Avenue des Fleurs<br>75000 Paris, France</span>
+							</li>
+							<li class="flex items-center">
+								<i class="fas fa-phone-alt mr-3 text-green-400"></i>
+								<span class="text-gray-300">+33 1 23 45 67 89</span>
+							</li>
+							<li class="flex items-center">
+								<i class="fas fa-envelope mr-3 text-green-400"></i>
+								<span class="text-gray-300">contact@fleurverte.fr</span>
+							</li>
+							<li class="mt-4">
+								<a href="#" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-block transition duration-300">Nous contacter</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Séparateur -->
+				<div class="border-t border-green-700 mt-8 pt-8">
+					<div class="flex flex-col md:flex-row justify-between items-center">
+						<p class="text-sm text-gray-400 mb-4 md:mb-0">&copy; {{ 'now'|date('Y') }} FleurVerte. Tous droits réservés.</p>
+						<div class="flex space-x-4">
+							<img src="{{ asset('img/payment-visa.svg') }}" alt="Visa" class="h-8">
+							<img src="{{ asset('img/payment-mastercard.svg') }}" alt="Mastercard" class="h-8">
+							<img src="{{ asset('img/payment-paypal.svg') }}" alt="PayPal" class="h-8">
+						</div>
+					</div>
+				</div>
+			</div>
 		</footer>
 	</body>
 </html>

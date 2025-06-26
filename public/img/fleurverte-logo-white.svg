@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 50" width="150" height="40">
+  <style>
+    .text { fill: #ffffff; font-family: Arial, sans-serif; font-weight: bold; }
+    .leaf { fill: #4CAF50; }
+  </style>
+  <text x="10" y="30" class="text" font-size="20">Fleur</text>
+  <text x="70" y="30" class="text" font-size="20">Verte</text>
+  <path class="leaf" d="M180,15 C185,5 170,5 165,15 C160,5 145,5 150,15 C140,20 140,35 150,40 C145,50 160,50 165,40 C170,50 185,50 180,40 C190,35 190,20 180,15 Z" />
+</svg>

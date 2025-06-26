@@ -8,6 +8,7 @@ use App\Entity\User;
 use App\Repository\CartItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Service de gestion du panier d'achat
@@ -31,7 +32,8 @@ class CartService
     public function __construct(
         private CartItemRepository $cartItemRepository,
         private EntityManagerInterface $entityManager,
-        private Security $security
+        private Security $security,
+        private RequestStack $requestStack
     ) {
     }
 
@@ -68,6 +70,9 @@ class CartService
         }
 
         $this->cartItemRepository->save($cartItem, true);
+        
+        // Mettre à jour le compteur dans la session
+        $this->updateCartCountInSession();
     }
 
     /**
@@ -78,6 +83,9 @@ class CartService
     public function removeFromCart(CartItem $cartItem): void
     {
         $this->cartItemRepository->remove($cartItem, true);
+        
+        // Mettre à jour le compteur dans la session
+        $this->updateCartCountInSession();
     }
 
     /**
@@ -145,5 +153,29 @@ class CartService
             $this->entityManager->remove($item);
         }
         $this->entityManager->flush();
+        
+        // Mettre à jour le compteur dans la session
+        $this->updateCartCountInSession();
+    }
+    
+    /**
+     * Met à jour le compteur d'articles du panier dans la session
+     */
+    private function updateCartCountInSession(): void
+    {
+        $session = $this->requestStack->getSession();
+        $cartItems = $this->getCartItems();
+        $itemCount = count($cartItems);
+        
+        $session->set('cart_count', $itemCount);
+    }
+    
+    /**
+     * Initialise le compteur d'articles du panier dans la session
+     * Cette méthode doit être appelée lors de l'initialisation de l'application
+     */
+    public function initCartCount(): void
+    {
+        $this->updateCartCountInSession();
     }
 }
