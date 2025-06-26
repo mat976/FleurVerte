@@ -1,0 +1,28 @@
+# Fichiers et dossiers à ignorer lors de la construction de l'image Docker
+
+# Dossiers de dépendances
+/node_modules/
+/vendor/
+
+# Fichiers de cache et logs
+/var/cache/*
+/var/log/*
+
+# Fichiers d'environnement
+.env.local
+.env.*.local
+
+# Fichiers Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Fichiers Git
+.git/
+.gitignore
+
+# Autres fichiers
+.DS_Store
+*.log
+*.sql
+*.sqlite

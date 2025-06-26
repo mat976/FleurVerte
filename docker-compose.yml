@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: fleurverte_web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./var/log:/var/www/html/var/log
+    depends_on:
+      - database
+    environment:
+      DATABASE_URL: mysql://root:@database:3306/fleurverte?serverVersion=5.7&charset=utf8mb4
+
+  database:
+    image: mysql:5.7
+    container_name: fleurverte_mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_DATABASE: fleurverte
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Si vous avez un fichier SQL pour initialiser la base de données
+      - ./fleur.sql:/docker-entrypoint-initdb.d/fleur.sql
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
