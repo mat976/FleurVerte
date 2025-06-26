@@ -4,35 +4,156 @@
 {% endblock %}
 
 {% block body %}
-	<div class="container mx-auto px-4 mt-8">
-		<h1 class="text-4xl font-bold mb-8">Conseils de Culture</h1>
-
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-			<div class="bg-white p-6 rounded-lg shadow-md">
-				<h2 class="text-2xl font-semibold mb-4">Choisir le bon emplacement</h2>
-				<p>La plupart de nos fleurs exotiques préfèrent un endroit lumineux mais pas en plein soleil. Assurez-vous de leur offrir une lumière indirecte ou filtrée.</p>
-			</div>
-
-			<div class="bg-white p-6 rounded-lg shadow-md">
-				<h2 class="text-2xl font-semibold mb-4">Arrosage adapté</h2>
-				<p>L'arrosage dépend de chaque espèce. En général, laissez le sol sécher légèrement entre les arrosages. Évitez l'excès d'eau qui peut causer la pourriture des racines.</p>
-			</div>
-
-			<div class="bg-white p-6 rounded-lg shadow-md">
-				<h2 class="text-2xl font-semibold mb-4">Maintenir une bonne humidité</h2>
-				<p>Les fleurs exotiques apprécient souvent une humidité élevée. Vous pouvez utiliser un brumisateur ou placer un plateau rempli de billes d'argile et d'eau sous le pot.</p>
-			</div>
-
-			<div class="bg-white p-6 rounded-lg shadow-md">
-				<h2 class="text-2xl font-semibold mb-4">Fertilisation</h2>
-				<p>Utilisez un engrais équilibré pour plantes d'intérieur pendant la période de croissance (printemps et été). Suivez les instructions sur l'emballage pour le dosage.</p>
+	<!-- Hero Section - Design simple et traditionnel -->
+	<div class="bg-green-50 py-12">
+		<div class="container mx-auto px-4">
+			<div class="max-w-4xl mx-auto text-center">
+				<span class="inline-block px-3 py-1 bg-green-100 text-green-700 rounded-md text-sm font-medium mb-4">Guide pratique</span>
+				<h1 class="text-4xl font-bold text-green-800 mb-4">Conseils de Culture</h1>
+				<div class="w-24 h-1 bg-green-500 mx-auto mb-6"></div>
+				<p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">Découvrez nos recommandations pour prendre soin de vos plantes et fleurs avec des méthodes simples et efficaces</p>
+				<div class="flex flex-wrap justify-center gap-4">
+					<a href="#principes" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition duration-200">
+						<span>Découvrir les principes</span>
+					</a>
+					<a href="{{ path('app_product') }}" class="px-6 py-3 bg-white border border-green-200 hover:border-green-300 text-green-600 font-medium rounded-md transition duration-200">
+						<span>Voir nos variétés</span>
+					</a>
+				</div>
 			</div>
 		</div>
+	</div>
 
-		<div class="mt-12">
-			<h2 class="text-3xl font-semibold mb-6">Conseils spécifiques par espèce</h2>
-			<p class="mb-4">Pour des conseils plus détaillés sur chaque espèce de fleur que nous proposons, consultez nos fiches individuelles dans la section "Nos Variétés".</p>
-			<a href="{{ path('app_product') }}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Voir nos variétés</a>
+	<!-- Section Principes Essentiels - Design simple et traditionnel -->
+	<div id="principes" class="container mx-auto px-4 py-12">
+		<div class="text-center mb-10">
+			<h2 class="text-3xl font-bold text-green-800 mb-4">Principes Essentiels d'Entretien</h2>
+			<div class="w-20 h-1 bg-green-500 mx-auto mb-4"></div>
+			<p class="text-gray-600 max-w-2xl mx-auto">Maîtrisez ces concepts clés pour assurer la santé et la beauté de vos plantes tout au long de l'année</p>
+		</div>
+
+		<div
+			class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+			<!-- Carte 1 - Design simple -->
+			<div class="bg-white border border-green-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition duration-200">
+				<div class="p-6">
+					<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+						</svg>
+					</div>
+					<h3 class="text-lg font-semibold text-green-800 mb-2">Choisir le bon emplacement</h3>
+					<p class="text-gray-600 text-sm">La plupart de nos fleurs exotiques préfèrent un endroit lumineux mais pas en plein soleil. Assurez-vous de leur offrir une lumière indirecte ou filtrée.</p>
+				</div>
+			</div>
+
+			<!-- Carte 2 -->
+			<div class="bg-white border border-green-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition duration-200">
+				<div class="p-6">
+					<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+						</svg>
+					</div>
+					<h3 class="text-lg font-semibold text-green-800 mb-2">Arrosage adapté</h3>
+					<p class="text-gray-600 text-sm">L'arrosage dépend de chaque espèce. En général, laissez le sol sécher légèrement entre les arrosages pour éviter la pourriture des racines.</p>
+				</div>
+			</div>
+
+			<!-- Carte 3 -->
+			<div class="bg-white border border-green-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition duration-200">
+				<div class="p-6">
+					<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
+						</svg>
+					</div>
+					<h3 class="text-lg font-semibold text-green-800 mb-2">Maintenir l'humidité</h3>
+					<p class="text-gray-600 text-sm">Les fleurs exotiques apprécient souvent une humidité élevée. Utilisez un brumisateur ou un plateau avec des billes d'argile et de l'eau.</p>
+				</div>
+			</div>
+
+			<!-- Carte 4 -->
+			<div class="bg-white border border-green-200 rounded-md overflow-hidden shadow-sm hover:shadow-md transition duration-200">
+				<div class="p-6">
+					<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+						<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-600" fill="none" viewbox="0 0 24 24" stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+						</svg>
+					</div>
+					<h3 class="text-lg font-semibold text-green-800 mb-2">Fertilisation</h3>
+					<p class="text-gray-600 text-sm">Utilisez un engrais équilibré pendant la période de croissance (printemps et été). Suivez les instructions pour le dosage approprié.</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Section FAQ - Design simple et traditionnel -->
+	<div class="bg-green-50 py-12">
+		<div class="container mx-auto px-4">
+			<div class="text-center mb-8">
+				<h2 class="text-2xl font-bold text-green-800 mb-3">Questions fréquentes</h2>
+				<div class="w-16 h-1 bg-green-500 mx-auto mb-3"></div>
+				<p class="text-gray-600 max-w-2xl mx-auto">Trouvez rapidement des réponses aux questions les plus courantes sur l'entretien des plantes</p>
+			</div>
+
+			<div
+				class="max-w-3xl mx-auto space-y-3" x-data="{active: null}">
+				<!-- Question 1 -->
+				<div class="bg-white border border-green-200 rounded-md overflow-hidden">
+					<button @click="active !== 1 ? active = 1 : active = null" class="flex justify-between items-center w-full p-4 text-left focus:outline-none">
+						<span class="font-medium text-green-800">Comment savoir si ma plante reçoit assez de lumière ?</span>
+						<svg class="h-5 w-5 text-green-600 transform transition-transform duration-200" :class="{'rotate-180': active === 1}" viewbox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+						</svg>
+					</button>
+					<div x-show="active === 1" class="px-4 pb-4 text-gray-600 text-sm">
+						<p>Observez la croissance et la coloration des feuilles. Une plante qui manque de lumière aura tendance à s'étioler (tiges allongées, feuilles espacées) et à perdre sa vivacité. À l'inverse, des feuilles brûlées ou décolorées peuvent indiquer un excès de lumière directe.</p>
+					</div>
+				</div>
+
+				<!-- Question 2 -->
+				<div class="bg-white border border-green-200 rounded-md overflow-hidden">
+					<button @click="active !== 2 ? active = 2 : active = null" class="flex justify-between items-center w-full p-4 text-left focus:outline-none">
+						<span class="font-medium text-green-800">Quelle est la meilleure période pour rempoter ?</span>
+						<svg class="h-5 w-5 text-green-600 transform transition-transform duration-200" :class="{'rotate-180': active === 2}" viewbox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+						</svg>
+					</button>
+					<div x-show="active === 2" class="px-4 pb-4 text-gray-600 text-sm">
+						<p>Le printemps est généralement la période idéale pour rempoter vos plantes, car c'est le début de la saison de croissance. Évitez de rempoter en hiver, période où la plupart des plantes sont en dormance.</p>
+					</div>
+				</div>
+
+				<!-- Question 3 -->
+				<div class="bg-white border border-green-200 rounded-md overflow-hidden">
+					<button @click="active !== 3 ? active = 3 : active = null" class="flex justify-between items-center w-full p-4 text-left focus:outline-none">
+						<span class="font-medium text-green-800">Comment traiter les parasites naturellement ?</span>
+						<svg class="h-5 w-5 text-green-600 transform transition-transform duration-200" :class="{'rotate-180': active === 3}" viewbox="0 0 20 20" fill="currentColor">
+							<path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+						</svg>
+					</button>
+					<div x-show="active === 3" class="px-4 pb-4 text-gray-600 text-sm">
+						<p>Pour traiter les parasites naturellement, vous pouvez utiliser un mélange d'eau et de savon noir, pulvériser de l'huile de neem diluée, ou introduire des insectes prédateurs comme les coccinelles. La prévention reste la meilleure solution : inspectez régulièrement vos plantes et isolez celles qui présentent des signes d'infestation.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Call to Action - Design simple et traditionnel -->
+	<div class="container mx-auto px-4 py-12">
+		<div class="bg-green-600 rounded-md p-6 md:p-8 text-center text-white">
+			<h2 class="text-2xl font-bold mb-4">Prêt à faire pousser votre collection ?</h2>
+			<p class="mb-6 max-w-2xl mx-auto">Découvrez notre sélection de plantes et fleurs exotiques, accompagnées de guides d'entretien détaillés pour chaque espèce.</p>
+			<div class="flex flex-wrap justify-center gap-4">
+				<a href="{{ path('app_product') }}" class="px-6 py-2 bg-white text-green-700 font-medium rounded-md transition duration-200">
+					Explorer nos variétés
+				</a>
+				<a href="#" class="px-6 py-2 bg-transparent border border-white text-white font-medium rounded-md transition duration-200 hover:bg-white hover:bg-opacity-10">
+					Contacter un expert
+				</a>
+			</div>
 		</div>
 	</div>
 {% endblock %}
