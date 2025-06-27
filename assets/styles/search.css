@@ -205,31 +205,37 @@
 
 /* Couleurs différentes selon le nombre d'articles */
 .cart-badge[data-count="1"] {
-    background-color: #e53e3e; /* Rouge pour 1 article */
+    background-color: #e53e3e;
+    /* Rouge pour 1 article */
 }
 
 .cart-badge[data-count="2"],
 .cart-badge[data-count="3"] {
-    background-color: #dd6b20; /* Orange pour 2-3 articles */
+    background-color: #dd6b20;
+    /* Orange pour 2-3 articles */
 }
 
 .cart-badge[data-count="4"],
 .cart-badge[data-count="5"] {
-    background-color: #d69e2e; /* Jaune-orange pour 4-5 articles */
+    background-color: #d69e2e;
+    /* Jaune-orange pour 4-5 articles */
 }
 
 .cart-badge[data-count="6"],
 .cart-badge[data-count="7"],
 .cart-badge[data-count="8"],
 .cart-badge[data-count="9"] {
-    background-color: #38a169; /* Vert pour 6-9 articles */
+    background-color: #38a169;
+    /* Vert pour 6-9 articles */
 }
 
 .cart-badge[data-count="10"],
 .cart-badge[data-count^="1"],
 .cart-badge[data-count^="2"] {
-    background-color: #3182ce; /* Bleu pour 10+ articles */
-    font-size: 0.7rem; /* Plus petit pour les grands nombres */
+    background-color: #3182ce;
+    /* Bleu pour 10+ articles */
+    font-size: 0.7rem;
+    /* Plus petit pour les grands nombres */
 }
 
 /* Animation lors du changement de nombre d'articles */
@@ -251,16 +257,26 @@
     0% {
         box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7), 0 2px 4px rgba(0, 0, 0, 0.3);
     }
+
     70% {
         box-shadow: 0 0 0 8px rgba(229, 62, 62, 0), 0 2px 4px rgba(0, 0, 0, 0.3);
     }
+
     100% {
         box-shadow: 0 0 0 0 rgba(229, 62, 62, 0), 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 }
 
 @keyframes colorChange {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }

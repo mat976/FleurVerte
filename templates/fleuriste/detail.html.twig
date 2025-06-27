@@ -33,6 +33,8 @@
                                         {{ fleuriste.email }}
                                     </p>
                                 {% endif %}
+                                
+
                             </div>
                         </div>
                         
@@ -44,20 +46,16 @@
                                 <p class="text-gray-500 italic">Aucune description disponible</p>
                             {% endif %}
                             
-                            {% if app.user and app.user.isClient() %}
-                                <div class="mt-4">
-                                    <a href="{{ path('app_conversation_new', {'id': fleuriste.id}) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">
-                                        <i class="fas fa-comment-alt mr-2"></i> Contacter ce fleuriste
-                                    </a>
-                                </div>
-                            {% elseif not app.user %}
-                                <div class="mt-4">
-                                    <a href="{{ path('app_login') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">
-                                        <i class="fas fa-sign-in-alt mr-2"></i> Connectez-vous pour contacter
-                                    </a>
-                                </div>
-                            {% endif %}
+
                         </div>
+                    </div>
+
+                    <!-- Section de messagerie pour tous les utilisateurs connectés -->
+                    <div class="mt-8 mb-8 text-center">
+                        <h2 class="text-2xl font-bold mb-6">Messagerie</h2>
+                        <a href="{{ path('app_conversation_new', {'id': fleuriste.id}) }}" class="inline-flex items-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out text-lg">
+                            <i class="fas fa-envelope mr-2"></i> Envoyez un message à {{ fleuriste.nom }}
+                        </a>
                     </div>
 
                     {% if fleuriste.images|length > 0 %}

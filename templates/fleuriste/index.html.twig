@@ -59,9 +59,13 @@
 									</p>
 								{% endif %}
 							</div>
-							<div class="px-6 pt-4 pb-2">
-								<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="block w-full text-center bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+							<div class="px-6 pt-4 pb-2 flex space-x-2">
+								<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded transition duration-300">
 									Voir détails
+								</a>
+						
+								<a href="{{ path('app_conversation_new', {'id': user.id}) }}" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded transition duration-300">
+									<i class="fas fa-envelope mr-1"></i>Message
 								</a>
 							</div>
 						</div>

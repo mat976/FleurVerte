@@ -58,7 +58,8 @@ class MessageController extends AbstractController
 
         // Vérifier que l'utilisateur est bien participant à la conversation
         if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
-            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())) {
+            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
+        ) {
             throw new AccessDeniedException('Vous n\'avez pas accès à cette conversation.');
         }
 
@@ -75,7 +76,7 @@ class MessageController extends AbstractController
         $message = new Message();
         $message->setExpediteur($user);
         $message->setConversation($conversation);
-        
+
         // Définir le destinataire en fonction de l'expéditeur
         if ($user->isClient()) {
             $message->setDestinataire($conversation->getFleuriste()->getUser());
@@ -112,8 +113,19 @@ class MessageController extends AbstractController
         EntityManagerInterface $entityManager
     ): Response {
         $user = $this->getUser();
-        if (!$user || !$user->isClient()) {
-            throw new AccessDeniedException('Vous devez être connecté en tant que client pour contacter un fleuriste.');
+        if (!$user) {
+            return $this->redirectToRoute('app_login', ['redirect' => $request->getUri()]);
+        }
+
+        // Vérifier que l'utilisateur n'est pas un fleuriste qui essaie de se contacter lui-même
+        if ($user->isFleuriste() && $user->getFleuriste() === $fleuriste) {
+            throw new AccessDeniedException('Vous ne pouvez pas vous envoyer un message à vous-même.');
+        }
+
+        // Si l'utilisateur n'est pas un client, on doit le rediriger vers la page de modification du profil
+        if (!$user->isClient()) {
+            $this->addFlash('error', 'Vous devez avoir un profil client pour contacter un fleuriste. Veuillez créer un profil client dans vos paramètres de profil.');
+            return $this->redirectToRoute('app_profil_edit');
         }
 
         $client = $user->getClient();
