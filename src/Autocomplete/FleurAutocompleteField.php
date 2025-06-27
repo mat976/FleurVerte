@@ -4,7 +4,7 @@ namespace App\Autocomplete;
 
 use App\Entity\Fleur;
 use App\Repository\FleurRepository;
-use Symfony\Component\Security\Core\Security;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\UX\Autocomplete\EntityAutocompleteFieldInterface;
 
 /**

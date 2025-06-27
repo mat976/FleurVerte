@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\FleurRepository;
+use App\Repository\TagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,23 +18,38 @@ class SearchController extends AbstractController
      * Affiche les résultats de recherche
      */
     #[Route('/search', name: 'app_search')]
-    public function index(Request $request, FleurRepository $fleurRepository): Response
+    public function index(Request $request, FleurRepository $fleurRepository, TagRepository $tagRepository): Response
     {
         $query = $request->query->get('q', '');
+        $tagId = $request->query->get('tag', null);
+        $sort = $request->query->get('sort', 'name_asc');
         $results = [];
-        
-        if ($query) {
-            // Recherche simple par nom de fleur
-            $results = $fleurRepository->createQueryBuilder('f')
-                ->where('f.nom LIKE :query')
-                ->setParameter('query', '%' . $query . '%')
-                ->getQuery()
-                ->getResult();
+        $selectedTag = null;
+
+        // Récupérer tous les tags pour l'affichage dans le filtre
+        $tags = $tagRepository->findAllSortedByName();
+
+        if ($query || $tagId) {
+            $options = [
+                'sort' => $sort,
+                'tag_id' => $tagId
+            ];
+
+            // Recherche avancée par nom, description ou tag
+            $results = $fleurRepository->searchByTermOrTag($query, $options);
+
+            // Récupérer le tag sélectionné pour l'affichage
+            if ($tagId) {
+                $selectedTag = $tagRepository->find($tagId);
+            }
         }
-        
+
         return $this->render('search/index.html.twig', [
             'query' => $query,
             'results' => $results,
+            'tags' => $tags,
+            'selectedTag' => $selectedTag,
+            'currentSort' => $sort
         ]);
     }
 }

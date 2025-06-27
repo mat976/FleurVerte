@@ -43,6 +43,20 @@
                             {% else %}
                                 <p class="text-gray-500 italic">Aucune description disponible</p>
                             {% endif %}
+                            
+                            {% if app.user and app.user.isClient() %}
+                                <div class="mt-4">
+                                    <a href="{{ path('app_conversation_new', {'id': fleuriste.id}) }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">
+                                        <i class="fas fa-comment-alt mr-2"></i> Contacter ce fleuriste
+                                    </a>
+                                </div>
+                            {% elseif not app.user %}
+                                <div class="mt-4">
+                                    <a href="{{ path('app_login') }}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">
+                                        <i class="fas fa-sign-in-alt mr-2"></i> Connectez-vous pour contacter
+                                    </a>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 

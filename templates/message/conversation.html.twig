@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation - FleurVerte{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- En-tête de la conversation -->
+        <div class="p-4 bg-green-600 text-white flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="{{ path('app_messages_index') }}" class="mr-4 text-white hover:text-green-200">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                {% if app.user.isClient() %}
+                    {% set otherUser = conversation.fleuriste %}
+                    <h1 class="text-xl font-bold">{{ otherUser.nom }}</h1>
+                {% else %}
+                    {% set otherUser = conversation.client.user %}
+                    <h1 class="text-xl font-bold">{{ otherUser.username }}</h1>
+                {% endif %}
+            </div>
+            {% if app.user.isClient() and conversation.fleuriste.user %}
+                <a href="{{ path('app_fleuriste_detail', {'id': conversation.fleuriste.id}) }}" class="text-white hover:text-green-200 text-sm">
+                    Voir le profil <i class="fas fa-external-link-alt ml-1"></i>
+                </a>
+            {% endif %}
+        </div>
+        
+        <!-- Corps de la conversation -->
+        <div class="flex flex-col h-[60vh]">
+            <!-- Messages -->
+            <div class="flex-1 p-4 overflow-y-auto" id="messages-container">
+                {% if conversation.messages|length > 0 %}
+                    <div class="space-y-4">
+                        {% for message in conversation.messages %}
+                            <div class="flex {% if message.expediteur == app.user %}justify-end{% else %}justify-start{% endif %}">
+                                <div class="{% if message.expediteur == app.user %}bg-green-500 text-white{% else %}bg-gray-200 text-gray-800{% endif %} rounded-lg px-4 py-2 max-w-[80%] break-words">
+                                    <div class="text-sm">{{ message.contenu|nl2br }}</div>
+                                    <div class="text-xs {% if message.expediteur == app.user %}text-green-100{% else %}text-gray-500{% endif %} text-right mt-1">
+                                        {{ message.dateEnvoi|date('H:i') }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="flex items-center justify-center h-full">
+                        <p class="text-gray-500 italic">Aucun message dans cette conversation. Envoyez le premier message !</p>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Formulaire d'envoi de message -->
+            <div class="border-t border-gray-200 p-4 bg-gray-50">
+                {{ form_start(form, {'attr': {'class': 'flex items-end'}}) }}
+                    <div class="flex-1">
+                        {{ form_widget(form.contenu) }}
+                        {{ form_errors(form.contenu) }}
+                    </div>
+                    <button type="submit" class="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out flex-shrink-0">
+                        <i class="fas fa-paper-plane mr-2"></i> Envoyer
+                    </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Faire défiler jusqu'au dernier message
+        const messagesContainer = document.getElementById('messages-container');
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        
+        // Focus sur le champ de texte
+        const textareaField = document.querySelector('textarea[name="message[contenu]"]');
+        if (textareaField) {
+            textareaField.focus();
+        }
+    });
+</script>
+{% endblock %}

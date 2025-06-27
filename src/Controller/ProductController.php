@@ -38,47 +38,52 @@ class ProductController extends AbstractController
         $searchForm = $this->createForm(SearchProductType::class, null, [
             'action' => $this->generateUrl('app_product')
         ]);
-        
+
         $searchForm->handleRequest($request);
         $formData = $searchForm->getData() ?: [];
-        
+
         $search = $request->query->get('search', $formData['search'] ?? '');
         $sort = $request->query->get('sort', $formData['sort'] ?? 'name_asc');
-        
-        $queryBuilder = $this->fleurRepository->createQueryBuilder('f');
-        
-        // Appliquer le filtre de recherche si présent
-        if (!empty($search)) {
-            $queryBuilder
-                ->where('f.nom LIKE :search OR f.description LIKE :search')
-                ->setParameter('search', '%' . $search . '%');
+        $tagId = $request->query->get('tag');
+
+        // Utiliser la nouvelle méthode de recherche qui inclut les tags
+        if (!empty($search) || !empty($tagId)) {
+            $options = [
+                'sort' => $sort,
+                'tag_id' => $tagId
+            ];
+
+            $fleurs = $this->fleurRepository->searchByTermOrTag($search, $options);
+        } else {
+            // Si pas de recherche, récupérer tous les produits avec tri
+            $queryBuilder = $this->fleurRepository->createQueryBuilder('f');
+
+            // Appliquer le tri
+            switch ($sort) {
+                case 'name_desc':
+                    $queryBuilder->orderBy('f.nom', 'DESC');
+                    break;
+                case 'price_asc':
+                    $queryBuilder->orderBy('f.prix', 'ASC');
+                    break;
+                case 'price_desc':
+                    $queryBuilder->orderBy('f.prix', 'DESC');
+                    break;
+                case 'thc_asc':
+                    $queryBuilder->orderBy('f.thc', 'ASC');
+                    break;
+                case 'thc_desc':
+                    $queryBuilder->orderBy('f.thc', 'DESC');
+                    break;
+                case 'name_asc':
+                default:
+                    $queryBuilder->orderBy('f.nom', 'ASC');
+                    break;
+            }
+
+            $fleurs = $queryBuilder->getQuery()->getResult();
         }
-        
-        // Appliquer le tri
-        switch ($sort) {
-            case 'name_desc':
-                $queryBuilder->orderBy('f.nom', 'DESC');
-                break;
-            case 'price_asc':
-                $queryBuilder->orderBy('f.prix', 'ASC');
-                break;
-            case 'price_desc':
-                $queryBuilder->orderBy('f.prix', 'DESC');
-                break;
-            case 'thc_asc':
-                $queryBuilder->orderBy('f.thc', 'ASC');
-                break;
-            case 'thc_desc':
-                $queryBuilder->orderBy('f.thc', 'DESC');
-                break;
-            case 'name_asc':
-            default:
-                $queryBuilder->orderBy('f.nom', 'ASC');
-                break;
-        }
-        
-        $fleurs = $queryBuilder->getQuery()->getResult();
-        
+
         return $this->render('product/index.html.twig', [
             'fleurs' => $fleurs,
             'search' => $search,

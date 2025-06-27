@@ -3,6 +3,8 @@
 namespace App\Form;
 
 use App\Entity\Fleur;
+use App\Entity\Tag;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -76,6 +78,18 @@ class FleurType extends AbstractType
                 'download_uri' => false,
                 'image_uri' => true,
                 'asset_helper' => true,
+            ])
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class,
+                'choice_label' => 'nom',
+                'multiple' => true,
+                'expanded' => true,
+                'required' => false,
+                'label' => 'Tags',
+                'attr' => [
+                    'class' => 'tag-selector'
+                ],
+                'by_reference' => false,
             ])
         ;
     }

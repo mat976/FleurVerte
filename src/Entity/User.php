@@ -11,6 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\Repository\MessageRepository;
 
 /**
  * Entité représentant un utilisateur du système
@@ -111,14 +112,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Adresse::class, orphanRemoval: true)]
     private Collection $adresses;
+    
+    /**
+     * Messages envoyés par l'utilisateur
+     * 
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(mappedBy: 'expediteur', targetEntity: Message::class)]
+    private Collection $messagesEnvoyes;
+
+    /**
+     * Messages reçus par l'utilisateur
+     * 
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(mappedBy: 'destinataire', targetEntity: Message::class)]
+    private Collection $messagesRecus;
 
     /**
      * Constructeur de l'entité User
-     * Initialise la collection d'adresses
+     * Initialise les collections
      */
     public function __construct()
     {
         $this->adresses = new ArrayCollection();
+        $this->messagesEnvoyes = new ArrayCollection();
+        $this->messagesRecus = new ArrayCollection();
     }
 
     /**
@@ -437,4 +456,90 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
     {
         return $this->client !== null;
     }
+    
+    /**
+     * Récupère les messages envoyés par l'utilisateur
+     * 
+     * @return Collection<int, Message>
+     */
+    public function getMessagesEnvoyes(): Collection
+    {
+        return $this->messagesEnvoyes;
+    }
+
+    /**
+     * Ajoute un message envoyé
+     * 
+     * @param Message $message Le message à ajouter
+     */
+    public function addMessageEnvoye(Message $message): static
+    {
+        if (!$this->messagesEnvoyes->contains($message)) {
+            $this->messagesEnvoyes->add($message);
+            $message->setExpediteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retire un message envoyé
+     * 
+     * @param Message $message Le message à retirer
+     */
+    public function removeMessageEnvoye(Message $message): static
+    {
+        if ($this->messagesEnvoyes->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getExpediteur() === $this) {
+                $message->setExpediteur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Récupère les messages reçus par l'utilisateur
+     * 
+     * @return Collection<int, Message>
+     */
+    public function getMessagesRecus(): Collection
+    {
+        return $this->messagesRecus;
+    }
+
+    /**
+     * Ajoute un message reçu
+     * 
+     * @param Message $message Le message à ajouter
+     */
+    public function addMessageRecu(Message $message): static
+    {
+        if (!$this->messagesRecus->contains($message)) {
+            $this->messagesRecus->add($message);
+            $message->setDestinataire($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retire un message reçu
+     * 
+     * @param Message $message Le message à retirer
+     */
+    public function removeMessageRecu(Message $message): static
+    {
+        if ($this->messagesRecus->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getDestinataire() === $this) {
+                $message->setDestinataire(null);
+            }
+        }
+
+        return $this;
+    }
+    
+
 }

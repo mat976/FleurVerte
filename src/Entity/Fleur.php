@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\FleurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
@@ -17,6 +19,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable]
 class Fleur
 {
+    public function __construct()
+    {
+        $this->tags = new ArrayCollection();
+    }
     /**
      * Identifiant unique de la fleur
      */
@@ -40,7 +46,7 @@ class Fleur
      */
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
-    
+
     /**
      * Taux de THC de la fleur
      * 
@@ -99,6 +105,14 @@ class Fleur
      */
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $updatedAt = null;
+
+    /**
+     * Tags associés à cette fleur
+     * 
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'fleurs')]
+    private Collection $tags;
 
     /**
      * Récupère l'identifiant de la fleur
@@ -316,7 +330,7 @@ class Fleur
      */
     public function getStockLabel(): string
     {
-        return match($this->getStockStatus()) {
+        return match ($this->getStockStatus()) {
             'out_of_stock' => 'Rupture de stock',
             'low_stock' => 'Stock faible',
             'medium_stock' => 'Stock moyen',
@@ -332,12 +346,44 @@ class Fleur
      */
     public function getStockColor(): string
     {
-        return match($this->getStockStatus()) {
+        return match ($this->getStockStatus()) {
             'out_of_stock' => 'red',
             'low_stock' => 'orange',
             'medium_stock' => 'yellow',
             'in_stock' => 'green',
             default => 'gray',
         };
+    }
+
+    /**
+     * Récupère les tags associés à cette fleur
+     * 
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    /**
+     * Ajoute un tag à cette fleur
+     */
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retire un tag de cette fleur
+     */
+    public function removeTag(Tag $tag): static
+    {
+        $this->tags->removeElement($tag);
+
+        return $this;
     }
 }

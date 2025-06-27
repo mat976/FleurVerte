@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau message - FleurVerte{% endblock %}
+
+{% block body %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- En-tête -->
+        <div class="p-4 bg-green-600 text-white flex items-center">
+            <a href="{{ path('app_fleuriste_detail', {'id': fleuriste.id}) }}" class="mr-4 text-white hover:text-green-200">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="text-xl font-bold">Message à {{ fleuriste.nom }}</h1>
+        </div>
+        
+        <!-- Corps -->
+        <div class="p-6">
+            <div class="mb-6 flex items-center">
+                <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                    {% if fleuriste.user.avatarName %}
+                        <img src="{{ asset('uploads/avatars/' ~ fleuriste.user.avatarName) }}" alt="{{ fleuriste.nom }}" class="w-16 h-16 rounded-full object-cover">
+                    {% else %}
+                        <span class="text-green-600 font-bold text-2xl">{{ fleuriste.nom|first|upper }}</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <h2 class="text-xl font-semibold text-gray-800">{{ fleuriste.nom }}</h2>
+                    <p class="text-gray-600">{{ fleuriste.adresse }}</p>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 pt-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Écrivez votre premier message</h3>
+                
+                {{ form_start(form, {'attr': {'class': 'space-y-4'}}) }}
+                    <div>
+                        {{ form_widget(form.contenu) }}
+                        {{ form_errors(form.contenu) }}
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out">
+                            <i class="fas fa-paper-plane mr-2"></i> Envoyer le message
+                        </button>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
