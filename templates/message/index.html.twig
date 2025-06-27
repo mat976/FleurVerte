@@ -66,7 +66,7 @@
                                                 {% if lastMessage.expediteur == app.user %}
                                                     <span class="text-gray-400">Vous: </span>
                                                 {% endif %}
-                                                {{ lastMessage.contenu|striptags|truncate(50) }}
+                                                {{ lastMessage.contenu|striptags|slice(0, 50) ~ (lastMessage.contenu|length > 50 ? '...' : '') }}
                                             </p>
                                         {% else %}
                                             <p class="text-sm text-gray-400 italic">Pas encore de messages</p>

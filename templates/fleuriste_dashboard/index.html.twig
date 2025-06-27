@@ -4,226 +4,225 @@
 {% endblock %}
 
 {% block body %}
-	<div class="min-h-screen bg-gray-100 py-12">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-			<div class="sm:mx-auto sm:w-full mb-8">
-				<h1 class="text-center text-3xl font-extrabold text-gray-900">
-					Tableau de bord Fleuriste
-				</h1>
+<div class="min-h-screen bg-gray-100 py-12">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="sm:mx-auto sm:w-full mb-8">
+			<h1 class="text-center text-3xl font-extrabold text-gray-900">
+				Tableau de bord Fleuriste
+			</h1>
+		</div>
+
+		{% for message in app.flashes('success') %}
+			<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+				<span class="block sm:inline">{{ message }}</span>
+			</div>
+		{% endfor %}
+
+		{% for message in app.flashes('info') %}
+			<div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
+				<span class="block sm:inline">{{ message }}</span>
+			</div>
+		{% endfor %}
+
+		{# Section des actions rapides #}
+		<div class="mb-8">
+			<div class="bg-white shadow rounded-lg p-6">
+				<h2 class="text-2xl font-bold text-gray-900 mb-4">Actions rapides</h2>
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+					<a href="{{ path('app_fleuriste_profile_edit') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
+						<i class="fas fa-user-edit text-2xl mb-2"></i>
+						<span>Modifier mon profil</span>
+					</a>
+					<a href="{{ path('app_fleuriste_fleur_new') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
+						<i class="fas fa-plus text-2xl mb-2"></i>
+						<span>Ajouter une fleur</span>
+					</a>
+					<a href="{{ path('app_tag_index') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
+						<i class="fas fa-tags text-2xl mb-2"></i>
+						<span>Gérer les tags</span>
+					</a>
+					<a href="{{ path('app_catalogue') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
+						<i class="fas fa-book-open text-2xl mb-2"></i>
+						<span>Catalogue de Fleurs</span>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		{# Section des adresses #}
+		<div class="mb-8">
+			<div class="bg-white shadow rounded-lg p-6">
+				<div class="flex justify-between items-center mb-6">
+					<h2 class="text-2xl font-bold text-gray-900">Mes Adresses</h2>
+					<a href="{{ path('app_adresse_new') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">
+						<i class="fas fa-plus mr-2"></i>Ajouter une adresse
+					</a>
+				</div>
+
+				<div class="overflow-hidden rounded-lg">
+					{% if app.user.adresses|length > 0 %}
+						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+							{% for adresse in app.user.adresses %}
+								<div class="border rounded-lg p-4 relative {% if adresse.principale %}border-green-500{% else %}border-gray-200{% endif %}">
+									{% if adresse.principale %}
+										<span class="absolute top-2 right-2 px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+											Principale
+										</span>
+									{% endif %}
+									<div class="mt-4">
+										<p class="text-gray-900">{{ adresse.rue }}</p>
+										{% if adresse.complement %}
+											<p class="text-gray-600">{{ adresse.complement }}</p>
+										{% endif %}
+										<p class="text-gray-600">{{ adresse.codePostal }}
+											{{ adresse.ville }}</p>
+									</div>
+									<div class="mt-4 flex justify-end space-x-2">
+										<a href="{{ path('app_adresse_edit', {'id': adresse.id}) }}" class="text-green-600 hover:text-green-900">Modifier</a>
+										{% if not adresse.principale %}
+											<form method="post" action="{{ path('app_adresse_set_principale', {'id': adresse.id}) }}" class="inline">
+												<input type="hidden" name="_token" value="{{ csrf_token('set-principale' ~ adresse.id) }}">
+												<button type="submit" class="text-blue-600 hover:text-blue-900">
+													Définir comme principale
+												</button>
+											</form>
+											<form method="post" action="{{ path('app_adresse_delete', {'id': adresse.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">
+												<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ adresse.id) }}">
+												<button type="submit" class="text-red-600 hover:text-red-900">
+													Supprimer
+												</button>
+											</form>
+										{% endif %}
+									</div>
+								</div>
+							{% endfor %}
+						</div>
+					{% else %}
+						<div class="text-center py-8 px-4">
+							<p class="text-gray-500">Vous n'avez pas encore ajouté d'adresse.</p>
+							<a href="{{ path('app_adresse_new') }}" class="mt-2 inline-block text-green-600 hover:text-green-900">
+								Ajouter votre première adresse
+							</a>
+						</div>
+					{% endif %}
+				</div>
 			</div>
 
-			{% for message in app.flashes('success') %}
-				<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-					<span class="block sm:inline">{{ message }}</span>
-				</div>
-			{% endfor %}
-
-			{% for message in app.flashes('info') %}
-				<div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
-					<span class="block sm:inline">{{ message }}</span>
-				</div>
-			{% endfor %}
-
-			{# Section des actions rapides #}
-			<div class="mb-8">
-				<div class="bg-white shadow rounded-lg p-6">
-					<h2 class="text-2xl font-bold text-gray-900 mb-4">Actions rapides</h2>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-						<a href="{{ path('app_fleuriste_profile_edit') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
-							<i class="fas fa-user-edit text-2xl mb-2"></i>
-							<span>Modifier mon profil</span>
-						</a>
-						<a href="{{ path('app_fleuriste_fleur_new') }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
-							<i class="fas fa-plus text-2xl mb-2"></i>
-							<span>Ajouter une fleur</span>
-						</a>
-						<a href="{{ path('app_tag_index') }}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
-							<i class="fas fa-tags text-2xl mb-2"></i>
-							<span>Gérer les tags</span>
-						</a>
-						<a href="{{ path('app_catalogue') }}" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-3 rounded-md text-center font-medium transition duration-200 ease-in-out flex flex-col items-center justify-center">
-							<i class="fas fa-book-open text-2xl mb-2"></i>
-							<span>Catalogue de Fleurs</span>
-						</a>
-					</div>
-				</div>
-			</div>
-
-			{# Section des adresses #}
+			{# Section des fleurs #}
 			<div class="mb-8">
 				<div class="bg-white shadow rounded-lg p-6">
 					<div class="flex justify-between items-center mb-6">
-						<h2 class="text-2xl font-bold text-gray-900">Mes Adresses</h2>
-						<a href="{{ path('app_adresse_new') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">
-							<i class="fas fa-plus mr-2"></i>Ajouter une adresse
+						<h2 class="text-2xl font-bold text-gray-900">Mes Produits</h2>
+						<a href="{{ path('app_fleuriste_fleur_new') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">
+							<i class="fas fa-plus mr-2"></i>Ajouter une fleur
 						</a>
 					</div>
 
-					<div class="overflow-hidden rounded-lg">
-						{% if app.user.adresses|length > 0 %}
-							<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
-								{% for adresse in app.user.adresses %}
-									<div class="border rounded-lg p-4 relative {% if adresse.principale %}border-green-500{% else %}border-gray-200{% endif %}">
-										{% if adresse.principale %}
-											<span class="absolute top-2 right-2 px-2 py-1 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
-												Principale
-											</span>
-										{% endif %}
-										<div class="mt-4">
-											<p class="text-gray-900">{{ adresse.rue }}</p>
-											{% if adresse.complement %}
-												<p class="text-gray-600">{{ adresse.complement }}</p>
-											{% endif %}
-											<p class="text-gray-600">{{ adresse.codePostal }}
-												{{ adresse.ville }}</p>
-										</div>
-										<div class="mt-4 flex justify-end space-x-2">
-											<a href="{{ path('app_adresse_edit', {'id': adresse.id}) }}" class="text-green-600 hover:text-green-900">Modifier</a>
-											{% if not adresse.principale %}
-												<form method="post" action="{{ path('app_adresse_set_principale', {'id': adresse.id}) }}" class="inline">
-													<input type="hidden" name="_token" value="{{ csrf_token('set-principale' ~ adresse.id) }}">
-													<button type="submit" class="text-blue-600 hover:text-blue-900">
-														Définir comme principale
-													</button>
-												</form>
-												<form method="post" action="{{ path('app_adresse_delete', {'id': adresse.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette adresse ?');">
-													<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ adresse.id) }}">
-													<button type="submit" class="text-red-600 hover:text-red-900">
-														Supprimer
-													</button>
-												</form>
-											{% endif %}
-										</div>
-									</div>
-								{% endfor %}
-							</div>
-						{% else %}
-							<div class="text-center py-8 px-4">
-								<p class="text-gray-500">Vous n'avez pas encore ajouté d'adresse.</p>
-								<a href="{{ path('app_adresse_new') }}" class="mt-2 inline-block text-green-600 hover:text-green-900">
-									Ajouter votre première adresse
-								</a>
-							</div>
-						{% endif %}
-					</div>
-				</div>
-
-				{# Section des fleurs #}
-				<div class="mb-8">
-					<div class="bg-white shadow rounded-lg p-6">
-						<div class="flex justify-between items-center mb-6">
-							<h2 class="text-2xl font-bold text-gray-900">Mes Produits</h2>
-							<a href="{{ path('app_fleuriste_fleur_new') }}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition duration-200 ease-in-out">
-								<i class="fas fa-plus mr-2"></i>Ajouter une fleur
-							</a>
-						</div>
-
-						{% if app.request.query.get('reapprovisionner') %}
-							<div id="reapprovisionner-modal" class="fixed inset-0 bg-gray-600 bg-opacity-70 overflow-y-auto h-full w-full z-50 flex items-center justify-center backdrop-blur-sm">
-								<div class="relative p-4 w-full max-w-md mx-auto">
-									<div class="bg-white rounded-lg shadow-xl border border-gray-200 max-w-md w-full mx-auto transform transition-all">
-										<div class="p-6 text-center">
-											<h3 class="mb-5 text-lg font-normal text-gray-500">Réapprovisionner</h3>
-											<form action="{{ path('app_fleuriste_reapprovisionner', {'id': app.request.query.get('fleurId')}) }}" method="POST">
-												<div class="mb-4">
-													<label for="quantite" class="block text-sm font-medium text-gray-700 mb-2">Quantité à ajouter</label>
-													<input type="number" name="quantite" id="quantite" required min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-												</div>
-												<div class="flex justify-center space-x-4">
-													<button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
-														Confirmer
-													</button>
-													<a href="{{ path('app_fleuriste_dashboard') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">
-														Annuler
-													</a>
-												</div>
-											</form>
-										</div>
+					{% if app.request.query.get('reapprovisionner') %}
+						<div id="reapprovisionner-modal" class="fixed inset-0 bg-gray-600 bg-opacity-70 overflow-y-auto h-full w-full z-50 flex items-center justify-center backdrop-blur-sm">
+							<div class="relative p-4 w-full max-w-md mx-auto">
+								<div class="bg-white rounded-lg shadow-xl border border-gray-200 max-w-md w-full mx-auto transform transition-all">
+									<div class="p-6 text-center">
+										<h3 class="mb-5 text-lg font-normal text-gray-500">Réapprovisionner</h3>
+										<form action="{{ path('app_fleuriste_reapprovisionner', {'id': app.request.query.get('fleurId')}) }}" method="POST">
+											<div class="mb-4">
+												<label for="quantite" class="block text-sm font-medium text-gray-700 mb-2">Quantité à ajouter</label>
+												<input type="number" name="quantite" id="quantite" required min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+											</div>
+											<div class="flex justify-center space-x-4">
+												<button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors">
+													Confirmer
+												</button>
+												<a href="{{ path('app_fleuriste_dashboard') }}" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">
+													Annuler
+												</a>
+											</div>
+										</form>
 									</div>
 								</div>
 							</div>
-						{% endif %}
+						</div>
+					{% endif %}
 
-						<div class="overflow-hidden rounded-lg">
-							<div class="overflow-x-auto">
-								<table class="min-w-full divide-y divide-gray-200">
-									<thead class="bg-gray-50">
+					<div class="overflow-hidden rounded-lg">
+						<div class="overflow-x-auto">
+							<table class="min-w-full divide-y divide-gray-200">
+								<thead class="bg-gray-50">
+									<tr>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THC</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+									</tr>
+								</thead>
+								<tbody class="bg-white divide-y divide-gray-200">
+									{% for fleur in fleurs %}
 										<tr>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THC</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-											<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-										</tr>
-									</thead>
-									<tbody class="bg-white divide-y divide-gray-200">
-										{% for fleur in fleurs %}
-											<tr>
-												<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-													<div class="flex items-center">
-														{% if fleur.imageName %}
-															<div class="flex-shrink-0 h-10 w-10 mr-3">
-																<img class="h-10 w-10 rounded-full object-cover" src="{{ vich_uploader_asset(fleur, 'imageFile') }}" alt="{{ fleur.nom }}">
+											<td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+												<div class="flex items-center">
+													{% if fleur.imageName %}
+														<div class="flex-shrink-0 h-10 w-10 mr-3">
+															<img class="h-10 w-10 rounded-full object-cover" src="{{ vich_uploader_asset(fleur, 'imageFile') }}" alt="{{ fleur.nom }}">
+														</div>
+													{% endif %}
+													<div>
+														{{ fleur.nom }}
+														{% if fleur.tags|length > 0 %}
+															<div class="flex flex-wrap gap-1 mt-1">
+																{% for tag in fleur.tags %}
+																	<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background-color: {{ tag.couleur ? tag.couleur ~ '33' : '#e5e7eb' }}; color: {{ tag.couleur ?: '#374151' }}">
+																		{{ tag.nom }}
+																	</span>
+																{% endfor %}
 															</div>
 														{% endif %}
-														<div>
-															{{ fleur.nom }}
-															{% if fleur.tags|length > 0 %}
-																<div class="flex flex-wrap gap-1 mt-1">
-																	{% for tag in fleur.tags %}
-																		<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium" style="background-color: {{ tag.couleur ? tag.couleur ~ '33' : '#e5e7eb' }}; color: {{ tag.couleur ?: '#374151' }}">
-																			{{ tag.nom }}
-																		</span>
-																	{% endfor %}
-																</div>
-															{% endif %}
-														</div>
 													</div>
-												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.description|slice(0, 50) }}
-													{% if fleur.description|length > 50 %}...
-													{% endif %}
-												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.thc }}%</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.prix }}€</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ fleur.stock > 10 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' }}">
-														{{ fleur.stock }}
+												</div>
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.description|slice(0, 50) }}
+												{% if fleur.description|length > 50 %}...
+												{% endif %}
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.thc }}%</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.prix }}€</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ fleur.stock > 10 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' }}">
+													{{ fleur.stock }}
+												</span>
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												{% if fleur.isPinned %}
+													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+														<i class="fas fa-thumbtack mr-1"></i> Épinglé
 													</span>
-												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-													{% if fleur.isPinned %}
-														<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-															<i class="fas fa-thumbtack mr-1"></i>
-															Épinglé
-														</span>
-													{% else %}
-														<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-															Standard
-														</span>
-													{% endif %}
-												</td>
-												<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-													<div class="flex space-x-2">
-														<a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" class="text-green-600 hover:text-green-900">
-															<i class="fas fa-edit"></i>
-														</a>
-														<a href="{{ path('app_fleuriste_dashboard', {'reapprovisionner': 1, 'fleurId': fleur.id}) }}" class="text-blue-600 hover:text-blue-900">
-															<i class="fas fa-plus-circle"></i>
-														</a>
-													</div>
-												</td>
-											</tr>
-										{% endfor %}
-									</tbody>
-								</table>
-							</div>
+												{% else %}
+													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+														Standard
+													</span>
+												{% endif %}
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+												<div class="flex space-x-2">
+													<a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" class="text-green-600 hover:text-green-900">
+														<i class="fas fa-edit"></i>
+													</a>
+													<a href="{{ path('app_fleuriste_dashboard', {'reapprovisionner': 1, 'fleurId': fleur.id}) }}" class="text-blue-600 hover:text-blue-900">
+														<i class="fas fa-plus-circle"></i>
+													</a>
+												</div>
+											</td>
+										</tr>
+									{% endfor %}
+								</tbody>
+							</table>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+</div>
 {% endblock %}
