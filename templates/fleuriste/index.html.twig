@@ -26,16 +26,16 @@
 				</a>
 			</div>
 			{% else %}
-			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-auto max-w-7xl px-4">
 				{% for user in fleuristes %}
 					{% if user.fleuriste %}
-						<div class="bg-white shadow-lg rounded-lg overflow-hidden transition duration-300 hover:shadow-xl">
-							<div class="px-6 py-4">
-								<div class="flex items-center mb-4">
-									<img src="{{ user.avatarName ? asset('uploads/avatars/' ~ user.avatarName) : asset('basic_avatar/1.png') }}" alt="{{ user.avatarName ? 'Avatar de ' ~ user.fleuriste.nom : 'Avatar par défaut' }}" class="w-16 h-16 rounded-full mr-4 object-cover">
-									<div class="font-bold text-xl text-green-800">{{ user.fleuriste.nom }}</div>
+						<div class="bg-white shadow-lg rounded-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 flex flex-col items-center">
+							<div class="px-6 py-6 w-full text-center">
+								<div class="flex flex-col items-center mb-4">
+									<img src="{{ user.avatarName ? asset('uploads/avatars/' ~ user.avatarName) : asset('basic_avatar/1.png') }}" alt="{{ user.avatarName ? 'Avatar de ' ~ user.fleuriste.nom : 'Avatar par défaut' }}" class="w-28 h-28 rounded-full mb-5 object-cover border-3 border-green-500 shadow-md">
+									<div class="font-bold text-2xl text-green-800 mb-2">{{ user.fleuriste.nom }}</div>
 								</div>
-								<p class="text-gray-700 text-base mb-2">
+								<p class="text-gray-700 text-base mb-3 flex items-center justify-center">
 									<i class="fas fa-envelope mr-2 text-green-600"></i>
 									{{ user.email }}
 								</p>
@@ -49,23 +49,27 @@
 									{% if principale_adresse is null %}
 										{% set principale_adresse = user.adresses|first %}
 									{% endif %}
-									<p class="text-gray-700 text-base">
-										<i class="fas fa-map-marker-alt mr-2 text-green-600"></i>
-										{{ principale_adresse.adresseComplete }}
-									</p>
+									<div class="mt-2 pt-2 border-t border-gray-100">
+										<p class="text-gray-700 text-base flex items-center justify-center">
+											<i class="fas fa-map-marker-alt mr-2 text-green-600"></i>
+											<span class="text-center">{{ principale_adresse.adresseComplete }}</span>
+										</p>
+									</div>
 								{% else %}
-									<p class="text-yellow-600 text-base">
-										<i class="fas fa-exclamation-triangle mr-2"></i>Adresse non renseignée
-									</p>
+									<div class="mt-2 pt-2 border-t border-gray-100">
+										<p class="text-yellow-600 text-base flex items-center justify-center">
+											<i class="fas fa-exclamation-triangle mr-2"></i>Adresse non renseignée
+										</p>
+									</div>
 								{% endif %}
 							</div>
-							<div class="px-6 pt-4 pb-2 flex space-x-2">
-								<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded transition duration-300">
-									Voir détails
+							<div class="px-8 pt-5 pb-8 flex space-x-4 justify-center w-full mb-2">
+								<a href="{{ path('app_fleuriste_detail', {'id': user.id}) }}" class="flex-1 text-center bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 max-w-[46%]">
+									<i class="fas fa-info-circle mr-2 text-xl"></i><span class="text-base">Voir détails</span>
 								</a>
 						
-								<a href="{{ path('app_conversation_new', {'id': user.id}) }}" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded transition duration-300">
-									<i class="fas fa-envelope mr-1"></i>Message
+								<a href="{{ path('app_conversation_new', {'id': user.id}) }}" class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 max-w-[46%]">
+									<i class="fas fa-envelope mr-2 text-xl"></i><span class="text-base">Message</span>
 								</a>
 							</div>
 						</div>
