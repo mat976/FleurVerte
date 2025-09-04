@@ -15,5 +15,25 @@ services:
       - ./fleur.sql:/docker-entrypoint-initdb.d/fleur.sql
     restart: unless-stopped
 
+  app:
+    build: .
+    container_name: fleurverte_app
+    depends_on:
+      - database
+    environment:
+      APP_ENV: dev
+      # Configuration de la base de données pour pointer vers le service database
+      DATABASE_URL: "mysql://root:@database:3306/fleurverte?serverVersion=5.7&charset=utf8mb4"
+    volumes:
+      - ./:/app:cached
+      - app_vendor:/app/vendor
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    # Configuration réseau pour permettre l'accès depuis l'extérieur
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
 volumes:
   mysql_data:
+  app_vendor:
