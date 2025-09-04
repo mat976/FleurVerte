@@ -9,7 +9,7 @@ FROM php:8.2-cli
 # Install system deps and PHP extensions needed by the app
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev \
+    git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev \
     && docker-php-ext-install pdo pdo_mysql \
     && rm -rf /var/lib/apt/lists/*
 
