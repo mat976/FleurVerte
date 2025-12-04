@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Fleur;
+use App\Entity\Commentaire;
 use App\Form\FleurType;
 use App\Form\SearchProductType;
+use App\Form\CommentaireType;
 use App\Repository\FleurRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -113,13 +115,14 @@ class ProductController extends AbstractController
     }
 
     /**
-     * Affiche les détails d'un produit spécifique
+     * Affiche les détails d'un produit spécifique avec commentaires
      * 
      * @param int $id L'identifiant du produit
+     * @param Request $request La requête HTTP
      * @throws NotFoundHttpException Si le produit n'existe pas
      */
     #[Route('/{id}', name: 'product_detail', requirements: ['id' => '\d+'])]
-    public function detail(int $id): Response
+    public function detail(int $id, Request $request): Response
     {
         $fleur = $this->fleurRepository->find($id);
 
@@ -127,8 +130,57 @@ class ProductController extends AbstractController
             throw $this->createNotFoundException(self::MESSAGE_NOT_FOUND);
         }
 
+        // Formulaire de commentaire
+        $commentaire = new Commentaire();
+        $commentaireForm = $this->createForm(CommentaireType::class, $commentaire);
+        $commentaireForm->handleRequest($request);
+
+        if ($commentaireForm->isSubmitted() && $commentaireForm->isValid()) {
+            if (!$this->getUser()) {
+                $this->addFlash('error', 'Vous devez être connecté pour laisser un commentaire.');
+                return $this->redirectToRoute('app_login');
+            }
+
+            $commentaire->setUser($this->getUser());
+            $commentaire->setFleur($fleur);
+            $commentaire->setDateCreation(new \DateTime());
+
+            $this->entityManager->persist($commentaire);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Votre commentaire a été ajouté avec succès !');
+            return $this->redirectToRoute('product_detail', ['id' => $id]);
+        }
+
         return $this->render('product/detail.html.twig', [
             'fleur' => $fleur,
+            'commentaireForm' => $commentaireForm->createView(),
         ]);
+    }
+
+    /**
+     * Supprime un commentaire
+     */
+    #[Route('/commentaire/{id}/delete', name: 'commentaire_delete', methods: ['POST'])]
+    public function deleteCommentaire(int $id, Request $request): Response
+    {
+        $commentaire = $this->entityManager->getRepository(Commentaire::class)->find($id);
+
+        if (!$commentaire) {
+            throw $this->createNotFoundException('Commentaire non trouvé');
+        }
+
+        // Vérifier que l'utilisateur est le propriétaire ou admin
+        if ($commentaire->getUser() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer ce commentaire.');
+            return $this->redirectToRoute('product_detail', ['id' => $commentaire->getFleur()->getId()]);
+        }
+
+        $fleurId = $commentaire->getFleur()->getId();
+        $this->entityManager->remove($commentaire);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Commentaire supprimé.');
+        return $this->redirectToRoute('product_detail', ['id' => $fleurId]);
     }
 }

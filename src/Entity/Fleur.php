@@ -22,6 +22,7 @@ class Fleur
     public function __construct()
     {
         $this->tags = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
     }
     /**
      * Identifiant unique de la fleur
@@ -106,6 +107,14 @@ class Fleur
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'fleurs')]
     private Collection $tags;
+
+    /**
+     * Commentaires sur cette fleur
+     * 
+     * @var Collection<int, Commentaire>
+     */
+    #[ORM\OneToMany(mappedBy: 'fleur', targetEntity: Commentaire::class, orphanRemoval: true)]
+    private Collection $commentaires;
 
     /**
      * Récupère l'identifiant de la fleur
@@ -360,5 +369,69 @@ class Fleur
         $this->tags->removeElement($tag);
 
         return $this;
+    }
+
+    /**
+     * Récupère les commentaires de cette fleur
+     * 
+     * @return Collection<int, Commentaire>
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    /**
+     * Ajoute un commentaire à cette fleur
+     */
+    public function addCommentaire(Commentaire $commentaire): static
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires->add($commentaire);
+            $commentaire->setFleur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Retire un commentaire de cette fleur
+     */
+    public function removeCommentaire(Commentaire $commentaire): static
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            if ($commentaire->getFleur() === $this) {
+                $commentaire->setFleur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Calcule la note moyenne de cette fleur
+     * 
+     * @return float|null La note moyenne ou null si pas de commentaires
+     */
+    public function getNoteMoyenne(): ?float
+    {
+        if ($this->commentaires->isEmpty()) {
+            return null;
+        }
+
+        $total = 0;
+        foreach ($this->commentaires as $commentaire) {
+            $total += $commentaire->getNote();
+        }
+
+        return round($total / $this->commentaires->count(), 1);
+    }
+
+    /**
+     * Récupère le nombre de commentaires
+     */
+    public function getNombreCommentaires(): int
+    {
+        return $this->commentaires->count();
     }
 }

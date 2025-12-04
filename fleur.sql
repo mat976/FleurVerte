@@ -4,12 +4,7 @@
 -- Utilisateurs
 INSERT INTO `user` (email, roles, password, username, avatar_name, updated_at) VALUES
 ('admin@test.com', '["ROLE_ADMIN"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NULL, NOW()),
-('user1@test.com', '["ROLE_USER"]', '$ 
-'$2 
-$2y.
-13$ 
-$92 
-$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user1', NULL, NOW()),
+('user1@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user1', NULL, NOW()),
 ('user2@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user2', NULL, NOW()),
 ('user3@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user3', NULL, NOW()),
 ('user4@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user4', NULL, NOW()),
