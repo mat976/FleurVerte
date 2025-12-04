@@ -12,6 +12,7 @@ use App\Repository\FleuristeRepository;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -163,6 +164,118 @@ class MessageController extends AbstractController
         return $this->render('message/new_conversation.html.twig', [
             'fleuriste' => $fleuriste,
             'form' => $form->createView(),
+        ]);
+    }
+
+    /**
+     * API: Récupère les nouveaux messages d'une conversation (pour le live polling)
+     */
+    #[Route('/api/conversation/{id}/messages', name: 'api_messages_get', methods: ['GET'])]
+    public function getMessages(
+        Request $request,
+        Conversation $conversation,
+        MessageRepository $messageRepository,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non autorisé'], 401);
+        }
+
+        // Vérifier l'accès
+        if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
+            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
+        ) {
+            return new JsonResponse(['error' => 'Accès refusé'], 403);
+        }
+
+        // Récupérer le dernier message ID pour ne charger que les nouveaux
+        $lastMessageId = $request->query->getInt('lastMessageId', 0);
+
+        $messages = [];
+        foreach ($conversation->getMessages() as $message) {
+            if ($message->getId() > $lastMessageId) {
+                // Marquer comme lu si destinataire
+                if ($message->getDestinataire() === $user && !$message->isEstLu()) {
+                    $message->setEstLu(true);
+                }
+                
+                $messages[] = [
+                    'id' => $message->getId(),
+                    'contenu' => $message->getContenu(),
+                    'dateEnvoi' => $message->getDateEnvoi()->format('H:i'),
+                    'dateEnvoiFull' => $message->getDateEnvoi()->format('d/m/Y H:i'),
+                    'isOwn' => $message->getExpediteur() === $user,
+                    'expediteurNom' => $message->getExpediteur()->getUsername(),
+                ];
+            }
+        }
+        
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'messages' => $messages,
+            'conversationId' => $conversation->getId(),
+        ]);
+    }
+
+    /**
+     * API: Envoie un nouveau message (AJAX)
+     */
+    #[Route('/api/conversation/{id}/send', name: 'api_message_send', methods: ['POST'])]
+    public function sendMessage(
+        Request $request,
+        Conversation $conversation,
+        EntityManagerInterface $entityManager
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Non autorisé'], 401);
+        }
+
+        // Vérifier l'accès
+        if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
+            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
+        ) {
+            return new JsonResponse(['error' => 'Accès refusé'], 403);
+        }
+
+        // Récupérer le contenu du message
+        $data = json_decode($request->getContent(), true);
+        $contenu = trim($data['contenu'] ?? '');
+
+        if (empty($contenu)) {
+            return new JsonResponse(['error' => 'Message vide'], 400);
+        }
+
+        // Créer le message
+        $message = new Message();
+        $message->setExpediteur($user);
+        $message->setConversation($conversation);
+        $message->setContenu($contenu);
+
+        // Définir le destinataire
+        if ($user->isClient()) {
+            $message->setDestinataire($conversation->getFleuriste()->getUser());
+        } else {
+            $message->setDestinataire($conversation->getClient()->getUser());
+        }
+
+        $conversation->updateDateDerniereActivite();
+        $entityManager->persist($message);
+        $entityManager->persist($conversation);
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'message' => [
+                'id' => $message->getId(),
+                'contenu' => $message->getContenu(),
+                'dateEnvoi' => $message->getDateEnvoi()->format('H:i'),
+                'dateEnvoiFull' => $message->getDateEnvoi()->format('d/m/Y H:i'),
+                'isOwn' => true,
+                'expediteurNom' => $user->getUsername(),
+            ],
         ]);
     }
 }

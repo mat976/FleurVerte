@@ -1,111 +1,182 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nos Fleurs - FleurVerte
-{% endblock %}
+{% block title %}Nos Fleurs - FleurVerte{% endblock %}
 
 {% block body %}
-	<div class="container mx-auto px-4 mt-8">
-		<div class="flex flex-col md:flex-row md:items-center md:justify-between mb-12">
-			<h1 class="text-4xl font-bold text-green-800 mb-6 md:mb-0">Nos Fleurs Exotiques</h1>
+	{# Page Produits - Design léger et transparent #}
+	<div class="min-h-screen bg-white relative overflow-hidden">
+		{# Formes décoratives flottantes #}
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div class="absolute top-20 left-5 w-72 h-72 bg-green-100/30 rounded-full blur-3xl animate-float"></div>
+			<div class="absolute top-40 right-10 w-96 h-96 bg-emerald-100/25 rounded-full blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-60 left-1/4 w-64 h-64 bg-teal-100/20 rounded-full blur-3xl animate-float-delay"></div>
+			<div class="absolute bottom-20 right-1/3 w-80 h-80 bg-green-50/30 rounded-full blur-3xl animate-pulse-soft"></div>
+			{# Éléments floraux décoratifs #}
+			<div class="absolute top-24 right-20 text-green-200/20 text-8xl animate-float">🌿</div>
+			<div class="absolute top-1/3 left-10 text-emerald-100/15 text-7xl animate-float-slow">🌸</div>
+			<div class="absolute bottom-40 right-16 text-green-100/20 text-6xl animate-pulse-soft">🌺</div>
+			<div class="absolute bottom-1/4 left-1/3 text-teal-100/15 text-5xl animate-float-delay">🍃</div>
 		</div>
 
-		<div class="max-w-4xl mx-auto mb-8">
-			{{ form_start(searchForm, {'attr': {'class': 'flex items-center'}}) }}
-			<div class="flex-grow">
-				<div class="flex">
-					{{ form_widget(searchForm.search, {'attr': {'class': 'px-4 py-2 rounded-l-md border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 w-full', 'placeholder': 'Rechercher une variété...', 'value': search}}) }}
-					<button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-r-md flex-shrink-0">
-						<i class="fas fa-search"></i>
-					</button>
+		{# Header Section #}
+		<section class="relative z-10 py-16">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+				<div class="text-center mb-10">
+					<div class="inline-flex items-center gap-2 px-5 py-2 bg-green-50/80 backdrop-blur-sm rounded-full border border-green-100 mb-6">
+						<i class="fas fa-seedling text-green-600"></i>
+						<span class="text-green-700 font-medium text-sm">Collection fraîche</span>
+					</div>
+					<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Fleurs</h1>
+					<p class="text-lg text-gray-500 max-w-2xl mx-auto">Découvrez notre sélection de fleurs fraîches, soigneusement choisies par nos fleuristes partenaires.</p>
+				</div>
+
+				{# Barre de recherche moderne #}
+				<div class="max-w-3xl mx-auto">
+					{{ form_start(searchForm, {'attr': {'class': 'flex flex-col sm:flex-row gap-3'}}) }}
+					<div class="flex-grow relative">
+						<i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+						{{ form_widget(searchForm.search, {'attr': {'class': 'w-full pl-12 pr-4 py-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-lg', 'placeholder': 'Rechercher une fleur...', 'value': search}}) }}
+					</div>
+					<div class="flex gap-3">
+						{{ form_widget(searchForm.sort, {'attr': {'class': 'px-5 py-4 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-lg'}, 'value': currentSort}) }}
+						<button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+							Rechercher
+						</button>
+					</div>
+					{{ form_end(searchForm) }}
 				</div>
 			</div>
-			<div class="ml-2 flex-shrink-0">
-				{{ form_widget(searchForm.sort, {'attr': {'class': 'px-3 py-2 rounded-md border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm w-auto', 'style': 'max-width: 160px'}, 'value': currentSort}) }}
-			</div>
-			{{ form_end(searchForm) }}
-		</div>
+		</section>
 
-		<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-			{% for fleur in fleurs %}
-				<div class="bg-white rounded-lg shadow-md overflow-hidden relative">
-					<img
-					src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-48 object-cover">
-
-					{# Badge de stock #}
-					<div class="absolute top-2 right-2">
-						<span class="px-2 py-1 text-xs font-semibold rounded-full
-								                            {% if fleur.stockStatus == 'out_of_stock' %}
-								                                bg-red-100 text-red-800
-								                            {% elseif fleur.stockStatus == 'low_stock' %}
-								                                bg-orange-100 text-orange-800
-								                            {% elseif fleur.stockStatus == 'medium_stock' %}
-								                                bg-yellow-100 text-yellow-800
-								                            {% elseif fleur.stockStatus == 'in_stock' %}
-								                                bg-green-100 text-green-800
-								                            {% else %}
-								                                bg-gray-100 text-gray-800
-								                            {% endif %}">
-							{{ fleur.stockLabel }}
-						</span>
+		{# Produits Grid #}
+		<section class="relative z-10 pb-20">
+			<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+				{# Résultats count #}
+				<div class="flex items-center justify-center gap-6 mb-10">
+					<div class="flex items-center gap-2 px-5 py-2.5 bg-white/60 backdrop-blur-sm rounded-xl border border-white/50 shadow">
+						<i class="fas fa-leaf text-green-600"></i>
+						<span class="font-semibold text-gray-700">{{ fleurs|length }} fleurs disponibles</span>
 					</div>
+				</div>
 
-					<div class="p-4">
-						<h2 class="text-xl font-semibold mb-2">{{ fleur.nom }}</h2>
-
-						<!-- Tags de la fleur -->
-						{% if fleur.tags|length > 0 %}
-							<div class="flex flex-wrap gap-1 mb-2">
-								{% for tag in fleur.tags %}
-									<a href="{{ path('app_search', {'tag': tag.id}) }}" class="inline-block px-2 py-1 rounded-full text-xs font-semibold" style="background-color: {{ tag.couleur }}; color: {{ tag.textColor }}">
-										{{ tag.nom }}
-									</a>
-								{% endfor %}
+			{# Grid de produits #}
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+				{% for fleur in fleurs %}
+					<div class="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-white/50 hover:-translate-y-2">
+						{# Image avec overlay #}
+						<div class="relative h-56 overflow-hidden">
+							<a href="{{ path('product_detail', {'id': fleur.id}) }}">
+								<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+							</a>
+							
+							{# Badge stock #}
+							<div class="absolute top-4 left-4">
+								<span class="px-3 py-1 text-xs font-semibold rounded-full backdrop-blur-sm
+									{% if fleur.stockStatus == 'out_of_stock' %}
+										bg-red-500/90 text-white
+									{% elseif fleur.stockStatus == 'low_stock' %}
+										bg-orange-500/90 text-white
+									{% elseif fleur.stockStatus == 'medium_stock' %}
+										bg-yellow-500/90 text-white
+									{% else %}
+										bg-green-500/90 text-white
+									{% endif %}">
+									{{ fleur.stockLabel }}
+								</span>
 							</div>
-						{% endif %}
 
-						<p class="text-gray-600 mb-4">{{ fleur.description|slice(0, 100) }}
-							{% if fleur.description|length > 100 %}...
+							{# Badge épinglé #}
+							{% if fleur.isPinned %}
+								<div class="absolute top-4 right-4">
+									<span class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
+										<i class="fas fa-star text-white text-sm"></i>
+									</span>
+								</div>
 							{% endif %}
-						</p>
-						<div class="flex justify-between items-center">
-							<span class="text-lg font-bold text-green-600">{{ fleur.prix }}
-								€</span>
-							<span class="text-sm text-gray-500">Stock:
-								{{ fleur.stock }}</span>
-						</div>
-						{% if fleur.noteMoyenne is not null %}
-						<div class="flex items-center mt-2">
-							{% for i in 1..5 %}
-								{% if i <= fleur.noteMoyenne %}
-									<span class="text-yellow-400 text-sm">★</span>
-								{% else %}
-									<span class="text-gray-300 text-sm">★</span>
-								{% endif %}
-							{% endfor %}
-							<span class="text-xs text-gray-500 ml-1">({{ fleur.nombreCommentaires }})</span>
-						</div>
-						{% endif %}
-						<div class="mt-4 flex justify-between items-center">
-							<span class="text-green-600 font-bold">{{ fleur.prix }}€</span>
-							<div class="flex space-x-2">
-								<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded text-sm">
-									Détails
+
+							{# Quick actions overlay #}
+							<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+								<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-800 hover:bg-green-600 hover:text-white transition-colors shadow-lg">
+									<i class="fas fa-eye"></i>
 								</a>
-								{% if is_granted('ROLE_USER') %}
-									<form action="{{ path('app_cart_add', {'id': fleur.id}) }}" method="POST" class="inline">
-										<button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
-											<i class="fas fa-cart-plus mr-1"></i>
-											Ajouter
+								{% if is_granted('ROLE_USER') and fleur.stock > 0 %}
+									<form action="{{ path('app_cart_add', {'id': fleur.id}) }}" method="POST">
+										<button type="submit" class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-gray-800 hover:bg-green-600 hover:text-white transition-colors shadow-lg">
+											<i class="fas fa-shopping-bag"></i>
 										</button>
 									</form>
 								{% endif %}
 							</div>
 						</div>
+
+						{# Content #}
+						<div class="p-5">
+							{# Tags #}
+							{% if fleur.tags|length > 0 %}
+								<div class="flex flex-wrap gap-1 mb-3">
+									{% for tag in fleur.tags|slice(0, 3) %}
+										<a href="{{ path('app_search', {'tag': tag.id}) }}" class="px-2 py-0.5 rounded-full text-xs font-medium transition-opacity hover:opacity-80" style="background-color: {{ tag.couleur }}20; color: {{ tag.couleur }}">
+											{{ tag.nom }}
+										</a>
+									{% endfor %}
+									{% if fleur.tags|length > 3 %}
+										<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600">+{{ fleur.tags|length - 3 }}</span>
+									{% endif %}
+								</div>
+							{% endif %}
+
+							{# Nom #}
+							<a href="{{ path('product_detail', {'id': fleur.id}) }}">
+								<h3 class="font-bold text-lg text-gray-900 mb-2 hover:text-green-600 transition-colors">{{ fleur.nom }}</h3>
+							</a>
+
+							{# Description #}
+							<p class="text-gray-500 text-sm mb-4 line-clamp-2">{{ fleur.description|slice(0, 80) }}{% if fleur.description|length > 80 %}...{% endif %}</p>
+
+							{# Rating #}
+							{% if fleur.noteMoyenne is not null %}
+								<div class="flex items-center gap-2 mb-4">
+									<div class="flex">
+										{% for i in 1..5 %}
+											{% if i <= fleur.noteMoyenne %}
+												<span class="text-yellow-400">★</span>
+											{% else %}
+												<span class="text-gray-200">★</span>
+											{% endif %}
+										{% endfor %}
+									</div>
+									<span class="text-sm text-gray-500">({{ fleur.nombreCommentaires }} avis)</span>
+								</div>
+							{% endif %}
+
+							{# Prix et bouton #}
+							<div class="flex items-center justify-between pt-4 border-t border-gray-100">
+								<div>
+									<span class="text-2xl font-bold text-green-600">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+								</div>
+								<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-colors">
+									Voir détails
+								</a>
+							</div>
+						</div>
 					</div>
-				</div>
-			{% else %}
-				<p class="col-span-full text-center text-gray-500">Aucune fleur disponible pour le moment.</p>
-			{% endfor %}
-		</div>
+				{% else %}
+					<div class="col-span-full">
+						<div class="max-w-lg mx-auto text-center bg-white/70 backdrop-blur-sm rounded-3xl p-12 border border-white/50 shadow-lg">
+							<div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+								<i class="fas fa-seedling text-green-400 text-3xl"></i>
+							</div>
+							<h3 class="text-xl font-bold text-gray-900 mb-2">Aucune fleur trouvée</h3>
+							<p class="text-gray-500 mb-6">Essayez de modifier vos critères de recherche.</p>
+							<a href="{{ path('app_product') }}" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl font-semibold transition-all hover:shadow-lg">
+								<i class="fas fa-leaf"></i>
+								Voir toutes les fleurs
+							</a>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+			</div>
+		</section>
 	</div>
 {% endblock %}

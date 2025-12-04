@@ -3,64 +3,108 @@
 {% block title %}Conversation - FleurVerte{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        <!-- En-tête de la conversation -->
-        <div class="p-4 bg-green-600 text-white flex items-center justify-between">
-            <div class="flex items-center">
-                <a href="{{ path('app_messages_index') }}" class="mr-4 text-white hover:text-green-200">
-                    <i class="fas fa-arrow-left"></i>
-                </a>
-                {% if app.user.isClient() %}
-                    {% set otherUser = conversation.fleuriste %}
-                    <h1 class="text-xl font-bold">{{ otherUser.nom }}</h1>
-                {% else %}
-                    {% set otherUser = conversation.client.user %}
-                    <h1 class="text-xl font-bold">{{ otherUser.username }}</h1>
-                {% endif %}
-            </div>
-            {% if app.user.isClient() and conversation.fleuriste.user %}
-                <a href="{{ path('app_fleuriste_detail', {'id': conversation.fleuriste.id}) }}" class="text-white hover:text-green-200 text-sm">
-                    Voir le profil <i class="fas fa-external-link-alt ml-1"></i>
-                </a>
-            {% endif %}
-        </div>
-        
-        <!-- Corps de la conversation -->
-        <div class="flex flex-col h-[60vh]">
-            <!-- Messages -->
-            <div class="flex-1 p-4 overflow-y-auto" id="messages-container">
-                {% if conversation.messages|length > 0 %}
-                    <div class="space-y-4">
-                        {% for message in conversation.messages %}
-                            <div class="flex {% if message.expediteur == app.user %}justify-end{% else %}justify-start{% endif %}">
-                                <div class="{% if message.expediteur == app.user %}bg-green-500 text-white{% else %}bg-gray-200 text-gray-800{% endif %} rounded-lg px-4 py-2 max-w-[80%] break-words">
-                                    <div class="text-sm">{{ message.contenu|nl2br }}</div>
-                                    <div class="text-xs {% if message.expediteur == app.user %}text-green-100{% else %}text-gray-500{% endif %} text-right mt-1">
-                                        {{ message.dateEnvoi|date('H:i') }}
-                                    </div>
-                                </div>
+{# Page Conversation - Design moderne avec Live Messaging #}
+<div class="min-h-screen bg-white relative overflow-hidden">
+    {# Formes décoratives #}
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-green-100/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-40 right-10 w-96 h-96 bg-emerald-100/15 rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-8 relative z-10">
+        {# Conteneur principal #}
+        <div class="bg-white/80 backdrop-blur-sm rounded-3xl border border-white/50 shadow-2xl overflow-hidden h-[85vh] flex flex-col">
+            
+            {# En-tête de la conversation #}
+            <div class="px-6 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <a href="{{ path('app_messages_index') }}" class="w-10 h-10 bg-white/20 hover:bg-white/30 rounded-full flex items-center justify-center transition-colors">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="flex items-center gap-3">
+                        {% if app.user.isClient() %}
+                            {% set otherUser = conversation.fleuriste %}
+                            {% set otherAvatar = conversation.fleuriste.user.avatarName %}
+                            {% set otherName = otherUser.nom %}
+                        {% else %}
+                            {% set otherUser = conversation.client.user %}
+                            {% set otherAvatar = otherUser.avatarName %}
+                            {% set otherName = otherUser.username %}
+                        {% endif %}
+                        <img src="{{ otherAvatar ? asset('uploads/avatars/' ~ otherAvatar) : asset('basic_avatar/1.png') }}" 
+                            alt="{{ otherName }}" class="w-12 h-12 rounded-full object-cover border-2 border-white/30">
+                        <div>
+                            <h1 class="text-lg font-bold">{{ otherName }}</h1>
+                            <div class="flex items-center gap-2 text-green-100 text-sm">
+                                <span class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
+                                <span id="status-text">En ligne</span>
                             </div>
-                        {% endfor %}
+                        </div>
                     </div>
-                {% else %}
-                    <div class="flex items-center justify-center h-full">
-                        <p class="text-gray-500 italic">Aucun message dans cette conversation. Envoyez le premier message !</p>
-                    </div>
+                </div>
+                {% if app.user.isClient() and conversation.fleuriste.user %}
+                    <a href="{{ path('app_fleuriste_detail', {'id': conversation.fleuriste.user.id}) }}" 
+                        class="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-sm font-medium transition-colors">
+                        <i class="fas fa-store"></i>
+                        Voir boutique
+                    </a>
                 {% endif %}
             </div>
             
-            <!-- Formulaire d'envoi de message -->
-            <div class="border-t border-gray-200 p-4 bg-gray-50">
-                {{ form_start(form, {'attr': {'class': 'flex items-end'}}) }}
-                    <div class="flex-1">
-                        {{ form_widget(form.contenu) }}
-                        {{ form_errors(form.contenu) }}
+            {# Zone des messages #}
+            <div class="flex-1 overflow-y-auto p-6 bg-gray-50/50" id="messages-container">
+                <div class="space-y-4" id="messages-list">
+                    {% for message in conversation.messages %}
+                        <div class="flex {% if message.expediteur == app.user %}justify-end{% else %}justify-start{% endif %} message-item" data-message-id="{{ message.id }}">
+                            <div class="max-w-[75%] {% if message.expediteur == app.user %}order-2{% endif %}">
+                                <div class="{% if message.expediteur == app.user %}bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-2xl rounded-br-sm{% else %}bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100{% endif %} px-4 py-3">
+                                    <p class="text-sm whitespace-pre-wrap break-words">{{ message.contenu }}</p>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1 {% if message.expediteur == app.user %}text-right{% endif %}">
+                                    {{ message.dateEnvoi|date('H:i') }}
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="flex items-center justify-center h-full py-20" id="empty-message">
+                            <div class="text-center">
+                                <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-comments text-green-400 text-3xl"></i>
+                                </div>
+                                <p class="text-gray-500">Démarrez la conversation !</p>
+                                <p class="text-gray-400 text-sm mt-1">Envoyez votre premier message</p>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {# Indicateur "en train d'écrire" #}
+            <div id="typing-indicator" class="hidden px-6 py-2 bg-gray-50/50">
+                <div class="flex items-center gap-2 text-gray-500 text-sm">
+                    <div class="flex gap-1">
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></span>
+                        <span class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></span>
                     </div>
-                    <button type="submit" class="ml-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-150 ease-in-out flex-shrink-0">
-                        <i class="fas fa-paper-plane mr-2"></i> Envoyer
+                    <span>{{ otherName }} écrit...</span>
+                </div>
+            </div>
+            
+            {# Formulaire d'envoi #}
+            <div class="px-6 py-4 bg-white border-t border-gray-100">
+                <form id="message-form" class="flex items-end gap-3">
+                    <div class="flex-1 relative">
+                        <textarea id="message-input" name="contenu" rows="1" 
+                            placeholder="Écrivez votre message..." 
+                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
+                            style="max-height: 120px;"></textarea>
+                    </div>
+                    <button type="submit" id="send-button" 
+                        class="w-12 h-12 bg-green-500 hover:bg-green-600 text-white rounded-xl flex items-center justify-center transition-all hover:shadow-lg hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-paper-plane"></i>
                     </button>
-                {{ form_end(form) }}
+                </form>
             </div>
         </div>
     </div>
@@ -70,16 +114,176 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Faire défiler jusqu'au dernier message
-        const messagesContainer = document.getElementById('messages-container');
+(function() {
+    const conversationId = {{ conversation.id }};
+    const messagesContainer = document.getElementById('messages-container');
+    const messagesList = document.getElementById('messages-list');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const emptyMessage = document.getElementById('empty-message');
+    
+    let lastMessageId = {{ conversation.messages|last ? conversation.messages|last.id : 0 }};
+    let isPolling = true;
+    let pollInterval = 2000; // 2 secondes
+
+    // Scroll to bottom
+    function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        
-        // Focus sur le champ de texte
-        const textareaField = document.querySelector('textarea[name="message[contenu]"]');
-        if (textareaField) {
-            textareaField.focus();
+    }
+
+    // Auto-resize textarea
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    });
+
+    // Envoyer avec Enter (Shift+Enter pour nouvelle ligne)
+    messageInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            messageForm.dispatchEvent(new Event('submit'));
         }
     });
+
+    // Créer un élément de message
+    function createMessageElement(message) {
+        const div = document.createElement('div');
+        div.className = `flex ${message.isOwn ? 'justify-end' : 'justify-start'} message-item`;
+        div.dataset.messageId = message.id;
+        
+        div.innerHTML = `
+            <div class="max-w-[75%] ${message.isOwn ? 'order-2' : ''}">
+                <div class="${message.isOwn 
+                    ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white rounded-2xl rounded-br-sm' 
+                    : 'bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100'} px-4 py-3">
+                    <p class="text-sm whitespace-pre-wrap break-words">${escapeHtml(message.contenu)}</p>
+                </div>
+                <p class="text-xs text-gray-400 mt-1 ${message.isOwn ? 'text-right' : ''}">${message.dateEnvoi}</p>
+            </div>
+        `;
+        
+        return div;
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Envoyer un message
+    messageForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const contenu = messageInput.value.trim();
+        if (!contenu) return;
+
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+
+        try {
+            const response = await fetch(`/messages/api/conversation/${conversationId}/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ contenu }),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Supprimer le message vide si présent
+                if (emptyMessage) {
+                    emptyMessage.remove();
+                }
+
+                // Ajouter le message
+                const messageEl = createMessageElement(data.message);
+                messagesList.appendChild(messageEl);
+                lastMessageId = data.message.id;
+
+                // Clear input
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+
+                // Scroll
+                scrollToBottom();
+            } else {
+                console.error('Erreur:', data.error);
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+        } finally {
+            sendButton.disabled = false;
+            messageInput.disabled = false;
+            messageInput.focus();
+        }
+    });
+
+    // Polling pour les nouveaux messages
+    async function pollMessages() {
+        if (!isPolling) return;
+
+        try {
+            const response = await fetch(`/messages/api/conversation/${conversationId}/messages?lastMessageId=${lastMessageId}`);
+            const data = await response.json();
+
+            if (data.messages && data.messages.length > 0) {
+                // Supprimer le message vide si présent
+                if (emptyMessage) {
+                    emptyMessage.remove();
+                }
+
+                data.messages.forEach(message => {
+                    // Vérifier si le message n'existe pas déjà
+                    if (!document.querySelector(`[data-message-id="${message.id}"]`)) {
+                        const messageEl = createMessageElement(message);
+                        messagesList.appendChild(messageEl);
+                        
+                        // Animation
+                        messageEl.style.opacity = '0';
+                        messageEl.style.transform = 'translateY(10px)';
+                        requestAnimationFrame(() => {
+                            messageEl.style.transition = 'all 0.3s ease';
+                            messageEl.style.opacity = '1';
+                            messageEl.style.transform = 'translateY(0)';
+                        });
+                    }
+                    lastMessageId = Math.max(lastMessageId, message.id);
+                });
+
+                scrollToBottom();
+
+                // Notification sonore pour nouveau message (optionnel)
+                if (data.messages.some(m => !m.isOwn)) {
+                    // Vous pouvez ajouter un son ici
+                }
+            }
+        } catch (error) {
+            console.error('Erreur polling:', error);
+        }
+
+        // Continuer le polling
+        setTimeout(pollMessages, pollInterval);
+    }
+
+    // Démarrer
+    scrollToBottom();
+    messageInput.focus();
+    
+    // Démarrer le polling après un court délai
+    setTimeout(pollMessages, pollInterval);
+
+    // Arrêter le polling quand la page n'est pas visible
+    document.addEventListener('visibilitychange', function() {
+        isPolling = !document.hidden;
+        if (isPolling) {
+            pollMessages();
+        }
+    });
+})();
 </script>
 {% endblock %}

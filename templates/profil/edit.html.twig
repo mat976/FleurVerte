@@ -1,87 +1,169 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier le profil
-{% endblock %}
+{% block title %}Modifier le profil - FleurVerte{% endblock %}
 
 {% block body %}
-<div class="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-	<div class="sm:mx-auto sm:w-full sm:max-w-md">
-		<h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-			Modifier votre profil
-		</h2>
+{# Page Edit Profil - Design moderne #}
+<div class="min-h-screen bg-white relative overflow-hidden" x-data="{ 
+	role: '{{ form.roles.vars.data }}',
+	selectedAvatar: '{{ app.user.avatarName }}'
+}">
+	{# Formes décoratives #}
+	<div class="absolute inset-0 overflow-hidden pointer-events-none">
+		<div class="absolute top-20 left-10 w-72 h-72 bg-green-100/30 rounded-full blur-3xl animate-float"></div>
+		<div class="absolute bottom-40 right-10 w-96 h-96 bg-emerald-100/20 rounded-full blur-3xl animate-float-slow"></div>
+		<div class="absolute top-40 right-1/4 text-green-200/20 text-8xl animate-pulse-soft">✏️</div>
 	</div>
 
-	<div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-		<div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-			{{ form_start(form, {'attr': {'class': 'space-y-6', 'data-controller': 'avatar'}}) }}
+	<div class="max-w-2xl mx-auto px-4 py-16 relative z-10">
+		{# Header #}
+		<div class="text-center mb-12">
+			<div class="inline-flex items-center gap-2 px-5 py-2 bg-green-50/80 backdrop-blur-sm rounded-full border border-green-100 mb-6">
+				<i class="fas fa-edit text-green-600"></i>
+				<span class="text-green-700 font-medium text-sm">Modification</span>
+			</div>
+			<h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Modifier le profil</h1>
+			<p class="text-gray-500">Mettez à jour vos informations personnelles</p>
+		</div>
 
-			<div>
-				{{ form_label(form.email, 'Adresse e-mail', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-				<div class="mt-1">
-					{{ form_widget(form.email, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm'}}) }}
+		{# Flash Messages #}
+		{% for message in app.flashes('error') %}
+			<div class="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-2xl mb-6 flex items-center gap-3">
+				<i class="fas fa-exclamation-circle text-red-500"></i>
+				<span>{{ message }}</span>
+			</div>
+		{% endfor %}
+
+		{# Formulaire #}
+		<div class="bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg overflow-hidden">
+			{{ form_start(form, {'attr': {'class': 'divide-y divide-gray-100'}}) }}
+			
+			{# Section Informations de base #}
+			<div class="p-8">
+				<h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+					<i class="fas fa-user-circle text-green-500"></i>
+					Informations personnelles
+				</h3>
+				
+				<div class="space-y-5">
+					{# Email #}
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Adresse e-mail</label>
+						{{ form_widget(form.email, {'attr': {'class': 'w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'}}) }}
+					</div>
+
+					{# Username #}
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Nom d'utilisateur</label>
+						{{ form_widget(form.username, {'attr': {'class': 'w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'}}) }}
+					</div>
 				</div>
 			</div>
 
-			<div>
-				{{ form_label(form.username, 'Nom d\'utilisateur', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                <div class="mt-1">
-                    {{ form_widget(form.username, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm'}}) }}
-                </div>
-            </div>
+			{# Section Type de compte #}
+			<div class="p-8">
+				<h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+					<i class="fas fa-id-badge text-blue-500"></i>
+					Type de compte
+				</h3>
+				
+				<div class="space-y-5">
+					{# Rôle #}
+					<div>
+						<label class="block text-sm font-medium text-gray-700 mb-2">Je suis</label>
+						{{ form_widget(form.roles, {'attr': {
+							'class': 'w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all',
+							'x-model': 'role'
+						}}) }}
+						<p class="mt-2 text-sm text-gray-500">
+							<i class="fas fa-info-circle mr-1"></i>
+							En devenant fleuriste, vous pourrez vendre vos fleurs sur la plateforme.
+						</p>
+					</div>
 
-            <div>
-                {{ form_label(form.roles, 'Rôle', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                <div class="mt-1">
-                    {{ form_widget(form.roles, {'attr': {'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm'}}) }}
-                </div>
-            </div>
+					{# Nom boutique (affiché si fleuriste) #}
+					<div x-show="role === 'ROLE_FLEURISTE'" x-transition class="p-4 bg-green-50 rounded-xl border border-green-100">
+						<label class="block text-sm font-medium text-green-700 mb-2">
+							<i class="fas fa-store mr-1"></i>Nom de votre boutique *
+						</label>
+						{{ form_widget(form.shopName, {'attr': {'class': 'w-full px-4 py-3 bg-white border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all'}}) }}
+						<p class="mt-2 text-xs text-green-600">Ce nom sera visible par les clients sur votre boutique.</p>
+					</div>
+				</div>
+			</div>
 
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Avatar actuel</label>
-                    <img src="{{ asset('uploads/avatars/' ~ app.user.avatarName) }}" alt="Avatar actuel" class="w-20 h-20 rounded-full">
-                </div>
+			{# Section Avatar #}
+			<div class="p-8">
+				<h3 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+					<i class="fas fa-camera text-purple-500"></i>
+					Photo de profil
+				</h3>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Choisir un nouvel avatar</label>
-                    <div class="grid grid-cols-5 gap-4">
-                        {% for i in 1..10 %}
-                            <label class="cursor-pointer block">
-                                <input type="radio" name="{{ form.avatarName.vars.full_name }}" value="{{ i }}.png" class="sr-only" 
-                                       data-avatar-target="avatarRadio"
-                                       {% if app.user.avatarName == i ~ '.png' %}checked{% endif %}>
-                                <img src="{{ asset('uploads/avatars/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
-                                     data-avatar-target="avatarImage"
-                                     class="w-12 h-12 rounded-full transition-all duration-200 hover:ring-2 hover:ring-green-300 
-                                            {% if app.user.avatarName == i ~ '.png' %}ring-2 ring-green-500{% endif %}">
-                            </label>
-                        {% endfor %}
-                    </div>
-                </div>
+				{# Avatar actuel #}
+				<div class="flex items-center gap-4 mb-6">
+					<img src="{{ app.user.avatarName ? asset('uploads/avatars/' ~ app.user.avatarName) : asset('basic_avatar/1.png') }}" 
+						alt="Avatar actuel" class="w-20 h-20 rounded-full object-cover border-4 border-green-200">
+					<div>
+						<p class="font-medium text-gray-900">Avatar actuel</p>
+						<p class="text-sm text-gray-500">Choisissez un nouvel avatar ci-dessous</p>
+					</div>
+				</div>
 
-                <div>
-                    {{ form_label(form.avatarFile, 'Ou téléchargez votre propre avatar', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
-                    <div class="mt-1">
-                        {{ form_widget(form.avatarFile, {'attr': {
-                            'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm text-gray-500
-                                file:mr-4 file:py-2 file:px-4
-                                file:rounded-md file:border-0
-                                file:text-sm file:font-semibold
-                                file:bg-green-50 file:text-green-700
-                                hover:file:bg-green-100',
-                            'data-avatar-target': 'fileInput'
-                        }}) }}
-                    </div>
-                </div>
-            </div>
+				{# Sélection d'avatars #}
+				<div class="mb-6">
+					<label class="block text-sm font-medium text-gray-700 mb-3">Avatars prédéfinis</label>
+					<div class="grid grid-cols-5 sm:grid-cols-10 gap-3">
+						{% for i in 1..10 %}
+							<label class="cursor-pointer group">
+								<input type="radio" name="{{ form.avatarName.vars.full_name }}" value="{{ i }}.png" class="sr-only peer"
+									{% if app.user.avatarName == i ~ '.png' %}checked{% endif %}
+									@click="selectedAvatar = '{{ i }}.png'">
+								<img src="{{ asset('basic_avatar/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
+									class="w-12 h-12 rounded-full transition-all duration-200 border-2 border-transparent 
+										peer-checked:border-green-500 peer-checked:ring-2 peer-checked:ring-green-200
+										group-hover:scale-110 group-hover:border-green-300">
+							</label>
+						{% endfor %}
+					</div>
+				</div>
 
-            <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    Mettre à jour le profil
-                </button>
-            </div>
-            {{ form_end(form, {'render_rest': false}) }}
-        </div>
-    </div>
+				{# Upload personnalisé #}
+				<div>
+					<label class="block text-sm font-medium text-gray-700 mb-2">Ou téléchargez votre propre image</label>
+					<div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl hover:border-green-400 transition-colors">
+						<div class="space-y-1 text-center">
+							<i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+							<div class="flex text-sm text-gray-600">
+								<label class="relative cursor-pointer bg-white rounded-md font-medium text-green-600 hover:text-green-500">
+									<span>Choisir un fichier</span>
+									{{ form_widget(form.avatarFile, {'attr': {'class': 'sr-only'}}) }}
+								</label>
+								<p class="pl-1">ou glisser-déposer</p>
+							</div>
+							<p class="text-xs text-gray-500">PNG, JPG jusqu'à 1MB</p>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			{# Boutons #}
+			<div class="p-8 bg-gray-50/50">
+				<div class="flex flex-col sm:flex-row gap-4">
+					<button type="submit" 
+						class="flex-1 inline-flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white py-4 px-6 rounded-xl font-semibold transition-all hover:shadow-lg hover:-translate-y-0.5">
+						<i class="fas fa-save"></i>
+						Enregistrer les modifications
+					</button>
+					<a href="{{ path('app_profil_index') }}" 
+						class="flex-1 inline-flex items-center justify-center gap-2 bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 py-4 px-6 rounded-xl font-semibold transition-colors">
+						<i class="fas fa-times"></i>
+						Annuler
+					</a>
+				</div>
+			</div>
+
+			{{ form_end(form, {'render_rest': false}) }}
+		</div>
+	</div>
 </div>
 {% endblock %}

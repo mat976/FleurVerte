@@ -3,89 +3,105 @@
 {% block title %}Mes messages - FleurVerte{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 py-8">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="p-6 bg-green-600 text-white">
-            <h1 class="text-2xl font-bold">Mes conversations</h1>
+{# Page Messages - Design moderne #}
+<div class="min-h-screen bg-white relative overflow-hidden">
+    {# Formes décoratives #}
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-green-100/30 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-40 right-10 w-96 h-96 bg-emerald-100/20 rounded-full blur-3xl animate-float-slow"></div>
+        <div class="absolute top-40 right-1/4 text-green-200/20 text-8xl animate-pulse-soft">💬</div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 py-16 relative z-10">
+        {# Header #}
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center gap-2 px-5 py-2 bg-green-50/80 backdrop-blur-sm rounded-full border border-green-100 mb-6">
+                <i class="fas fa-comments text-green-600"></i>
+                <span class="text-green-700 font-medium text-sm">Messagerie</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Mes Conversations</h1>
+            <p class="text-lg text-gray-500">Échangez avec vos fleuristes préférés</p>
         </div>
-        
-        <div class="p-6">
-            {% if conversations is empty %}
-                <div class="text-center py-8">
-                    <p class="text-gray-500 mb-4">Vous n'avez pas encore de conversations.</p>
-                    {% if app.user.isClient() %}
-                        <p>Visitez notre <a href="{{ path('app_fleuriste_index') }}" class="text-green-600 hover:underline">liste de fleuristes</a> pour démarrer une conversation.</p>
-                    {% else %}
-                        <p>Les clients pourront vous contacter via cette interface.</p>
-                    {% endif %}
+
+        {# Contenu #}
+        {% if conversations is empty %}
+            <div class="max-w-lg mx-auto text-center bg-white/70 backdrop-blur-sm rounded-3xl p-12 border border-white/50 shadow-lg">
+                <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i class="fas fa-inbox text-green-400 text-4xl"></i>
                 </div>
-            {% else %}
-                <div class="divide-y divide-gray-200">
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">Aucune conversation</h3>
+                <p class="text-gray-500 mb-8">Vous n'avez pas encore démarré de conversation.</p>
+                {% if app.user.isClient() %}
+                    <a href="{{ path('app_fleuriste_index') }}" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl font-semibold transition-all hover:shadow-lg hover:-translate-y-0.5">
+                        <i class="fas fa-store"></i>
+                        Découvrir les fleuristes
+                    </a>
+                {% else %}
+                    <p class="text-gray-400 text-sm">Les clients pourront vous contacter depuis votre boutique.</p>
+                {% endif %}
+            </div>
+        {% else %}
+            {# Liste des conversations #}
+            <div class="bg-white/70 backdrop-blur-sm rounded-3xl border border-white/50 shadow-lg overflow-hidden">
+                <div class="divide-y divide-gray-100">
                     {% for conversation in conversations %}
                         {% set unreadCount = conversation.countMessagesNonLus(app.user) %}
-                        <a href="{{ path('app_conversation_show', {'id': conversation.id}) }}" class="block hover:bg-gray-50 transition duration-150 ease-in-out">
-                            <div class="flex items-center py-4 px-2 {% if unreadCount > 0 %}bg-green-50{% endif %}">
-                                <div class="flex-shrink-0 mr-4">
-                                    {% if app.user.isClient() %}
-                                        {% set otherUser = conversation.fleuriste.user %}
-                                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
-                                            {% if otherUser.avatarName %}
-                                                <img src="{{ asset('uploads/avatars/' ~ otherUser.avatarName) }}" alt="{{ otherUser.username }}" class="w-12 h-12 rounded-full object-cover">
-                                            {% else %}
-                                                <span class="text-green-600 font-bold text-xl">{{ otherUser.username|first|upper }}</span>
+                        {% if app.user.isClient() %}
+                            {% set otherUser = conversation.fleuriste.user %}
+                            {% set otherName = conversation.fleuriste.nom %}
+                        {% else %}
+                            {% set otherUser = conversation.client.user %}
+                            {% set otherName = otherUser.username %}
+                        {% endif %}
+                        
+                        <a href="{{ path('app_conversation_show', {'id': conversation.id}) }}" 
+                            class="flex items-center gap-4 p-5 hover:bg-white/50 transition-all group {% if unreadCount > 0 %}bg-green-50/50{% endif %}">
+                            
+                            {# Avatar #}
+                            <div class="relative flex-shrink-0">
+                                <img src="{{ otherUser.avatarName ? asset('uploads/avatars/' ~ otherUser.avatarName) : asset('basic_avatar/1.png') }}" 
+                                    alt="{{ otherName }}" 
+                                    class="w-14 h-14 rounded-full object-cover border-2 border-white shadow group-hover:scale-105 transition-transform">
+                                {# Indicateur en ligne #}
+                                <span class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
+                            </div>
+                            
+                            {# Infos #}
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between mb-1">
+                                    <h3 class="font-bold text-gray-900 truncate group-hover:text-green-600 transition-colors">{{ otherName }}</h3>
+                                    <span class="text-xs text-gray-400 flex-shrink-0 ml-2">{{ conversation.dateDerniereActivite|date('d/m H:i') }}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    {% if conversation.messages|length > 0 %}
+                                        {% set lastMessage = conversation.messages|last %}
+                                        <p class="text-sm text-gray-500 truncate">
+                                            {% if lastMessage.expediteur == app.user %}
+                                                <span class="text-gray-400">Vous : </span>
                                             {% endif %}
-                                        </div>
+                                            {{ lastMessage.contenu|striptags|slice(0, 40) }}{% if lastMessage.contenu|length > 40 %}...{% endif %}
+                                        </p>
                                     {% else %}
-                                        {% set otherUser = conversation.client.user %}
-                                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
-                                            {% if otherUser.avatarName %}
-                                                <img src="{{ asset('uploads/avatars/' ~ otherUser.avatarName) }}" alt="{{ otherUser.username }}" class="w-12 h-12 rounded-full object-cover">
-                                            {% else %}
-                                                <span class="text-blue-600 font-bold text-xl">{{ otherUser.username|first|upper }}</span>
-                                            {% endif %}
-                                        </div>
+                                        <p class="text-sm text-gray-400 italic">Démarrer la conversation</p>
                                     {% endif %}
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center justify-between">
-                                        <h2 class="text-lg font-medium text-gray-900 truncate">
-                                            {% if app.user.isClient() %}
-                                                {{ conversation.fleuriste.nom }}
-                                            {% else %}
-                                                {{ conversation.client.user.username }}
-                                            {% endif %}
-                                        </h2>
-                                        <span class="text-sm text-gray-500">
-                                            {{ conversation.dateDerniereActivite|date('d/m/Y H:i') }}
-                                        </span>
-                                    </div>
-                                    <div class="mt-1">
-                                        {% if conversation.messages|length > 0 %}
-                                            {% set lastMessage = conversation.messages|last %}
-                                            <p class="text-sm text-gray-600 truncate">
-                                                {% if lastMessage.expediteur == app.user %}
-                                                    <span class="text-gray-400">Vous: </span>
-                                                {% endif %}
-                                                {{ lastMessage.contenu|striptags|slice(0, 50) ~ (lastMessage.contenu|length > 50 ? '...' : '') }}
-                                            </p>
-                                        {% else %}
-                                            <p class="text-sm text-gray-400 italic">Pas encore de messages</p>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                {% if unreadCount > 0 %}
-                                    <div class="ml-4">
-                                        <span class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-green-600 rounded-full">
-                                            {{ unreadCount }}
-                                        </span>
-                                    </div>
-                                {% endif %}
                             </div>
+                            
+                            {# Badge non lu #}
+                            {% if unreadCount > 0 %}
+                                <div class="flex-shrink-0">
+                                    <span class="w-6 h-6 bg-green-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                                        {{ unreadCount }}
+                                    </span>
+                                </div>
+                            {% else %}
+                                <i class="fas fa-chevron-right text-gray-300 group-hover:text-green-500 transition-colors"></i>
+                            {% endif %}
                         </a>
                     {% endfor %}
                 </div>
-            {% endif %}
-        </div>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% endblock %}

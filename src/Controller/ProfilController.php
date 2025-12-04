@@ -38,21 +38,57 @@ class ProfilController extends AbstractController
     {
         /** @var User $user */
         $user = $this->getUser();
-        $form = $this->createForm(ProfilType::class, $user);
+        
+        // Déterminer le rôle actuel
+        $currentRole = in_array('ROLE_FLEURISTE', $user->getRoles()) ? 'ROLE_FLEURISTE' : 'ROLE_USER';
+        $currentShopName = $user->getFleuriste() ? $user->getFleuriste()->getNom() : '';
+        
+        $form = $this->createForm(\App\Form\ProfilType::class, $user);
+        
+        // Pré-remplir le rôle actuel et le nom de boutique
+        $form->get('roles')->setData($currentRole);
+        if ($currentShopName) {
+            $form->get('shopName')->setData($currentShopName);
+        }
+        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             // Gestion du rôle
             $newRole = $form->get('roles')->getData();
-            if ($newRole === 'ROLE_FLEURISTE' && !$user->isFleuriste()) {
-                $fleuriste = new Fleuriste();
-                $fleuriste->setUser($user);
-                $entityManager->persist($fleuriste);
+            $shopName = $form->get('shopName')->getData();
+            
+            if ($newRole === 'ROLE_FLEURISTE') {
+                // Devenir fleuriste
+                if (!$user->isFleuriste()) {
+                    // Vérifier qu'on a un nom de boutique
+                    if (empty($shopName)) {
+                        $this->addFlash('error', 'Veuillez entrer un nom de boutique pour devenir fleuriste.');
+                        return $this->render('profil/edit.html.twig', [
+                            'user' => $user,
+                            'form' => $form,
+                        ]);
+                    }
+                    
+                    $fleuriste = new Fleuriste();
+                    $fleuriste->setUser($user);
+                    $fleuriste->setNom($shopName);
+                    $fleuriste->setActif(true);
+                    $entityManager->persist($fleuriste);
+                }
                 $user->setRoles(['ROLE_FLEURISTE']);
-            } elseif ($newRole === 'ROLE_USER' && !$user->isClient()) {
-                $client = new Client();
-                $client->setUser($user);
-                $entityManager->persist($client);
+                
+                // Mettre à jour le nom de boutique si déjà fleuriste
+                if ($user->getFleuriste() && $shopName) {
+                    $user->getFleuriste()->setNom($shopName);
+                }
+            } else {
+                // Rester ou devenir client
+                if (!$user->isClient()) {
+                    $client = new Client();
+                    $client->setUser($user);
+                    $entityManager->persist($client);
+                }
                 $user->setRoles(['ROLE_USER']);
             }
 
@@ -72,7 +108,7 @@ class ProfilController extends AbstractController
                     );
                     $user->setAvatarName($newFilename);
                 } catch (FileException $e) {
-                    // Gérer l'exception si quelque chose se passe mal pendant le téléchargement du fichier
+                    $this->addFlash('error', 'Erreur lors du téléchargement de l\'avatar.');
                 }
             } elseif ($avatarName) {
                 $user->setAvatarName($avatarName);

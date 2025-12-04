@@ -1,169 +1,263 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-	{{ fleur.nom }}
-	- FleurVerte
-{% endblock %}
+{% block title %}{{ fleur.nom }} - FleurVerte{% endblock %}
 
 {% block body %}
-<div class="container mx-auto px-4 mt-8">
-	<div class="bg-white shadow-lg rounded-lg overflow-hidden">
-		<div class="md:flex">
-			<div class="md:w-1/2">
-				<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-96 object-cover rounded-lg shadow-md">
-			</div>
-			<div class="md:w-1/2 p-8">
-				<div class="flex justify-between items-start mb-4">
-					<h1 class="text-3xl font-bold">{{ fleur.nom }}</h1>
-					<span class="px-3 py-1 text-sm font-semibold rounded-full ml-4
-							                            {% if fleur.stockStatus == 'out_of_stock' %}
-							                                bg-red-100 text-red-800
-							                            {% elseif fleur.stockStatus == 'low_stock' %}
-							                                bg-orange-100 text-orange-800
-							                            {% elseif fleur.stockStatus == 'medium_stock' %}
-							                                bg-yellow-100 text-yellow-800
-							                            {% elseif fleur.stockStatus == 'in_stock' %}
-							                                bg-green-100 text-green-800
-							                            {% else %}
-							                                bg-gray-100 text-gray-800
-							                            {% endif %}">
-						{{ fleur.stockLabel }}
-					</span>
+	{# Breadcrumb #}
+	<div class="bg-gray-50 py-4">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+			<nav class="flex items-center space-x-2 text-sm text-gray-500">
+				<a href="{{ path('app_home') }}" class="hover:text-green-600 transition-colors">Accueil</a>
+				<i class="fas fa-chevron-right text-xs"></i>
+				<a href="{{ path('app_product') }}" class="hover:text-green-600 transition-colors">Nos Fleurs</a>
+				<i class="fas fa-chevron-right text-xs"></i>
+				<span class="text-gray-900 font-medium">{{ fleur.nom }}</span>
+			</nav>
+		</div>
+	</div>
+
+	{# Produit détail #}
+	<section class="py-12 bg-white">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+				{# Image #}
+				<div class="relative w-full">
+					<div class="w-full max-w-md mx-auto lg:max-w-none rounded-3xl overflow-hidden bg-gray-100 shadow-lg" style="aspect-ratio: 1/1;">
+						<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-full object-cover">
+					</div>
+					{# Badges #}
+					{% if fleur.isPinned %}
+						<div class="absolute top-6 left-6">
+							<span class="bg-yellow-400 text-white px-4 py-2 rounded-full font-semibold text-sm shadow-lg">
+								<i class="fas fa-star mr-1"></i>Populaire
+							</span>
+						</div>
+					{% endif %}
+					<div class="absolute top-6 right-6">
+						<span class="px-4 py-2 rounded-full font-semibold text-sm shadow-lg
+							{% if fleur.stockStatus == 'out_of_stock' %}
+								bg-red-500 text-white
+							{% elseif fleur.stockStatus == 'low_stock' %}
+								bg-orange-500 text-white
+							{% elseif fleur.stockStatus == 'medium_stock' %}
+								bg-yellow-500 text-white
+							{% else %}
+								bg-green-500 text-white
+							{% endif %}">
+							{{ fleur.stockLabel }}
+						</span>
+					</div>
 				</div>
 
-				<p class="text-gray-600 mb-4">{{ fleur.description }}</p>
-
-				<!-- Tags de la fleur -->
-				{% if fleur.tags|length > 0 %}
-					<div class="mb-4">
-						<h3 class="text-sm font-medium text-gray-700 mb-2">Tags:</h3>
-						<div class="flex flex-wrap gap-2">
+				{# Infos #}
+				<div class="flex flex-col">
+					{# Tags #}
+					{% if fleur.tags|length > 0 %}
+						<div class="flex flex-wrap gap-2 mb-4">
 							{% for tag in fleur.tags %}
-								<a href="{{ path('app_search', {'tag': tag.id}) }}" class="inline-block px-3 py-1 rounded-full text-sm font-semibold hover:tag-selected transition-all duration-300" style="background-color: {{ tag.couleur }}; color: {{ tag.textColor }}">
+								<a href="{{ path('app_search', {'tag': tag.id}) }}" class="px-3 py-1 rounded-full text-sm font-medium transition-all hover:scale-105" style="background-color: {{ tag.couleur }}20; color: {{ tag.couleur }}; border: 1px solid {{ tag.couleur }}40">
 									{{ tag.nom }}
 								</a>
 							{% endfor %}
 						</div>
-					</div>
-				{% endif %}
+					{% endif %}
 
-				<div class="flex items-center justify-between mb-6">
-					<span class="text-2xl font-bold text-green-600">{{ fleur.prix }}
-						€</span>
-					<div class="text-gray-500">
-						<span class="font-semibold">Stock:</span>
-						<span>{{ fleur.stock }}</span>
-					</div>
-				</div>
+					{# Titre #}
+					<h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{{ fleur.nom }}</h1>
 
-				<div class="mt-6">
-					<a href="{{ path('app_cart_add', {'id': fleur.id}) }}" class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
-						Ajouter au panier
-					</a>
-				</div>
-
-				{# Note moyenne #}
-				<div class="mt-6 p-4 bg-gray-50 rounded-lg">
-					<div class="flex items-center gap-2">
-						<span class="text-lg font-semibold">Note moyenne:</span>
-						{% if fleur.noteMoyenne is not null %}
-							<div class="flex items-center">
+					{# Rating #}
+					{% if fleur.noteMoyenne is not null %}
+						<div class="flex items-center gap-3 mb-6">
+							<div class="flex">
 								{% for i in 1..5 %}
 									{% if i <= fleur.noteMoyenne %}
 										<span class="text-yellow-400 text-xl">★</span>
 									{% else %}
-										<span class="text-gray-300 text-xl">★</span>
+										<span class="text-gray-200 text-xl">★</span>
 									{% endif %}
 								{% endfor %}
-								<span class="ml-2 text-gray-600">({{ fleur.noteMoyenne }}/5 - {{ fleur.nombreCommentaires }} avis)</span>
 							</div>
+							<span class="text-gray-600">{{ fleur.noteMoyenne }}/5</span>
+							<span class="text-gray-400">•</span>
+							<a href="#commentaires" class="text-green-600 hover:underline">{{ fleur.nombreCommentaires }} avis</a>
+						</div>
+					{% endif %}
+
+					{# Prix #}
+					<div class="mb-6">
+						<span class="text-4xl font-bold text-green-600">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+					</div>
+
+					{# Description #}
+					<div class="mb-8">
+						<p class="text-gray-600 leading-relaxed text-lg">{{ fleur.description }}</p>
+					</div>
+
+					{# Stock info #}
+					<div class="flex items-center gap-4 mb-8 p-4 bg-gray-50 rounded-2xl">
+						<div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+							<i class="fas fa-box text-green-600"></i>
+						</div>
+						<div>
+							<p class="font-semibold text-gray-900">{{ fleur.stock }} en stock</p>
+							<p class="text-sm text-gray-500">Expédié sous 24-48h</p>
+						</div>
+					</div>
+
+					{# Boutons #}
+					<div class="flex flex-col sm:flex-row gap-4 mb-8">
+						{% if fleur.stock > 0 %}
+							{% if is_granted('ROLE_USER') %}
+								<form action="{{ path('app_cart_add', {'id': fleur.id}) }}" method="POST" class="flex-1">
+									<button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-full font-semibold text-lg transition-all hover:shadow-xl hover:-translate-y-1">
+										<i class="fas fa-shopping-bag mr-2"></i>Ajouter au panier
+									</button>
+								</form>
+							{% else %}
+								<a href="{{ path('app_login') }}" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 px-8 rounded-full font-semibold text-lg transition-all hover:shadow-xl text-center">
+									<i class="fas fa-sign-in-alt mr-2"></i>Connectez-vous pour acheter
+								</a>
+							{% endif %}
 						{% else %}
-							<span class="text-gray-500">Aucun avis pour le moment</span>
+							<button disabled class="flex-1 bg-gray-300 text-gray-500 py-4 px-8 rounded-full font-semibold text-lg cursor-not-allowed">
+								<i class="fas fa-times-circle mr-2"></i>Rupture de stock
+							</button>
 						{% endif %}
+						<button class="w-14 h-14 border-2 border-gray-200 rounded-full flex items-center justify-center text-gray-400 hover:border-red-400 hover:text-red-400 transition-colors">
+							<i class="fas fa-heart text-xl"></i>
+						</button>
+					</div>
+
+					{# Avantages #}
+					<div class="grid grid-cols-2 gap-4">
+						<div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+							<i class="fas fa-truck text-green-600"></i>
+							<span class="text-sm text-gray-700">Livraison express</span>
+						</div>
+						<div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+							<i class="fas fa-shield-alt text-green-600"></i>
+							<span class="text-sm text-gray-700">Paiement sécurisé</span>
+						</div>
+						<div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+							<i class="fas fa-undo text-green-600"></i>
+							<span class="text-sm text-gray-700">Retours gratuits</span>
+						</div>
+						<div class="flex items-center gap-3 p-3 bg-green-50 rounded-xl">
+							<i class="fas fa-leaf text-green-600"></i>
+							<span class="text-sm text-gray-700">Fleurs fraîches</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 
 	{# Section Commentaires #}
-	<div class="mt-8 bg-white shadow-lg rounded-lg p-6">
-		<h2 class="text-2xl font-bold mb-6">Avis et commentaires</h2>
-
-		{# Formulaire de commentaire #}
-		{% if app.user %}
-			<div class="mb-8 p-4 bg-gray-50 rounded-lg">
-				<h3 class="text-lg font-semibold mb-4">Laisser un avis</h3>
-				{{ form_start(commentaireForm, {'attr': {'class': 'space-y-4'}}) }}
-					<div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-						<div>
-							{{ form_label(commentaireForm.note, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-							{{ form_widget(commentaireForm.note) }}
-							{{ form_errors(commentaireForm.note) }}
+	<section id="commentaires" class="py-12 bg-gray-50">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16">
+			<div class="bg-white rounded-3xl shadow-sm p-8">
+				<div class="flex items-center justify-between mb-8">
+					<h2 class="text-2xl md:text-3xl font-bold text-gray-900">Avis clients</h2>
+					{% if fleur.noteMoyenne is not null %}
+						<div class="flex items-center gap-3 bg-green-50 px-4 py-2 rounded-full">
+							<div class="flex">
+								{% for i in 1..5 %}
+									{% if i <= fleur.noteMoyenne %}
+										<span class="text-yellow-400 text-lg">★</span>
+									{% else %}
+										<span class="text-gray-200 text-lg">★</span>
+									{% endif %}
+								{% endfor %}
+							</div>
+							<span class="font-semibold text-gray-900">{{ fleur.noteMoyenne }}/5</span>
+							<span class="text-gray-500">({{ fleur.nombreCommentaires }} avis)</span>
 						</div>
-						<div class="md:col-span-3">
-							{{ form_label(commentaireForm.contenu, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-1'}}) }}
-							{{ form_widget(commentaireForm.contenu) }}
-							{{ form_errors(commentaireForm.contenu) }}
-						</div>
-					</div>
-					<button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition duration-300">
-						Publier mon avis
-					</button>
-				{{ form_end(commentaireForm) }}
-			</div>
-		{% else %}
-			<div class="mb-8 p-4 bg-blue-50 rounded-lg text-center">
-				<p class="text-gray-700">
-					<a href="{{ path('app_login') }}" class="text-blue-600 hover:underline font-semibold">Connectez-vous</a> pour laisser un avis.
-				</p>
-			</div>
-		{% endif %}
+					{% endif %}
+				</div>
 
-		{# Liste des commentaires #}
-		{% if fleur.commentaires|length > 0 %}
-			<div class="space-y-4">
-				{% for commentaire in fleur.commentaires %}
-					<div class="border-b border-gray-200 pb-4 {% if not loop.last %}mb-4{% endif %}">
-						<div class="flex justify-between items-start">
-							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white font-bold">
-									{{ commentaire.user.username|first|upper }}
-								</div>
+				{# Formulaire de commentaire #}
+				{% if app.user %}
+					<div class="mb-10 p-6 bg-gray-50 rounded-2xl">
+						<h3 class="text-lg font-semibold text-gray-900 mb-4">Donnez votre avis</h3>
+						{{ form_start(commentaireForm, {'attr': {'class': 'space-y-4'}}) }}
+							<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
 								<div>
-									<p class="font-semibold">{{ commentaire.user.username }}</p>
-									<p class="text-sm text-gray-500">{{ commentaire.dateCreation|date('d/m/Y à H:i') }}</p>
+									{{ form_label(commentaireForm.note, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+									{{ form_widget(commentaireForm.note, {'attr': {'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500'}}) }}
+									{{ form_errors(commentaireForm.note) }}
+								</div>
+								<div class="md:col-span-3">
+									{{ form_label(commentaireForm.contenu, null, {'label_attr': {'class': 'block text-sm font-medium text-gray-700 mb-2'}}) }}
+									{{ form_widget(commentaireForm.contenu, {'attr': {'class': 'w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none'}}) }}
+									{{ form_errors(commentaireForm.contenu) }}
 								</div>
 							</div>
-							<div class="flex items-center gap-2">
-								<div class="flex">
-									{% for i in 1..5 %}
-										{% if i <= commentaire.note %}
-											<span class="text-yellow-400">★</span>
-										{% else %}
-											<span class="text-gray-300">★</span>
-										{% endif %}
-									{% endfor %}
-								</div>
-								<span class="text-sm text-gray-600">({{ commentaire.note }}/5)</span>
-							</div>
-						</div>
-						<p class="mt-3 text-gray-700">{{ commentaire.contenu }}</p>
-						
-						{# Bouton supprimer pour le propriétaire ou admin #}
-						{% if app.user and (app.user == commentaire.user or is_granted('ROLE_ADMIN')) %}
-							<form action="{{ path('commentaire_delete', {'id': commentaire.id}) }}" method="post" class="mt-2">
-								<button type="submit" class="text-red-600 hover:text-red-800 text-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">
-									🗑️ Supprimer
-								</button>
-							</form>
-						{% endif %}
+							<button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-full transition-all hover:shadow-lg">
+								<i class="fas fa-paper-plane mr-2"></i>Publier mon avis
+							</button>
+						{{ form_end(commentaireForm) }}
 					</div>
-				{% endfor %}
+				{% else %}
+					<div class="mb-10 p-6 bg-green-50 rounded-2xl text-center">
+						<i class="fas fa-comment-dots text-green-600 text-3xl mb-3"></i>
+						<p class="text-gray-700 mb-4">Connectez-vous pour partager votre avis sur cette fleur.</p>
+						<a href="{{ path('app_login') }}" class="inline-block bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-full font-semibold transition-colors">
+							<i class="fas fa-sign-in-alt mr-2"></i>Se connecter
+						</a>
+					</div>
+				{% endif %}
+
+				{# Liste des commentaires #}
+				{% if fleur.commentaires|length > 0 %}
+					<div class="space-y-6">
+						{% for commentaire in fleur.commentaires %}
+							<div class="p-6 bg-gray-50 rounded-2xl {% if loop.first %}border-2 border-green-200{% endif %}">
+								<div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+									<div class="flex items-center gap-4">
+										<div class="w-12 h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md">
+											{{ commentaire.user.username|first|upper }}
+										</div>
+										<div>
+											<p class="font-semibold text-gray-900">{{ commentaire.user.username }}</p>
+											<p class="text-sm text-gray-500">{{ commentaire.dateCreation|date('d M Y') }}</p>
+										</div>
+									</div>
+									<div class="flex items-center gap-2 bg-white px-3 py-1 rounded-full shadow-sm">
+										<div class="flex">
+											{% for i in 1..5 %}
+												{% if i <= commentaire.note %}
+													<span class="text-yellow-400">★</span>
+												{% else %}
+													<span class="text-gray-200">★</span>
+												{% endif %}
+											{% endfor %}
+										</div>
+										<span class="text-sm font-medium text-gray-700">{{ commentaire.note }}/5</span>
+									</div>
+								</div>
+								<p class="text-gray-700 leading-relaxed">{{ commentaire.contenu }}</p>
+								
+								{# Bouton supprimer #}
+								{% if app.user and (app.user == commentaire.user or is_granted('ROLE_ADMIN')) %}
+									<form action="{{ path('commentaire_delete', {'id': commentaire.id}) }}" method="post" class="mt-4">
+										<button type="submit" class="text-red-500 hover:text-red-700 text-sm font-medium transition-colors" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">
+											<i class="fas fa-trash-alt mr-1"></i>Supprimer
+										</button>
+									</form>
+								{% endif %}
+							</div>
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="text-center py-12">
+						<div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+							<i class="fas fa-comments text-gray-300 text-3xl"></i>
+						</div>
+						<h3 class="text-xl font-semibold text-gray-900 mb-2">Aucun avis pour le moment</h3>
+						<p class="text-gray-500">Soyez le premier à donner votre avis sur cette fleur !</p>
+					</div>
+				{% endif %}
 			</div>
-		{% else %}
-			<p class="text-gray-500 text-center py-8">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
-		{% endif %}
-	</div>
-</div>
+		</div>
+	</section>
 {% endblock %}

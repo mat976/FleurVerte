@@ -1,45 +1,63 @@
 -- Données de test pour Fleur Verte
--- 1 admin, 20 users, 5 fleuristes, 20 types de plantes
+-- 1 admin, 20 clients, 5 fleuristes, 20 types de plantes
+-- Mot de passe pour tous: 'password'
 
--- Utilisateurs
-INSERT INTO `user` (email, roles, password, username, avatar_name, updated_at) VALUES
-('admin@test.com', '["ROLE_ADMIN"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', NULL, NOW()),
-('user1@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user1', NULL, NOW()),
-('user2@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user2', NULL, NOW()),
-('user3@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user3', NULL, NOW()),
-('user4@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user4', NULL, NOW()),
-('user5@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user5', NULL, NOW()),
-('user6@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user6', NULL, NOW()),
-('user7@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user7', NULL, NOW()),
-('user8@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user8', NULL, NOW()),
-('user9@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user9', NULL, NOW()),
-('user10@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user10', NULL, NOW()),
-('user11@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user11', NULL, NOW()),
-('user12@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user12', NULL, NOW()),
-('user13@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user13', NULL, NOW()),
-('user14@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user14', NULL, NOW()),
-('user15@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user15', NULL, NOW()),
-('user16@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user16', NULL, NOW()),
-('user17@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user17', NULL, NOW()),
-('user18@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user18', NULL, NOW()),
-('user19@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user19', NULL, NOW()),
-('user20@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'user20', NULL, NOW()),
-('fleuriste1@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'fleuriste1', NULL, NOW()),
-('fleuriste2@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'fleuriste2', NULL, NOW()),
-('fleuriste3@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'fleuriste3', NULL, NOW()),
-('fleuriste4@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'fleuriste4', NULL, NOW()),
-('fleuriste5@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'fleuriste5', NULL, NOW());
+-- Nettoyage des tables (dans l'ordre des dépendances)
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE commentaire;
+TRUNCATE TABLE fleur_tag;
+TRUNCATE TABLE cart_item;
+TRUNCATE TABLE cart;
+TRUNCATE TABLE message;
+TRUNCATE TABLE conversation;
+TRUNCATE TABLE fleur;
+TRUNCATE TABLE tag;
+TRUNCATE TABLE fleuriste;
+TRUNCATE TABLE client;
+TRUNCATE TABLE `user`;
+SET FOREIGN_KEY_CHECKS = 1;
 
--- Clients (premiers 10 users)
-INSERT INTO client (user_id) VALUES (2), (3), (4), (5), (6), (7), (8), (9), (10), (11);
+-- Utilisateurs (1 admin + 20 clients + 5 fleuristes = 26 users)
+INSERT INTO `user` (id, email, roles, password, username, avatar_name, updated_at) VALUES
+(1, 'admin@test.com', '["ROLE_ADMIN"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin', '1.png', NOW()),
+(2, 'client1@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Marie_Dupont', '2.png', NOW()),
+(3, 'client2@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Jean_Martin', '3.png', NOW()),
+(4, 'client3@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Sophie_Bernard', '4.png', NOW()),
+(5, 'client4@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lucas_Petit', '5.png', NOW()),
+(6, 'client5@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Emma_Dubois', '6.png', NOW()),
+(7, 'client6@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Thomas_Moreau', '7.png', NOW()),
+(8, 'client7@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Lea_Laurent', '8.png', NOW()),
+(9, 'client8@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Hugo_Simon', '9.png', NOW()),
+(10, 'client9@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Chloe_Michel', '10.png', NOW()),
+(11, 'client10@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nathan_Garcia', '1.png', NOW()),
+(12, 'client11@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Camille_Roux', '2.png', NOW()),
+(13, 'client12@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Maxime_Leroy', '3.png', NOW()),
+(14, 'client13@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Manon_David', '4.png', NOW()),
+(15, 'client14@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Antoine_Bertrand', '5.png', NOW()),
+(16, 'client15@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Julie_Robert', '6.png', NOW()),
+(17, 'client16@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Romain_Richard', '7.png', NOW()),
+(18, 'client17@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Laura_Durand', '8.png', NOW()),
+(19, 'client18@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Quentin_Morel', '9.png', NOW()),
+(20, 'client19@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Sarah_Fournier', '10.png', NOW()),
+(21, 'client20@test.com', '["ROLE_USER"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Theo_Girard', '1.png', NOW()),
+(22, 'fleuriste1@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Flora_Shop', '2.png', NOW()),
+(23, 'fleuriste2@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Rose_Garden', '3.png', NOW()),
+(24, 'fleuriste3@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Nature_Bloom', '4.png', NOW()),
+(25, 'fleuriste4@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Premium_Flora', '5.png', NOW()),
+(26, 'fleuriste5@test.com', '["ROLE_FLEURISTE"]', '$2y$13$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Exotic_Plants', '6.png', NOW());
 
--- Fleuristes (shops)
-INSERT INTO fleuriste (user_id, nom, actif) VALUES
-(22, 'Green Paradise Shop', 1),
-(23, 'Royal Bloom Boutique', 1),
-(24, 'Nature\'s Best Garden', 1),
-(25, 'Premium Flora Store', 1),
-(26, 'Exotic Plants Market', 1);
+-- Clients (users 2 à 21 = 20 clients)
+INSERT INTO client (id, user_id) VALUES
+(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7), (7, 8), (8, 9), (9, 10), (10, 11),
+(11, 12), (12, 13), (13, 14), (14, 15), (15, 16), (16, 17), (17, 18), (18, 19), (19, 20), (20, 21);
+
+-- Fleuristes (users 22 à 26 = 5 fleuristes avec boutiques)
+INSERT INTO fleuriste (id, user_id, nom, actif) VALUES
+(1, 22, 'Green Paradise Shop', 1),
+(2, 23, 'Royal Bloom Boutique', 1),
+(3, 24, 'Nature''s Best Garden', 1),
+(4, 25, 'Premium Flora Store', 1),
+(5, 26, 'Exotic Plants Market', 1);
 
 -- Tags (20 types de plantes)
 INSERT INTO tag (nom, couleur) VALUES

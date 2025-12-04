@@ -1,76 +1,218 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil - FleurVerte
-{% endblock %}
+{% block title %}Accueil - FleurVerte{% endblock %}
+
 {% block body %}
-	<div class="container mx-auto px-4 mt-8">
-		<h1 class="text-4xl font-bold mb-4 text-center text-green-900">Bienvenue chez FleurVerte</h1>
-		<p class="text-xl mb-8 text-center text-green-800">Découvrez notre sélection de fleurs exotiques pour élever votre esprit et apaiser votre intérieur.</p>
+	{# Hero Section - Design léger et transparent #}
+	<section class="relative min-h-screen flex items-center overflow-hidden bg-white">
+		{# Formes décoratives flottantes #}
+		<div class="absolute inset-0 overflow-hidden pointer-events-none">
+			<div class="absolute top-20 left-10 w-72 h-72 bg-green-200/30 rounded-full blur-3xl animate-float"></div>
+			<div class="absolute top-40 right-20 w-96 h-96 bg-emerald-100/40 rounded-full blur-3xl animate-float-slow"></div>
+			<div class="absolute bottom-20 left-1/3 w-64 h-64 bg-green-100/30 rounded-full blur-3xl animate-float-delay"></div>
+			<div class="absolute -bottom-10 right-10 w-80 h-80 bg-teal-100/30 rounded-full blur-3xl animate-pulse-soft"></div>
+		</div>
 
-		{% set images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg', 'flower7.jpg', 'flower8.jpg', 'flower9.jpg', 'flower10.jpg', 'flower11.jpg', 'flower12.jpg'] %}
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
-				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Nos variétés" class="w-full h-64 object-cover">
-				<div class="card-body p-6">
-					<h2 class="text-2xl font-semibold mb-2 text-green-800">Nos variétés</h2>
-					<p class="mb-4 text-gray-600">Explorez notre vaste gamme de fleurs aux arômes enivrants et aux effets relaxants.</p>
-					<a href="{{ path('app_product') }}" class="btn btn-primary bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">Voir nos variétés</a>
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 py-20 relative z-10">
+			<div class="text-center max-w-4xl mx-auto">
+				{# Badge #}
+				<div class="inline-flex items-center gap-2 px-5 py-2 bg-green-50/80 backdrop-blur-sm rounded-full border border-green-100 mb-8 animate-fade-in">
+					<span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+					<span class="text-green-700 font-medium text-sm">La nature à votre porte</span>
 				</div>
-			</div>
 
-			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
-				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Conseils de culture" class="w-full h-64 object-cover">
-				<div class="card-body p-6">
-					<h2 class="text-2xl font-semibold mb-2 text-green-800">Conseils de culture</h2>
-					<p class="mb-4 text-gray-600">Apprenez à cultiver vos propres fleurs avec nos guides de croissance naturelle.</p>
-					<a href="#" class="btn btn-secondary bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">Lire nos conseils</a>
+				{# Titre principal #}
+				<h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight mb-8 animate-slide-up">
+					Des fleurs 
+					<span class="text-gradient">d'exception</span>
+					<br class="hidden sm:block">
+					pour votre quotidien
+				</h1>
+
+				{# Description #}
+				<p class="text-xl text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in" style="animation-delay: 0.2s;">
+					Découvrez notre collection de fleurs fraîches, soigneusement sélectionnées par nos fleuristes passionnés.
+				</p>
+
+				{# Boutons #}
+				<div class="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style="animation-delay: 0.4s;">
+					<a href="{{ path('app_product') }}" class="group inline-flex items-center justify-center gap-3 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:shadow-green-500/25 hover:-translate-y-1">
+						<i class="fas fa-leaf"></i>
+						Découvrir
+						<i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+					</a>
+					<a href="{{ path('app_fleuriste_index') }}" class="inline-flex items-center justify-center gap-2 bg-white/80 backdrop-blur-sm hover:bg-white text-gray-700 px-8 py-4 rounded-full font-semibold text-lg border border-gray-200 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+						<i class="fas fa-store"></i>
+						Nos fleuristes
+					</a>
 				</div>
-			</div>
 
-			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
-				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Notre philosophie" class="w-full h-64 object-cover">
-				<div class="card-body p-6">
-					<h2 class="text-2xl font-semibold mb-2 text-green-800">Notre philosophie</h2>
-					<p class="mb-4 text-gray-600">Découvrez notre passion pour la culture responsable et le respect de la nature.</p>
-					<a href="#" class="btn btn-primary bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">En savoir plus</a>
-				</div>
-			</div>
-
-			<div class="card bg-white shadow-lg rounded-lg overflow-hidden">
-				<img src="{{ asset('img/flowerimg/' ~ random(images)) }}" alt="Nos engagements" class="w-full h-64 object-cover">
-				<div class="card-body p-6">
-					<h2 class="text-2xl font-semibold mb-2 text-green-800">Nos engagements</h2>
-					<ul class="list-disc pl-5 mb-4 text-gray-600">
-						<li>Culture 100% naturelle et biologique</li>
-						<li>Respect des cycles naturels de croissance</li>
-						<li>Sélection minutieuse de nos graines</li>
-						<li>Récolte à maturité pour des arômes optimaux</li>
-						<li>Séchage lent pour préserver les propriétés de nos fleurs</li>
-					</ul>
+				{# Stats flottantes #}
+				<div class="flex flex-wrap justify-center gap-8 mt-16 animate-fade-in" style="animation-delay: 0.6s;">
+					<div class="flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg hover-lift">
+						<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+							<i class="fas fa-seedling text-green-600"></i>
+						</div>
+						<div class="text-left">
+							<p class="font-bold text-gray-900">30+</p>
+							<p class="text-xs text-gray-500">Variétés</p>
+						</div>
+					</div>
+					<div class="flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg hover-lift">
+						<div class="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
+							<i class="fas fa-star text-yellow-500"></i>
+						</div>
+						<div class="text-left">
+							<p class="font-bold text-gray-900">4.9/5</p>
+							<p class="text-xs text-gray-500">Avis clients</p>
+						</div>
+					</div>
+					<div class="flex items-center gap-3 px-6 py-3 bg-white/60 backdrop-blur-sm rounded-2xl border border-white/50 shadow-lg hover-lift">
+						<div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+							<i class="fas fa-truck text-blue-500"></i>
+						</div>
+						<div class="text-left">
+							<p class="font-bold text-gray-900">24h</p>
+							<p class="text-xs text-gray-500">Livraison</p>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<!-- Nouvelle section après les cartes -->
-		<div class="bg-green-100 p-8 rounded-lg shadow-md mb-16">
-			<h2 class="text-3xl font-bold mb-4 text-green-800 text-center">Pourquoi choisir FleurVerte ?</h2>
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-				<div class="text-center">
-					<i class="fas fa-leaf text-4xl text-green-500 mb-2"></i>
-					<h3 class="text-xl font-semibold mb-2 text-green-700">Qualité Premium</h3>
-					<p class="text-gray-600">Nous sélectionnons soigneusement chaque fleur pour garantir une expérience exceptionnelle.</p>
-				</div>
-				<div class="text-center">
-					<i class="fas fa-shipping-fast text-4xl text-green-500 mb-2"></i>
-					<h3 class="text-xl font-semibold mb-2 text-green-700">Livraison Rapide</h3>
-					<p class="text-gray-600">Profitez de nos fleurs fraîches grâce à notre service de livraison express.</p>
-				</div>
-				<div class="text-center">
-					<i class="fas fa-heart text-4xl text-green-500 mb-2"></i>
-					<h3 class="text-xl font-semibold mb-2 text-green-700">Service Client Dévoué</h3>
-					<p class="text-gray-600">Notre équipe est là pour vous conseiller et répondre à toutes vos questions.</p>
+		{# Scroll indicator #}
+		<div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+			<div class="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center pt-2">
+				<div class="w-1.5 h-3 bg-gray-400 rounded-full animate-pulse"></div>
+			</div>
+		</div>
+	</section>
+
+	{# Section Collections - Cards transparentes #}
+	<section class="py-24 bg-gradient-soft relative overflow-hidden">
+		{# Décor #}
+		<div class="absolute top-0 right-0 w-96 h-96 bg-green-100/20 rounded-full blur-3xl"></div>
+		
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
+			<div class="text-center mb-16">
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Explorez nos collections</h2>
+				<p class="text-lg text-gray-500 max-w-xl mx-auto">Des fleurs pour chaque occasion, cultivées avec passion.</p>
+			</div>
+
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				{# Card Fleurs #}
+				<a href="{{ path('app_product') }}" class="group relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-white/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+					<div class="absolute top-0 right-0 w-32 h-32 bg-green-100/50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+					<div class="relative">
+						<div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+							<i class="fas fa-leaf text-green-600 text-2xl"></i>
+						</div>
+						<h3 class="text-2xl font-bold text-gray-900 mb-3">Nos Fleurs</h3>
+						<p class="text-gray-500 mb-6">Plus de 30 variétés de fleurs fraîches sélectionnées avec soin.</p>
+						<span class="inline-flex items-center gap-2 text-green-600 font-semibold group-hover:gap-4 transition-all">
+							Explorer <i class="fas fa-arrow-right"></i>
+						</span>
+					</div>
+				</a>
+
+				{# Card Fleuristes #}
+				<a href="{{ path('app_fleuriste_index') }}" class="group relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-white/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+					<div class="absolute top-0 right-0 w-32 h-32 bg-emerald-100/50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+					<div class="relative">
+						<div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+							<i class="fas fa-store text-emerald-600 text-2xl"></i>
+						</div>
+						<h3 class="text-2xl font-bold text-gray-900 mb-3">Fleuristes</h3>
+						<p class="text-gray-500 mb-6">Découvrez nos artisans fleuristes partenaires près de chez vous.</p>
+						<span class="inline-flex items-center gap-2 text-emerald-600 font-semibold group-hover:gap-4 transition-all">
+							Découvrir <i class="fas fa-arrow-right"></i>
+						</span>
+					</div>
+				</a>
+
+				{# Card Conseils #}
+				<a href="{{ path('app_conseils_culture') }}" class="group relative bg-white/70 backdrop-blur-sm rounded-3xl p-8 border border-white/50 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden">
+					<div class="absolute top-0 right-0 w-32 h-32 bg-teal-100/50 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
+					<div class="relative">
+						<div class="w-16 h-16 bg-teal-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+							<i class="fas fa-book-open text-teal-600 text-2xl"></i>
+						</div>
+						<h3 class="text-2xl font-bold text-gray-900 mb-3">Conseils</h3>
+						<p class="text-gray-500 mb-6">Guides et astuces pour entretenir vos fleurs au quotidien.</p>
+						<span class="inline-flex items-center gap-2 text-teal-600 font-semibold group-hover:gap-4 transition-all">
+							Apprendre <i class="fas fa-arrow-right"></i>
+						</span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</section>
+
+	{# Section Avantages - Design épuré #}
+	<section class="py-24 bg-white relative overflow-hidden">
+		<div class="absolute bottom-0 left-0 w-96 h-96 bg-green-50/50 rounded-full blur-3xl"></div>
+		
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
+			<div class="text-center mb-16">
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Pourquoi nous choisir ?</h2>
+				<p class="text-lg text-gray-500">Une expérience florale unique</p>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+				{% set features = [
+					{'icon': 'leaf', 'color': 'green', 'title': 'Qualité Premium', 'desc': 'Fleurs fraîches sélectionnées avec soin'},
+					{'icon': 'truck', 'color': 'blue', 'title': 'Livraison Express', 'desc': 'Réception en 24-48h partout en France'},
+					{'icon': 'heart', 'color': 'pink', 'title': 'Service Personnalisé', 'desc': 'Conseils experts pour chaque occasion'},
+					{'icon': 'award', 'color': 'yellow', 'title': 'Artisans Certifiés', 'desc': 'Partenaires aux savoir-faire reconnus'},
+					{'icon': 'shield-alt', 'color': 'purple', 'title': 'Paiement Sécurisé', 'desc': 'Transactions 100% protégées'},
+					{'icon': 'sync-alt', 'color': 'orange', 'title': 'Satisfaction Garantie', 'desc': 'Remboursement si insatisfait'}
+				] %}
+
+				{% for feature in features %}
+					<div class="group p-6 rounded-2xl bg-{{ feature.color }}-50/50 hover:bg-{{ feature.color }}-50 border border-{{ feature.color }}-100/50 transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
+						<div class="flex items-start gap-4">
+							<div class="w-12 h-12 bg-{{ feature.color }}-100 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+								<i class="fas fa-{{ feature.icon }} text-{{ feature.color }}-600 text-xl"></i>
+							</div>
+							<div>
+								<h3 class="font-bold text-gray-900 mb-1">{{ feature.title }}</h3>
+								<p class="text-sm text-gray-500">{{ feature.desc }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
+
+	{# CTA Section - Glassmorphism #}
+	<section class="py-24 relative overflow-hidden">
+		{# Background gradient #}
+		<div class="absolute inset-0 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-500"></div>
+		<div class="absolute inset-0 opacity-30">
+			<div class="absolute top-10 left-10 w-64 h-64 bg-white/20 rounded-full blur-3xl animate-float"></div>
+			<div class="absolute bottom-10 right-10 w-80 h-80 bg-white/10 rounded-full blur-3xl animate-float-slow"></div>
+		</div>
+
+		<div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+			<div class="bg-white/10 backdrop-blur-lg rounded-3xl p-12 border border-white/20">
+				<h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Prêt à embellir votre intérieur ?</h2>
+				<p class="text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+					Rejoignez des milliers de clients satisfaits et découvrez la beauté de nos fleurs fraîches.
+				</p>
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a href="{{ path('app_product') }}" class="inline-flex items-center justify-center gap-2 bg-white text-green-600 hover:bg-green-50 px-8 py-4 rounded-full font-semibold text-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+						<i class="fas fa-shopping-bag"></i>
+						Voir la collection
+					</a>
+					{% if not app.user %}
+						<a href="{{ path('app_register') }}" class="inline-flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 rounded-full font-semibold text-lg border border-white/30 transition-all duration-300 hover:-translate-y-1">
+							<i class="fas fa-user-plus"></i>
+							Créer un compte
+						</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
-	</div>
+	</section>
 {% endblock %}
