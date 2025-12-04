@@ -69,12 +69,6 @@ class ProductController extends AbstractController
                 case 'price_desc':
                     $queryBuilder->orderBy('f.prix', 'DESC');
                     break;
-                case 'thc_asc':
-                    $queryBuilder->orderBy('f.thc', 'ASC');
-                    break;
-                case 'thc_desc':
-                    $queryBuilder->orderBy('f.thc', 'DESC');
-                    break;
                 case 'name_asc':
                 default:
                     $queryBuilder->orderBy('f.nom', 'ASC');

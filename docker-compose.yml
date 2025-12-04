@@ -14,21 +14,32 @@ services:
       # Si vous avez un fichier SQL pour initialiser la base de données
       - ./fleur.sql:/docker-entrypoint-initdb.d/fleur.sql
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
   app:
     build: .
     container_name: fleurverte_app
     depends_on:
-      - database
+      database:
+        condition: service_healthy
     environment:
       APP_ENV: dev
       # Configuration de la base de données pour pointer vers le service database
       DATABASE_URL: "mysql://root:@database:3306/fleurverte?serverVersion=5.7&charset=utf8mb4"
+      # Database connection variables for init script
+      DATABASE_HOST: database
+      DATABASE_PORT: 3306
+      DATABASE_NAME: fleurverte
+      DATABASE_USER: root
+      DATABASE_PASSWORD: ""
     volumes:
       - ./:/app:cached
       - app_vendor:/app/vendor
     ports:
-      - "8000:8000"
+      - "8080:8000"
     restart: unless-stopped
     # Configuration réseau pour permettre l'accès depuis l'extérieur
     extra_hosts:

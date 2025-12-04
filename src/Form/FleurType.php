@@ -21,7 +21,7 @@ use Vich\UploaderBundle\Form\Type\VichImageType;
  * 
  * Ce formulaire permet la création et la modification des produits,
  * incluant toutes les caractéristiques importantes d'une fleur :
- * nom, description, prix, taux THC, stock et statut épinglé.
+ * nom, description, prix, stock et statut épinglé.
  */
 class FleurType extends AbstractType
 {
@@ -32,7 +32,6 @@ class FleurType extends AbstractType
      * - Nom du produit
      * - Description détaillée
      * - Prix en euros
-     * - Taux de THC (avec précision décimale)
      * - Gestion du stock
      * - Option pour épingler le produit
      * 
@@ -51,10 +50,6 @@ class FleurType extends AbstractType
             ->add('prix', MoneyType::class, [
                 'label' => 'Prix',
                 'currency' => 'EUR',
-            ])
-            ->add('Thc', NumberType::class, [
-                'label' => 'Taux THC',
-                'scale' => 2,
             ])
             ->add('stock', IntegerType::class, [
                 'label' => 'Stock disponible',

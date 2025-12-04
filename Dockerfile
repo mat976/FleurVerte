@@ -26,5 +26,5 @@ WORKDIR /app
 # Expose the dev HTTP port
 EXPOSE 8000
 
-# Default command: install deps then run symfony server in HTTP (no TLS) with access from outside
-CMD ["sh", "-lc", "composer install --no-interaction --prefer-dist --no-progress && symfony serve --no-tls --port=8000 --allow-http --ansi --allow-all-ip"]
+# Default command: install deps, create database, run migrations, then start symfony server
+CMD ["sh", "-lc", "composer install --no-interaction --prefer-dist --no-progress && php bin/console doctrine:database:create --if-not-exists && php bin/console doctrine:migrations:migrate --no-interaction && symfony serve --no-tls --port=8000 --allow-http --ansi --allow-all-ip"]

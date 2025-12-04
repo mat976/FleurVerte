@@ -47,13 +47,6 @@ class Fleur
     #[ORM\Column(type: "text", nullable: true)]
     private ?string $description = null;
 
-    /**
-     * Taux de THC de la fleur
-     * 
-     * @var float|null
-     */
-    #[ORM\Column]
-    private ?float $thc = null;
 
     /**
      * Prix de vente de la fleur
@@ -160,24 +153,6 @@ class Fleur
         return $this;
     }
 
-    /**
-     * Récupère le taux de THC
-     */
-    public function getThc(): ?float
-    {
-        return $this->thc;
-    }
-
-    /**
-     * Définit le taux de THC
-     * 
-     * @param float $thc Le nouveau taux
-     */
-    public function setThc(float $thc): static
-    {
-        $this->thc = $thc;
-        return $this;
-    }
 
     /**
      * Récupère le prix de la fleur

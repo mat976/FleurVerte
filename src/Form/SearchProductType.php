@@ -36,8 +36,6 @@ class SearchProductType extends AbstractType
                     'Nom (Z-A)' => 'name_desc',
                     'Prix croissant' => 'price_asc',
                     'Prix décroissant' => 'price_desc',
-                    'THC croissant' => 'thc_asc',
-                    'THC décroissant' => 'thc_desc',
                 ],
                 'attr' => [
                     'class' => 'px-4 py-2 border border-gray-300 border-l-0 rounded-r-md bg-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent'
