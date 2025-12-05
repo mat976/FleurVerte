@@ -39,14 +39,14 @@ class ProfilController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
         
-        // Déterminer le rôle actuel
-        $currentRole = in_array('ROLE_FLEURISTE', $user->getRoles()) ? 'ROLE_FLEURISTE' : 'ROLE_USER';
+        // Déterminer si l'utilisateur est actuellement fleuriste
+        $isCurrentlyFleuriste = $user->getFleuriste() !== null && $user->getFleuriste()->isActif();
         $currentShopName = $user->getFleuriste() ? $user->getFleuriste()->getNom() : '';
         
         $form = $this->createForm(\App\Form\ProfilType::class, $user);
         
-        // Pré-remplir le rôle actuel et le nom de boutique
-        $form->get('roles')->setData($currentRole);
+        // Pré-remplir le statut fleuriste actuel et le nom de boutique
+        $form->get('becomeFleuriste')->setData($isCurrentlyFleuriste ? '1' : '0');
         if ($currentShopName) {
             $form->get('shopName')->setData($currentShopName);
         }
@@ -54,13 +54,13 @@ class ProfilController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Gestion du rôle
-            $newRole = $form->get('roles')->getData();
+            // Gestion du statut fleuriste
+            $wantToBeFleuriste = $form->get('becomeFleuriste')->getData();
             $shopName = $form->get('shopName')->getData();
             
-            if ($newRole === 'ROLE_FLEURISTE') {
-                // Devenir fleuriste
-                if (!$user->isFleuriste()) {
+            if ($wantToBeFleuriste === '1') {
+                // Devenir ou rester fleuriste
+                if ($user->getFleuriste() === null) {
                     // Vérifier qu'on a un nom de boutique
                     if (empty($shopName)) {
                         $this->addFlash('error', 'Veuillez entrer un nom de boutique pour devenir fleuriste.');
@@ -70,26 +70,31 @@ class ProfilController extends AbstractController
                         ]);
                     }
                     
+                    // Créer nouveau fleuriste
                     $fleuriste = new Fleuriste();
                     $fleuriste->setUser($user);
                     $fleuriste->setNom($shopName);
                     $fleuriste->setActif(true);
                     $entityManager->persist($fleuriste);
-                }
-                $user->setRoles(['ROLE_FLEURISTE']);
-                
-                // Mettre à jour le nom de boutique si déjà fleuriste
-                if ($user->getFleuriste() && $shopName) {
-                    $user->getFleuriste()->setNom($shopName);
+                } else {
+                    // Activer et mettre à jour le fleuriste existant
+                    $user->getFleuriste()->setActif(true);
+                    if ($shopName) {
+                        $user->getFleuriste()->setNom($shopName);
+                    }
                 }
             } else {
-                // Rester ou devenir client
-                if (!$user->isClient()) {
+                // Redevenir client - désactiver le fleuriste si existant
+                if ($user->getFleuriste() !== null) {
+                    $user->getFleuriste()->setActif(false);
+                }
+                
+                // Créer un profil client si pas encore existant
+                if ($user->getClient() === null) {
                     $client = new Client();
                     $client->setUser($user);
                     $entityManager->persist($client);
                 }
-                $user->setRoles(['ROLE_USER']);
             }
 
             // Gestion de l'avatar

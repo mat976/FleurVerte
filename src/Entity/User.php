@@ -179,6 +179,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
 
     /**
      * Récupère les rôles de l'utilisateur
+     * Le rôle ROLE_FLEURISTE est automatiquement ajouté si l'utilisateur a un profil fleuriste actif
      * 
      * @return array Liste des rôles
      */
@@ -186,6 +187,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+        
+        // Ajouter ROLE_FLEURISTE automatiquement si l'utilisateur a un profil fleuriste actif
+        if ($this->fleuriste !== null && $this->fleuriste->isActif()) {
+            $roles[] = 'ROLE_FLEURISTE';
+        }
+        
         return array_unique($roles);
     }
 

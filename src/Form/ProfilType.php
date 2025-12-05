@@ -28,11 +28,11 @@ class ProfilType extends AbstractType
             ->add('username', TextType::class, [
                 'label' => 'Nom d\'utilisateur',
             ])
-            ->add('roles', ChoiceType::class, [
+            ->add('becomeFleuriste', ChoiceType::class, [
                 'label' => 'Type de compte',
                 'choices' => [
-                    'Client' => 'ROLE_USER',
-                    'Fleuriste (vendeur)' => 'ROLE_FLEURISTE',
+                    'Client' => '0',
+                    'Fleuriste (vendeur)' => '1',
                 ],
                 'multiple' => false,
                 'expanded' => false,
@@ -47,26 +47,10 @@ class ProfilType extends AbstractType
                 ],
             ])
 
-            ->add('avatarName', ChoiceType::class, [
-                'label' => 'Choisissez votre avatar',
-                'choices' => [
-                    'Avatar 1' => '1.png',
-                    'Avatar 2' => '2.png',
-                    'Avatar 3' => '3.png',
-                    'Avatar 4' => '4.png',
-                    'Avatar 5' => '5.png',
-                    'Avatar 6' => '6.png',
-                    'Avatar 7' => '7.png',
-                    'Avatar 8' => '8.png',
-                    'Avatar 9' => '9.png',
-                    'Avatar 10' => '10.png',
-                ],
-                'expanded' => true,
-                'multiple' => false,
+            ->add('avatarName', TextType::class, [
+                'label' => 'Avatar sélectionné',
+                'mapped' => false,
                 'required' => false,
-                'choice_attr' => function ($choice, $key, $value) {
-                    return ['class' => 'sr-only avatar-radio'];
-                },
             ])
             ->add('avatarFile', FileType::class, [
                 'label' => 'Télécharger un nouvel avatar',
