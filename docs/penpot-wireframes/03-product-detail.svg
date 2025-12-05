@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 1600" width="1440" height="1600">
+  <!-- Background -->
+  <rect width="1440" height="1600" fill="#ffffff"/>
+  
+  <!-- NAVIGATION -->
+  <rect x="0" y="0" width="1440" height="70" fill="#ffffff" fill-opacity="0.95"/>
+  <rect x="0" y="69" width="1440" height="1" fill="#e5e7eb"/>
+  <rect x="80" y="20" width="40" height="30" rx="5" fill="#22c55e"/>
+  <text x="130" y="42" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#22c55e">FleurVerte</text>
+  <text x="400" y="42" font-family="Inter, sans-serif" font-size="14" fill="#374151">Accueil</text>
+  <text x="500" y="42" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#22c55e">Nos Fleurs</text>
+  <text x="610" y="42" font-family="Inter, sans-serif" font-size="14" fill="#374151">Fleuristes</text>
+  <circle cx="1280" cy="35" r="18" fill="#f3f4f6"/>
+  <circle cx="1340" cy="35" r="18" fill="#22c55e"/>
+  
+  <!-- BREADCRUMB -->
+  <rect x="0" y="70" width="1440" height="50" fill="#f9fafb"/>
+  <text x="140" y="100" font-family="Inter, sans-serif" font-size="13" fill="#6b7280">Accueil</text>
+  <text x="195" y="100" font-family="Inter, sans-serif" font-size="13" fill="#9ca3af">›</text>
+  <text x="215" y="100" font-family="Inter, sans-serif" font-size="13" fill="#6b7280">Nos Fleurs</text>
+  <text x="290" y="100" font-family="Inter, sans-serif" font-size="13" fill="#9ca3af">›</text>
+  <text x="310" y="100" font-family="Inter, sans-serif" font-size="13" font-weight="500" fill="#111827">Rose Éternelle</text>
+  
+  <!-- PRODUCT SECTION -->
+  <!-- Image -->
+  <rect x="140" y="160" width="520" height="520" rx="24" fill="#f3f4f6"/>
+  <text x="400" y="440" font-family="Inter, sans-serif" font-size="120" text-anchor="middle">🌸</text>
+  
+  <!-- Badges on image -->
+  <rect x="170" y="190" width="100" height="36" rx="18" fill="#facc15"/>
+  <text x="190" y="214" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#ffffff">⭐ Populaire</text>
+  
+  <rect x="530" y="190" width="100" height="36" rx="18" fill="#22c55e"/>
+  <text x="555" y="214" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#ffffff">En stock</text>
+  
+  <!-- Product Info -->
+  <!-- Tags -->
+  <rect x="720" y="170" width="70" height="28" rx="14" fill="#dcfce7" stroke="#bbf7d0"/>
+  <text x="735" y="189" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#15803d">Exotique</text>
+  <rect x="800" y="170" width="50" height="28" rx="14" fill="#fef3c7" stroke="#fde68a"/>
+  <text x="812" y="189" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#92400e">Rare</text>
+  <rect x="860" y="170" width="70" height="28" rx="14" fill="#fce7f3" stroke="#fbcfe8"/>
+  <text x="873" y="189" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#be185d">Premium</text>
+  
+  <!-- Title -->
+  <text x="720" y="250" font-family="Inter, sans-serif" font-size="36" font-weight="700" fill="#111827">Rose Éternelle</text>
+  
+  <!-- Rating -->
+  <text x="720" y="295" font-family="Inter, sans-serif" font-size="20" fill="#facc15">★★★★☆</text>
+  <text x="830" y="295" font-family="Inter, sans-serif" font-size="16" fill="#6b7280">4.5/5</text>
+  <text x="890" y="295" font-family="Inter, sans-serif" font-size="16" fill="#9ca3af">•</text>
+  <text x="910" y="295" font-family="Inter, sans-serif" font-size="16" fill="#22c55e">12 avis</text>
+  
+  <!-- Price -->
+  <text x="720" y="360" font-family="Inter, sans-serif" font-size="40" font-weight="700" fill="#22c55e">24,99€</text>
+  
+  <!-- Description -->
+  <text x="720" y="420" font-family="Inter, sans-serif" font-size="16" fill="#4b5563">Une rose magnifique aux pétales veloutés d'un rouge profond.</text>
+  <text x="720" y="445" font-family="Inter, sans-serif" font-size="16" fill="#4b5563">Parfaite pour exprimer vos sentiments les plus sincères, cette</text>
+  <text x="720" y="470" font-family="Inter, sans-serif" font-size="16" fill="#4b5563">rose apportera élégance et passion à votre intérieur.</text>
+  
+  <!-- Stock Info Box -->
+  <rect x="720" y="500" width="500" height="80" rx="16" fill="#f9fafb"/>
+  <rect x="740" y="520" width="48" height="48" rx="12" fill="#dcfce7"/>
+  <text x="755" y="552" font-family="Inter, sans-serif" font-size="20">📦</text>
+  <text x="810" y="542" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#111827">25 en stock</text>
+  <text x="810" y="565" font-family="Inter, sans-serif" font-size="14" fill="#6b7280">Expédié sous 24-48h</text>
+  
+  <!-- Add to Cart Button -->
+  <rect x="720" y="610" width="380" height="60" rx="30" fill="#22c55e"/>
+  <text x="840" y="648" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#ffffff">🛒 Ajouter au panier</text>
+  
+  <!-- Heart Button -->
+  <rect x="1120" y="610" width="60" height="60" rx="30" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+  <text x="1140" y="648" font-family="Inter, sans-serif" font-size="22" fill="#9ca3af">♡</text>
+  
+  <!-- Features Grid -->
+  <rect x="720" y="700" width="150" height="60" rx="12" fill="#f0fdf4"/>
+  <text x="745" y="738" font-family="Inter, sans-serif" font-size="13" fill="#374151">🚚 Livraison express</text>
+  
+  <rect x="885" y="700" width="150" height="60" rx="12" fill="#f0fdf4"/>
+  <text x="905" y="738" font-family="Inter, sans-serif" font-size="13" fill="#374151">🛡️ Paiement sécurisé</text>
+  
+  <rect x="1050" y="700" width="150" height="60" rx="12" fill="#f0fdf4"/>
+  <text x="1075" y="738" font-family="Inter, sans-serif" font-size="13" fill="#374151">🔄 Retours gratuits</text>
+  
+  <!-- COMMENTS SECTION -->
+  <rect x="0" y="800" width="1440" height="800" fill="#f9fafb"/>
+  
+  <rect x="140" y="850" width="1160" height="650" rx="24" fill="#ffffff"/>
+  
+  <!-- Section Header -->
+  <text x="180" y="910" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#111827">Avis clients</text>
+  
+  <rect x="1050" y="880" width="200" height="45" rx="22" fill="#f0fdf4"/>
+  <text x="1080" y="910" font-family="Inter, sans-serif" font-size="16" fill="#facc15">★★★★☆</text>
+  <text x="1150" y="910" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#111827">4.5/5</text>
+  <text x="1195" y="910" font-family="Inter, sans-serif" font-size="13" fill="#6b7280">(12)</text>
+  
+  <!-- Comment Form -->
+  <rect x="180" y="950" width="1080" height="120" rx="16" fill="#f9fafb"/>
+  <text x="210" y="985" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#111827">Donnez votre avis</text>
+  
+  <rect x="210" y="1010" width="100" height="40" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
+  <text x="225" y="1037" font-family="Inter, sans-serif" font-size="13" fill="#6b7280">Note ▼</text>
+  
+  <rect x="330" y="1010" width="700" height="40" rx="8" fill="#ffffff" stroke="#e5e7eb"/>
+  <text x="350" y="1037" font-family="Inter, sans-serif" font-size="13" fill="#9ca3af">Votre commentaire...</text>
+  
+  <rect x="1050" y="1010" width="180" height="40" rx="20" fill="#22c55e"/>
+  <text x="1085" y="1037" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#ffffff">📤 Publier mon avis</text>
+  
+  <!-- Comment 1 -->
+  <rect x="180" y="1100" width="1080" height="140" rx="16" fill="#f9fafb" stroke="#dcfce7"/>
+  
+  <circle cx="230" cy="1145" r="24" fill="#22c55e"/>
+  <text x="222" y="1152" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff">M</text>
+  
+  <text x="270" y="1140" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#111827">Marie</text>
+  <text x="270" y="1160" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">12 Nov 2024</text>
+  
+  <rect x="1100" y="1125" width="130" height="30" rx="15" fill="#ffffff"/>
+  <text x="1115" y="1146" font-family="Inter, sans-serif" font-size="14" fill="#facc15">★★★★★</text>
+  <text x="1180" y="1146" font-family="Inter, sans-serif" font-size="13" fill="#374151">5/5</text>
+  
+  <text x="200" y="1200" font-family="Inter, sans-serif" font-size="14" fill="#4b5563">Magnifique rose ! Elle a tenu plus de deux semaines. Je recommande vivement ce produit.</text>
+  <text x="200" y="1220" font-family="Inter, sans-serif" font-size="14" fill="#4b5563">La livraison était rapide et le colis soigneusement emballé.</text>
+  
+  <!-- Comment 2 -->
+  <rect x="180" y="1260" width="1080" height="140" rx="16" fill="#f9fafb"/>
+  
+  <circle cx="230" cy="1305" r="24" fill="#3b82f6"/>
+  <text x="222" y="1312" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="#ffffff">P</text>
+  
+  <text x="270" y="1300" font-family="Inter, sans-serif" font-size="15" font-weight="600" fill="#111827">Pierre</text>
+  <text x="270" y="1320" font-family="Inter, sans-serif" font-size="12" fill="#6b7280">10 Nov 2024</text>
+  
+  <rect x="1100" y="1285" width="130" height="30" rx="15" fill="#ffffff"/>
+  <text x="1115" y="1306" font-family="Inter, sans-serif" font-size="14" fill="#facc15">★★★★☆</text>
+  <text x="1180" y="1306" font-family="Inter, sans-serif" font-size="13" fill="#374151">4/5</text>
+  
+  <text x="200" y="1360" font-family="Inter, sans-serif" font-size="14" fill="#4b5563">Très belle fleur, couleur sublime. Un peu fragile à la livraison mais rien de grave.</text>
+  <text x="200" y="1380" font-family="Inter, sans-serif" font-size="14" fill="#4b5563">Je l'ai offerte et elle a fait très plaisir !</text>
+  
+  <!-- No more comments indicator -->
+  <text x="720" y="1470" font-family="Inter, sans-serif" font-size="14" fill="#9ca3af" text-anchor="middle">— Fin des commentaires —</text>
+</svg>
