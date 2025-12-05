@@ -101,7 +101,7 @@
 
 				{# Avatar actuel #}
 				<div class="flex items-center gap-4 mb-6">
-					<img src="{{ app.user.avatarName ? asset('uploads/avatars/' ~ app.user.avatarName) : asset('basic_avatar/1.png') }}" 
+					<img src="{{ app.user.avatarName ? asset('uploads/avatars/' ~ app.user.avatarName) : asset('uploads/avatars/1.png') }}" 
 						alt="Avatar actuel" class="w-20 h-20 rounded-full object-cover border-4 border-green-200">
 					<div>
 						<p class="font-medium text-gray-900">Avatar actuel</p>
@@ -119,7 +119,7 @@
 							<div class="cursor-pointer group" 
 								@click="selectedAvatar = '{{ i }}.png'"
 								:class="selectedAvatar === '{{ i }}.png' ? 'ring-2 ring-green-500 rounded-full' : ''">
-								<img src="{{ asset('basic_avatar/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
+								<img src="{{ asset('uploads/avatars/' ~ i ~ '.png') }}" alt="Avatar {{ i }}" 
 									class="w-12 h-12 rounded-full transition-all duration-200 border-2 border-transparent 
 										group-hover:scale-110 group-hover:border-green-300"
 									:class="selectedAvatar === '{{ i }}.png' ? 'border-green-500' : ''">

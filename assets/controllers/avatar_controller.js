@@ -1,72 +1,80 @@
 import { Controller } from '@hotwired/stimulus';
 
 /**
- * Avatar selection controller
- *
- * This controller manages the avatar selection functionality in the profile edit page.
- * It handles highlighting the selected avatar and clearing the file input when a predefined avatar is selected.
+ * Contrôleur de sélection d'avatar
+ * 
+ * Gère la sélection d'avatars prédéfinis et le téléchargement d'images personnalisées
+ * dans la page d'édition de profil.
  */
 export default class extends Controller {
-    static targets = ['avatarRadio', 'fileInput', 'avatarImage'];
+    static targets = ['radio', 'file', 'image', 'preview'];
 
-    connect() {
-        console.log('Avatar controller connected');
-        this.addEventListeners();
-    }
+    static classes = ['selected'];
 
-    addEventListeners() {
-        // Add click event listeners to all avatar radio buttons
-        if (this.hasAvatarRadioTarget) {
-            this.avatarRadioTargets.forEach(radio => {
-                radio.addEventListener('change', this.handleAvatarSelection.bind(this));
-            });
+    static values = {
+        selectedClass: { type: String, default: 'ring-2 ring-green-500' }
+    };
+
+    /**
+     * Sélection d'un avatar prédéfini
+     */
+    selectAvatar(event) {
+        const avatarName = event.currentTarget.dataset.avatar;
+        
+        // Réinitialiser le champ fichier
+        if (this.hasFileTarget) {
+            this.fileTarget.value = '';
         }
 
-        // Add change event listener to file input
-        if (this.hasFileInputTarget) {
-            this.fileInputTarget.addEventListener('change', this.handleFileSelection.bind(this));
-        }
-    }
+        // Mettre à jour l'état visuel
+        this.updateSelection(event.currentTarget);
 
-    handleAvatarSelection(event) {
-        // When a predefined avatar is selected, clear the file input
-        if (this.hasFileInputTarget) {
-            this.fileInputTarget.value = '';
-        }
-
-        // Update visual indication of selected avatar
-        if (this.hasAvatarImageTarget) {
-            this.avatarImageTargets.forEach(img => {
-                // Remove highlight from all avatars
-                img.classList.remove('ring-2', 'ring-green-500');
-                // Add hover effect to all
-                img.classList.add('hover:ring-2', 'hover:ring-green-300');
-            });
-
-            // Add highlight to selected avatar
-            const selectedLabel = event.target.closest('label');
-            if (selectedLabel) {
-                const selectedImg = selectedLabel.querySelector('img');
-                if (selectedImg) {
-                    selectedImg.classList.add('ring-2', 'ring-green-500');
-                }
+        // Mettre à jour la prévisualisation si disponible
+        if (this.hasPreviewTarget) {
+            const img = event.currentTarget.querySelector('img');
+            if (img) {
+                this.previewTarget.src = img.src;
             }
         }
     }
 
-    handleFileSelection(event) {
-        // When a file is selected, uncheck all predefined avatars
-        if (this.hasAvatarRadioTarget && event.target.value) {
-            this.avatarRadioTargets.forEach(radio => {
-                radio.checked = false;
-            });
+    /**
+     * Gestion du téléchargement d'un fichier
+     */
+    handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
 
-            // Remove highlight from all avatars
-            if (this.hasAvatarImageTarget) {
-                this.avatarImageTargets.forEach(img => {
-                    img.classList.remove('ring-2', 'ring-green-500');
-                });
-            }
+        // Désélectionner tous les avatars prédéfinis
+        this.clearSelection();
+
+        // Afficher la prévisualisation
+        if (this.hasPreviewTarget) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.previewTarget.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
         }
+    }
+
+    /**
+     * Met à jour l'état visuel de la sélection
+     */
+    updateSelection(selectedElement) {
+        // Retirer la sélection de tous les éléments
+        this.clearSelection();
+
+        // Ajouter la sélection à l'élément cliqué
+        selectedElement.classList.add(...this.selectedClassValue.split(' '));
+    }
+
+    /**
+     * Réinitialise la sélection visuelle
+     */
+    clearSelection() {
+        this.element.querySelectorAll('[data-avatar]').forEach(el => {
+            el.classList.remove(...this.selectedClassValue.split(' '));
+        });
     }
 }

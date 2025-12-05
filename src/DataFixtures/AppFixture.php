@@ -16,9 +16,20 @@ class AppFixture extends Fixture
 {
     private UserPasswordHasherInterface $passwordHasher;
 
+    /** Liste des avatars disponibles (1.png à 10.png) */
+    private const AVATARS = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png'];
+
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
         $this->passwordHasher = $passwordHasher;
+    }
+
+    /**
+     * Retourne un avatar aléatoire
+     */
+    private function getRandomAvatar(): string
+    {
+        return self::AVATARS[array_rand(self::AVATARS)];
     }
 
     public function load(ObjectManager $manager): void
@@ -32,6 +43,7 @@ class AppFixture extends Fixture
         $admin->setUsername('admin');
         $admin->setRoles(['ROLE_ADMIN']);
         $admin->setPassword($this->passwordHasher->hashPassword($admin, 'password'));
+        $admin->setAvatarName($this->getRandomAvatar());
         $manager->persist($admin);
         $users[] = $admin;
 
@@ -42,6 +54,7 @@ class AppFixture extends Fixture
             $user->setUsername("user{$i}");
             $user->setRoles(['ROLE_USER']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
+            $user->setAvatarName($this->getRandomAvatar());
             $manager->persist($user);
             $users[] = $user;
         }
@@ -92,6 +105,7 @@ class AppFixture extends Fixture
             $user->setUsername("fleuriste{$i}");
             $user->setRoles(['ROLE_FLEURISTE']);
             $user->setPassword($this->passwordHasher->hashPassword($user, 'password'));
+            $user->setAvatarName($this->getRandomAvatar());
             $manager->persist($user);
             $users[] = $user;
 
