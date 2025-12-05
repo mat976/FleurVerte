@@ -1,4 +1,6 @@
 {
+    "name": "mat976/fleur-verte",
+    "description": "Application e-commerce de fleurs - Symfony backend",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",
