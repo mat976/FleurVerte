@@ -1,19 +1,18 @@
-# Dev image to run Symfony app with `symfony serve` inside Docker
+# Dev image for Symfony with fixtures auto-load
 
-# Stage with Composer for faster copy
 FROM composer:2 AS composer_stage
 
 # Final stage: PHP CLI with extensions and Symfony CLI
 FROM php:8.2-cli
 
-# Install system deps and PHP extensions needed by the app
+# Install system deps and PHP extensions
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev \
-    && docker-php-ext-install pdo pdo_mysql \
+    && docker-php-ext-install pdo pdo_mysql intl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Composer from composer_stage
+# Install Composer
 COPY --from=composer_stage /usr/bin/composer /usr/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -26,5 +25,5 @@ WORKDIR /app
 # Expose the dev HTTP port
 EXPOSE 8000
 
-# Default command: install deps, create database, run migrations, then start symfony server
-CMD ["sh", "-lc", "composer install --no-interaction --prefer-dist --no-progress && php bin/console doctrine:database:create --if-not-exists && php bin/console doctrine:migrations:migrate --no-interaction && symfony serve --no-tls --port=8000 --allow-http --ansi --allow-all-ip"]
+# Start: migrations + fixtures + server
+CMD ["sh", "-c", "php bin/console doctrine:database:create --if-not-exists && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console doctrine:fixtures:load --no-interaction && symfony serve --no-tls --port=8000 --allow-http --allow-all-ip"]

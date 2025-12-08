@@ -138,7 +138,7 @@
 							{% for tag in form.tags %}
 								<div class="flex items-center">
 									{{ form_widget(tag, {'attr': {'class': 'sr-only tag-checkbox'}}) }}
-									<label for="{{ tag.vars.id }}" class="tag-label cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-colors" data-color="{% if tag.vars.value.couleur is defined %}{{ tag.vars.value.couleur }}{% else %}#4B5563{% endif %}" style="background-color: {% if tag.vars.value.couleur is defined %}{{ tag.vars.value.couleur ? tag.vars.value.couleur ~ '33' : '#e5e7eb' }}{% else %}#e5e7eb{% endif %}; color: {% if tag.vars.value.couleur is defined %}{{ tag.vars.value.couleur ?: '#374151' }}{% else %}#374151{% endif %}">
+									<label for="{{ tag.vars.id }}" class="tag-label cursor-pointer inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-colors" data-color="{% if tag.vars.value.couleur is defined %}{{ tag.vars.value.couleur }}{% else %}#4B5563{% endif %}" style="background-color: {% if tag.vars.value.couleur is defined %}{{ tag.vars.value.couleur }}{% else %}#e5e7eb{% endif %}; color: {% if tag.vars.value.couleur is defined %}{{ tag.vars.value.textColor ?? '#ffffff' }}{% else %}#374151{% endif %}">
                                         {% if tag.vars.value.nom is defined %}{{ tag.vars.value.nom }}{% else %}{{ tag.vars.label }}{% endif %}
                                         <span class="tag-check ml-1 hidden">
                                             <i class="fas fa-check"></i>

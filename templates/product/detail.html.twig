@@ -55,7 +55,7 @@
 					{% if fleur.tags|length > 0 %}
 						<div class="flex flex-wrap gap-2 mb-4">
 							{% for tag in fleur.tags %}
-								<a href="{{ path('app_search', {'tag': tag.id}) }}" class="px-3 py-1 rounded-full text-sm font-medium transition-all hover:scale-105" style="background-color: {{ tag.couleur }}20; color: {{ tag.couleur }}; border: 1px solid {{ tag.couleur }}40">
+								<a href="{{ path('app_search', {'tag': tag.id}) }}" class="px-3 py-1 rounded-full text-sm font-medium transition-all hover:scale-105" style="background-color: {{ tag.couleur }}; color: {{ tag.textColor ?? '#ffffff' }};">
 									{{ tag.nom }}
 								</a>
 							{% endfor %}
