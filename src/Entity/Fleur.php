@@ -296,6 +296,9 @@ class Fleur
      */
     public function getStockStatus(): string
     {
+        if ($this->stock === null) {
+            return 'unknown';
+        }
         if ($this->stock === 0) {
             return 'out_of_stock';
         } elseif ($this->stock <= 10) {

@@ -32,9 +32,17 @@ class FleurTest extends TestCase
     {
         $fleur = new Fleur();
         
-        // Test in stock
+        // Test low stock (<= 10)
         $fleur->setStock(5);
-        $this->assertEquals('available', $fleur->getStockStatus());
+        $this->assertEquals('low_stock', $fleur->getStockStatus());
+        
+        // Test medium stock (<= 50)
+        $fleur->setStock(20);
+        $this->assertEquals('medium_stock', $fleur->getStockStatus());
+
+        // Test in stock (> 50)
+        $fleur->setStock(60);
+        $this->assertEquals('in_stock', $fleur->getStockStatus());
         
         // Test out of stock
         $fleur->setStock(0);
