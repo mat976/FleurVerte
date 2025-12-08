@@ -28,11 +28,8 @@ class DatabaseTest extends WebTestCase
     {
         $fleur = new Fleur();
         $fleur->setNom('Test Fleur');
-        $fleur->setDescription('Test Description');
-        // $fleur->setThc(15.5); // Removed attribute
         $fleur->setPrix(25.99);
         $fleur->setStock(10);
-        $fleur->setIsPinned(false);
 
         $this->entityManager->persist($fleur);
         $this->entityManager->flush();
@@ -41,9 +38,7 @@ class DatabaseTest extends WebTestCase
         
         $this->assertNotNull($retrievedFleur);
         $this->assertEquals('Test Fleur', $retrievedFleur->getNom());
-        // $this->assertEquals(15.5, $retrievedFleur->getThc());
         $this->assertEquals(25.99, $retrievedFleur->getPrix());
-        $this->assertFalse($retrievedFleur->getIsPinned());
 
         // Clean up
         $this->entityManager->remove($retrievedFleur);

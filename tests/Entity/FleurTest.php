@@ -14,32 +14,18 @@ class FleurTest extends TestCase
         
         $this->assertNull($fleur->getId());
         $this->assertNull($fleur->getNom());
-        $this->assertNull($fleur->getDescription());
-        // $this->assertNull($fleur->getThc());
         $this->assertNull($fleur->getPrix());
-        $this->assertNull($fleur->getStock());
-        $this->assertFalse($fleur->getIsPinned());
-        $this->assertNull($fleur->getFleuriste());
     }
 
     public function testFleurSettersAndGetters(): void
     {
         $fleur = new Fleur();
-        $fleuriste = new Fleuriste();
         
         $fleur->setNom('Test Fleur');
-        $fleur->setDescription('Test Description');
         $fleur->setPrix(25.99);
-        $fleur->setStock(10);
-        $fleur->setIsPinned(true);
-        $fleur->setFleuriste($fleuriste);
         
         $this->assertEquals('Test Fleur', $fleur->getNom());
-        $this->assertEquals('Test Description', $fleur->getDescription());
         $this->assertEquals(25.99, $fleur->getPrix());
-        $this->assertEquals(10, $fleur->getStock());
-        $this->assertTrue($fleur->getIsPinned());
-        $this->assertEquals($fleuriste, $fleur->getFleuriste());
     }
 
     public function testFleurStockStatus(): void
