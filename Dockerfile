@@ -25,8 +25,10 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Install PHP dependencies (with APP_ENV=prod to skip dev bundles)
+ENV APP_ENV=prod
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer run-script --no-dev post-install-cmd || true
 
 # Expose the HTTP port (Render uses 10000 by default, but we'll use PORT env var)
 EXPOSE 10000
