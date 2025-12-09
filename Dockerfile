@@ -32,8 +32,11 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 
 # Install PHP dependencies (with APP_ENV=prod to skip dev bundles)
 ENV APP_ENV=prod
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+RUN composer install --optimize-autoloader --no-interaction --no-scripts
 RUN composer run-script --no-dev post-install-cmd || true
+
+# Ensure fixtures bundle is available
+RUN composer require doctrine/doctrine-fixtures-bundle --no-interaction --optimize-autoloader
 
 # Build frontend assets
 RUN npm install && npm run build
