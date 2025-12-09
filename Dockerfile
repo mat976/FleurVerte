@@ -1,15 +1,15 @@
-# Dev image for Symfony with fixtures auto-load
+# Production image for Symfony on Render
 
 FROM composer:2 AS composer_stage
 
 # Final stage: PHP CLI with extensions and Symfony CLI
 FROM php:8.2-cli
 
-# Install system deps and PHP extensions
+# Install system deps and PHP extensions (PostgreSQL for Render)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-    git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev \
-    && docker-php-ext-install pdo pdo_mysql intl \
+    git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql intl zip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -22,8 +22,23 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash \
 
 WORKDIR /app
 
-# Expose the dev HTTP port
-EXPOSE 8000
+# Copy application files
+COPY . .
 
-# Start: migrations + fixtures + server
-CMD ["sh", "-c", "php bin/console doctrine:database:create --if-not-exists && php bin/console doctrine:migrations:migrate --no-interaction && php bin/console doctrine:fixtures:load --no-interaction && symfony serve --no-tls --port=8000 --allow-http --allow-all-ip"]
+# Install PHP dependencies
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Expose the HTTP port (Render uses 10000 by default, but we'll use PORT env var)
+EXPOSE 10000
+
+# Start script for Render (fixtures only on fresh DB)
+CMD ["sh", "-c", "\
+  if php bin/console doctrine:database:create --if-not-exists --no-interaction 2>&1 | grep -q 'created'; then \
+    echo 'New database created, loading fixtures...' && \
+    php bin/console doctrine:migrations:migrate --no-interaction && \
+    php bin/console doctrine:fixtures:load --no-interaction; \
+  else \
+    echo 'Database exists, running migrations only...' && \
+    php bin/console doctrine:migrations:migrate --no-interaction; \
+  fi && \
+  symfony serve --no-tls --port=${PORT:-10000} --allow-http --allow-all-ip"]
