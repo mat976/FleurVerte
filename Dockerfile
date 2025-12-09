@@ -25,10 +25,18 @@ WORKDIR /app
 # Copy application files
 COPY . .
 
+# Install Node.js for asset building
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
+
 # Install PHP dependencies (with APP_ENV=prod to skip dev bundles)
 ENV APP_ENV=prod
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 RUN composer run-script --no-dev post-install-cmd || true
+
+# Build frontend assets
+RUN npm install && npm run build
 
 # Expose the HTTP port (Render uses 10000 by default, but we'll use PORT env var)
 EXPOSE 10000
