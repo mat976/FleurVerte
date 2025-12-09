@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Docker
+docker-compose.yml
+docker-compose*.yml
+Dockerfile
+
+# Symfony
+var/
+vendor/
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+
+# Cache and logs
+*.log
+*.cache
+
+# Tests
+tests/
+phpunit.xml*
