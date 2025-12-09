@@ -5,7 +5,7 @@ FROM composer:2 AS composer_stage
 # Final stage: PHP CLI with extensions and Symfony CLI
 FROM php:8.2-cli
 
-# Install system deps and PHP extensions (PostgreSQL for Render)
+# Install system deps and PHP extensions (PostgreSQL)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     git curl unzip zip gnupg ca-certificates libzip-dev libicu-dev libpq-dev \
