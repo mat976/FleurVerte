@@ -33,14 +33,14 @@ RUN composer run-script --no-dev post-install-cmd || true
 # Expose the HTTP port (Render uses 10000 by default, but we'll use PORT env var)
 EXPOSE 10000
 
-# Start script for Render (fixtures only on fresh DB)
+# Start script for Render (schema update + fixtures on fresh DB)
 CMD ["sh", "-c", "\
-  if php bin/console doctrine:database:create --if-not-exists --no-interaction 2>&1 | grep -q 'created'; then \
-    echo 'New database created, loading fixtures...' && \
-    php bin/console doctrine:migrations:migrate --no-interaction && \
-    php bin/console doctrine:fixtures:load --no-interaction; \
+  php bin/console doctrine:schema:update --force --no-interaction && \
+  TABLE_COUNT=$(php bin/console doctrine:query:sql \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'\" 2>/dev/null | grep -o '[0-9]*' | head -1 || echo '0') && \
+  if [ \"$TABLE_COUNT\" -lt \"5\" ]; then \
+    echo 'Fresh database, loading fixtures...' && \
+    php bin/console doctrine:fixtures:load --no-interaction || true; \
   else \
-    echo 'Database exists, running migrations only...' && \
-    php bin/console doctrine:migrations:migrate --no-interaction; \
+    echo 'Database has data, skipping fixtures'; \
   fi && \
   symfony serve --no-tls --port=${PORT:-10000} --allow-http --allow-all-ip"]
