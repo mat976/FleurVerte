@@ -41,14 +41,15 @@ RUN npm install && npm run build
 # Expose the HTTP port (Render uses 10000 by default, but we'll use PORT env var)
 EXPOSE 10000
 
-# Start script for Render (schema update + fixtures on fresh DB)
+# Start script for Render (schema update + fixtures if no users)
 CMD ["sh", "-c", "\
   php bin/console doctrine:schema:update --force --no-interaction && \
-  TABLE_COUNT=$(php bin/console doctrine:query:sql \"SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public'\" 2>/dev/null | grep -o '[0-9]*' | head -1 || echo '0') && \
-  if [ \"$TABLE_COUNT\" -lt \"5\" ]; then \
-    echo 'Fresh database, loading fixtures...' && \
-    php bin/console doctrine:fixtures:load --no-interaction || true; \
+  USER_COUNT=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) as cnt FROM \"user\"' 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo '0') && \
+  echo \"User count: $USER_COUNT\" && \
+  if [ \"$USER_COUNT\" = \"0\" ] || [ -z \"$USER_COUNT\" ]; then \
+    echo 'No users found, loading fixtures...' && \
+    php bin/console doctrine:fixtures:load --no-interaction; \
   else \
-    echo 'Database has data, skipping fixtures'; \
+    echo 'Users exist, skipping fixtures'; \
   fi && \
   symfony serve --no-tls --port=${PORT:-10000} --allow-http --allow-all-ip"]
