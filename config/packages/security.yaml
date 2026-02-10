@@ -8,7 +8,7 @@ security:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: username  # Changé de 'email' à 'username'
+                property: email
 
     firewalls:
         dev:
@@ -31,8 +31,8 @@ security:
                 login_path: app_login
                 check_path: app_login
                 enable_csrf: true
-                username_parameter: _username  # Changé de 'email' à '_username'
-                password_parameter: _password  # Changé pour correspondre au formulaire
+                username_parameter: _email
+                password_parameter: _password
 
     access_control:
         # Define access control rules here
