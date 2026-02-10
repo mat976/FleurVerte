@@ -46,7 +46,11 @@ EXPOSE 10000
 
 # Start script for Render (schema update + fixtures if no users)
 CMD ["sh", "-c", "\
-  php bin/console doctrine:schema:update --force --no-interaction && \
+  echo 'Waiting for database...' && \
+  for i in 1 2 3 4 5; do \
+    php bin/console doctrine:schema:update --force --no-interaction && break; \
+    echo \"Attempt $i failed, retrying in 5s...\" && sleep 5; \
+  done && \
   USER_COUNT=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) as cnt FROM \"user\"' 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo '0') && \
   echo \"User count: $USER_COUNT\" && \
   if [ \"$USER_COUNT\" = \"0\" ] || [ -z \"$USER_COUNT\" ]; then \

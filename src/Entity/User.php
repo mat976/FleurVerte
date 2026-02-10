@@ -23,7 +23,7 @@ use App\Repository\MessageRepository;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[Vich\Uploadable]
-class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serializable
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * Identifiant unique de l'utilisateur
@@ -375,31 +375,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, \Serial
     /**
      * Sérialise les données essentielles de l'utilisateur
      * 
-     * @return string
+     * @return array
      */
-    public function serialize()
+    public function __serialize(): array
     {
-        return serialize([
-            $this->id,
-            $this->username,
-            $this->email,
-            $this->password,
-        ]);
+        return [
+            'id' => $this->id,
+            'username' => $this->username,
+            'email' => $this->email,
+            'password' => $this->password,
+        ];
     }
 
     /**
      * Désérialise les données de l'utilisateur
      * 
-     * @param string $data Les données sérialisées
+     * @param array $data Les données sérialisées
      */
-    public function unserialize($data)
+    public function __unserialize(array $data): void
     {
-        [
-            $this->id,
-            $this->username,
-            $this->email,
-            $this->password,
-        ] = unserialize($data);
+        $this->id = $data['id'];
+        $this->username = $data['username'];
+        $this->email = $data['email'];
+        $this->password = $data['password'];
     }
 
     /**
