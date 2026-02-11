@@ -88,6 +88,97 @@
 		</div>
 	</section>
 
+	{# Section Promotions #}
+	{% if promos|length > 0 %}
+	<section class="py-20 bg-gradient-to-b from-white to-red-50/30 relative overflow-hidden">
+		<div class="absolute top-0 right-0 w-96 h-96 bg-red-100/20 rounded-full blur-3xl"></div>
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
+			<div class="text-center mb-12">
+				<div class="inline-flex items-center gap-2 px-5 py-2 bg-red-50/80 backdrop-blur-sm rounded-full border border-red-100 mb-6">
+					<i class="fas fa-fire text-red-500 animate-pulse"></i>
+					<span class="text-red-700 font-medium text-sm">Offres du moment</span>
+				</div>
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Promotions</h2>
+				<p class="text-lg text-gray-500 max-w-xl mx-auto">Profitez de nos offres exceptionnelles sur une sélection de fleurs.</p>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+				{% for fleur in promos %}
+					<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-white/50 hover:-translate-y-2">
+						<div class="relative h-48 overflow-hidden">
+							<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+							<div class="absolute top-3 right-3">
+								<span class="px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
+									-{{ fleur.promoPercent }}%
+								</span>
+							</div>
+							<div class="absolute top-3 left-3">
+								<span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-500/90 text-white backdrop-blur-sm">
+									{{ fleur.stockLabel }}
+								</span>
+							</div>
+						</div>
+						<div class="p-4">
+							<h3 class="font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">{{ fleur.nom }}</h3>
+							<div class="flex items-center gap-2">
+								<span class="text-sm line-through text-gray-400">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+								<span class="text-xl font-bold text-red-600">{{ fleur.prixPromo|number_format(2, ',', ' ') }}€</span>
+							</div>
+							<p class="text-xs text-green-600 mt-1 font-medium">Économie : {{ fleur.economie|number_format(2, ',', ' ') }}€</p>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
+
+			<div class="text-center mt-10">
+				<a href="{{ path('app_product') }}" class="inline-flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-full font-semibold transition-all hover:shadow-xl hover:-translate-y-0.5">
+					<i class="fas fa-tags"></i>
+					Voir toutes les promos
+				</a>
+			</div>
+		</div>
+	</section>
+	{% endif %}
+
+	{# Section Dernières Nouveautés #}
+	{% if latestFleurs|length > 0 %}
+	<section class="py-20 bg-white relative overflow-hidden">
+		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-16 relative z-10">
+			<div class="text-center mb-12">
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nouveautés</h2>
+				<p class="text-lg text-gray-500 max-w-xl mx-auto">Les dernières fleurs ajoutées à notre catalogue.</p>
+			</div>
+
+			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+				{% for fleur in latestFleurs %}
+					<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-white/50 hover:-translate-y-2">
+						<div class="relative h-52 overflow-hidden">
+							<img src="{{ asset(fleur.getImageUrl()) }}" alt="{{ fleur.nom }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+							{% if fleur.isEnPromo %}
+								<div class="absolute top-3 right-3">
+									<span class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">-{{ fleur.promoPercent }}%</span>
+								</div>
+							{% endif %}
+						</div>
+						<div class="p-5">
+							<h3 class="font-bold text-lg text-gray-900 mb-2 group-hover:text-green-600 transition-colors">{{ fleur.nom }}</h3>
+							<p class="text-gray-500 text-sm mb-3 line-clamp-2">{{ fleur.description|slice(0, 80) }}{% if fleur.description|length > 80 %}...{% endif %}</p>
+							<div>
+								{% if fleur.isEnPromo %}
+									<span class="text-sm line-through text-gray-400">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+									<span class="text-xl font-bold text-red-600 ml-1">{{ fleur.prixPromo|number_format(2, ',', ' ') }}€</span>
+								{% else %}
+									<span class="text-xl font-bold text-green-600">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+								{% endif %}
+							</div>
+						</div>
+					</a>
+				{% endfor %}
+			</div>
+		</div>
+	</section>
+	{% endif %}
+
 	{# Section Collections - Cards transparentes #}
 	<section class="py-24 bg-gradient-soft relative overflow-hidden">
 		{# Décor #}

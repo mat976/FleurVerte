@@ -52,11 +52,8 @@ class FleurRepository extends ServiceEntityRepository
             case 'price_desc':
                 $qb->orderBy('f.prix', 'DESC');
                 break;
-            case 'thc_asc':
-                $qb->orderBy('f.thc', 'ASC');
-                break;
-            case 'thc_desc':
-                $qb->orderBy('f.thc', 'DESC');
+            case 'promo':
+                $qb->orderBy('f.promoPercent', 'DESC');
                 break;
             case 'name_asc':
             default:
@@ -65,5 +62,38 @@ class FleurRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return Fleur[]
+     */
+    public function findActivePromos(int $limit = 6): array
+    {
+        $now = new \DateTime();
+
+        return $this->createQueryBuilder('f')
+            ->where('f.promoActive = true')
+            ->andWhere('f.promoPercent > 0')
+            ->andWhere('f.promoStart IS NULL OR f.promoStart <= :now')
+            ->andWhere('f.promoEnd IS NULL OR f.promoEnd >= :now')
+            ->andWhere('f.stock > 0')
+            ->setParameter('now', $now)
+            ->orderBy('f.promoPercent', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return Fleur[]
+     */
+    public function findLatest(int $limit = 6): array
+    {
+        return $this->createQueryBuilder('f')
+            ->where('f.stock > 0')
+            ->orderBy('f.id', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 }

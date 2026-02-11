@@ -151,10 +151,9 @@
 									<tr>
 										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
 										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">THC</th>
 										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prix</th>
 										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Stock</th>
-										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Promo</th>
 										<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
 									</tr>
 								</thead>
@@ -182,34 +181,48 @@
 													</div>
 												</div>
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.description|slice(0, 50) }}
-												{% if fleur.description|length > 50 %}...
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.description|slice(0, 50) }}{% if fleur.description|length > 50 %}...{% endif %}
+											</td>
+											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+												{% if fleur.isEnPromo %}
+													<span class="line-through text-gray-400">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+													<span class="text-red-600 font-bold ml-1">{{ fleur.prixPromo|number_format(2, ',', ' ') }}€</span>
+													<span class="text-xs text-red-500 block">-{{ fleur.promoPercent }}%</span>
+												{% else %}
+													{{ fleur.prix|number_format(2, ',', ' ') }}€
 												{% endif %}
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.thc }}%</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ fleur.prix }}€</td>
 											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-												<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ fleur.stock > 10 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800' }}">
-													{{ fleur.stock }}
+												<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ fleur.stock > 10 ? 'bg-green-100 text-green-800' : (fleur.stock > 0 ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800') }}">
+													{{ fleur.stock ?? 0 }}
 												</span>
 											</td>
-											<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-												{% if fleur.isPinned %}
-													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-														<i class="fas fa-thumbtack mr-1"></i> Épinglé
-													</span>
+											<td class="px-6 py-4 whitespace-nowrap text-sm">
+												{% if fleur.promoPercent > 0 %}
+													<div class="flex items-center gap-2">
+														<form method="post" action="{{ path('app_fleuriste_toggle_promo', {'id': fleur.id}) }}">
+															<button type="submit" class="px-3 py-1 text-xs font-semibold rounded-full transition-colors {{ fleur.isEnPromo ? 'bg-red-100 text-red-700 hover:bg-red-200' : 'bg-green-100 text-green-700 hover:bg-green-200' }}">
+																{% if fleur.isEnPromo %}
+																	<i class="fas fa-pause mr-1"></i>Désactiver
+																{% else %}
+																	<i class="fas fa-play mr-1"></i>Activer
+																{% endif %}
+															</button>
+														</form>
+														<span class="text-xs text-gray-500">-{{ fleur.promoPercent }}%</span>
+													</div>
 												{% else %}
-													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-														Standard
+													<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-500">
+														Aucune
 													</span>
 												{% endif %}
 											</td>
 											<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
 												<div class="flex space-x-2">
-													<a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" class="text-green-600 hover:text-green-900">
+													<a href="{{ path('app_fleuriste_fleur_edit', {'id': fleur.id}) }}" class="text-green-600 hover:text-green-900" title="Modifier">
 														<i class="fas fa-edit"></i>
 													</a>
-													<a href="{{ path('app_fleuriste_dashboard', {'reapprovisionner': 1, 'fleurId': fleur.id}) }}" class="text-blue-600 hover:text-blue-900">
+													<a href="{{ path('app_fleuriste_dashboard', {'reapprovisionner': 1, 'fleurId': fleur.id}) }}" class="text-blue-600 hover:text-blue-900" title="Réapprovisionner">
 														<i class="fas fa-plus-circle"></i>
 													</a>
 												</div>

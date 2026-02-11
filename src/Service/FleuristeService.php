@@ -83,7 +83,6 @@ class FleuristeService
             ->setNom($fleur->getNom())
             ->setDescription($fleur->getDescription())
             ->setPrix($fleur->getPrix())
-            ->setThc($fleur->getThc())
             ->setStock(0)
             ->setFleuriste($fleuriste);
 

@@ -2,6 +2,11 @@
 
 {% block title %}Nos Fleurs - FleurVerte{% endblock %}
 
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('js/product-preview.js') }}" defer></script>
+{% endblock %}
+
 {% block body %}
 	{# Page Produits - Design léger et transparent #}
 	<div class="min-h-screen bg-white relative overflow-hidden">
@@ -62,7 +67,20 @@
 			{# Grid de produits #}
 			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 				{% for fleur in fleurs %}
-					<div class="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-white/50 hover:-translate-y-2">
+					<div class="group bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-white/50 hover:-translate-y-2"
+						data-preview
+						data-preview-image="{{ asset(fleur.getImageUrl()) }}"
+						data-preview-name="{{ fleur.nom }}"
+						data-preview-desc="{{ fleur.description|slice(0, 200) }}"
+						data-preview-price="{{ fleur.isEnPromo ? fleur.prixPromo|number_format(2, ',', ' ') : fleur.prix|number_format(2, ',', ' ') }}"
+						data-preview-old-price="{{ fleur.prix|number_format(2, ',', ' ') }}"
+						data-preview-promo="{{ fleur.isEnPromo ? 'true' : 'false' }}"
+						data-preview-percent="{{ fleur.promoPercent }}"
+						data-preview-stock="{{ fleur.stockLabel }}"
+						data-preview-rating="{{ fleur.noteMoyenne is not null ? fleur.noteMoyenne ~ '/5 (' ~ fleur.nombreCommentaires ~ ' avis)' : 'Aucun avis' }}"
+						data-preview-url="{{ path('product_detail', {'id': fleur.id}) }}"
+						data-preview-tags="{{ fleur.tags|map(t => {name: t.nom, color: t.couleur, textColor: t.textColor})|json_encode|e('html_attr') }}"
+					>
 						{# Image avec overlay #}
 						<div class="relative h-56 overflow-hidden">
 							<a href="{{ path('product_detail', {'id': fleur.id}) }}">
@@ -85,11 +103,11 @@
 								</span>
 							</div>
 
-							{# Badge épinglé #}
-							{% if fleur.isPinned %}
+							{# Badge promo #}
+							{% if fleur.isEnPromo %}
 								<div class="absolute top-4 right-4">
-									<span class="w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg">
-										<i class="fas fa-star text-white text-sm"></i>
+									<span class="px-3 py-1.5 bg-red-500 text-white text-xs font-bold rounded-full shadow-lg animate-pulse">
+										-{{ fleur.promoPercent }}%
 									</span>
 								</div>
 							{% endif %}
@@ -152,7 +170,13 @@
 							{# Prix et bouton #}
 							<div class="flex items-center justify-between pt-4 border-t border-gray-100">
 								<div>
-									<span class="text-2xl font-bold text-green-600">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+									{% if fleur.isEnPromo %}
+										<span class="text-xs line-through text-gray-400 block">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+										<span class="text-xl font-bold text-gray-900">{{ fleur.prixPromo|number_format(2, ',', ' ') }}€</span>
+										<span class="text-xs text-emerald-600 font-medium">-{{ fleur.economie|number_format(2, ',', ' ') }}€</span>
+									{% else %}
+										<span class="text-xl font-bold text-gray-900">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+									{% endif %}
 								</div>
 								<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm transition-colors">
 									Voir détails
@@ -178,5 +202,36 @@
 			</div>
 			</div>
 		</section>
+	</div>
+
+	{# Modal de prévisualisation au survol — carte flottante centrée #}
+	<div id="product-preview-modal"
+		class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 opacity-0 scale-95 pointer-events-none transition-all duration-300 ease-out w-full max-w-lg mx-auto">
+		<div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100" id="product-preview-card">
+			<div class="relative h-56 overflow-hidden">
+				<img data-preview-image src="" alt="" class="w-full h-full object-cover">
+				<div data-preview-badge class="absolute top-4 right-4 px-3 py-1.5 bg-rose-500 text-white text-sm font-bold rounded-full shadow-lg hidden"></div>
+			</div>
+			<div class="p-6">
+				<div data-preview-tags class="flex flex-wrap gap-1.5 mb-3"></div>
+				<h3 data-preview-name class="text-2xl font-bold text-gray-900 mb-2"></h3>
+				<p data-preview-desc class="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-3"></p>
+				<div class="flex items-center gap-3 mb-3">
+					<span class="text-sm text-gray-500"><i class="fas fa-box mr-1"></i><span data-preview-stock></span></span>
+					<span class="text-gray-300">|</span>
+					<span class="text-sm text-gray-500"><i class="fas fa-star text-yellow-400 mr-1"></i><span data-preview-rating></span></span>
+				</div>
+				<div class="flex items-center justify-between pt-4 border-t border-gray-100">
+					<div class="flex items-baseline gap-2">
+						<span data-preview-old-price class="text-sm line-through text-gray-400 hidden"></span>
+						<span data-preview-price class="text-2xl font-bold text-gray-900"></span>
+						<span data-preview-promo class="text-xs text-emerald-600 font-medium hidden">promo</span>
+					</div>
+					<a data-preview-link href="#" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-full font-semibold text-sm transition-colors">
+						Voir détails
+					</a>
+				</div>
+			</div>
+		</div>
 	</div>
 {% endblock %}

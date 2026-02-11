@@ -157,6 +157,6 @@ class CartItem
      */
     public function getTotal(): float
     {
-        return $this->fleur->getPrix() * $this->quantity;
+        return $this->fleur->getPrixEffectif() * $this->quantity;
     }
 }

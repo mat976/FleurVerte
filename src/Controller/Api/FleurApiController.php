@@ -31,8 +31,10 @@ class FleurApiController extends AbstractController
                 'stock_status' => $fleur->getStockStatus(),
                 'stock_label' => $fleur->getStockLabel(),
                 'stock_color' => $fleur->getStockColor(),
-                'image_url' => $imageUrl, // App will likely prepend base URL
-                'is_pinned' => $fleur->getIsPinned(),
+                'image_url' => $imageUrl,
+                'is_en_promo' => $fleur->isEnPromo(),
+                'promo_percent' => $fleur->getPromoPercent(),
+                'prix_effectif' => $fleur->getPrixEffectif(),
                 'fleuriste' => $fleur->getFleuriste() ? $fleur->getFleuriste()->getNom() : null,
             ];
         }
@@ -58,7 +60,9 @@ class FleurApiController extends AbstractController
             'stock_label' => $fleur->getStockLabel(),
             'stock_color' => $fleur->getStockColor(),
             'image_url' => $fleur->getImageUrl(),
-            'is_pinned' => $fleur->getIsPinned(),
+            'is_en_promo' => $fleur->isEnPromo(),
+            'promo_percent' => $fleur->getPromoPercent(),
+            'prix_effectif' => $fleur->getPrixEffectif(),
             'fleuriste' => $fleur->getFleuriste() ? $fleur->getFleuriste()->getNom() : null,
             'tags' => [],
         ];

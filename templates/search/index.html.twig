@@ -49,8 +49,7 @@
 							<option value="name_desc" {% if currentSort == 'name_desc' %} selected {% endif %}>Nom (Z-A)</option>
 							<option value="price_asc" {% if currentSort == 'price_asc' %} selected {% endif %}>Prix (croissant)</option>
 							<option value="price_desc" {% if currentSort == 'price_desc' %} selected {% endif %}>Prix (décroissant)</option>
-							<option value="thc_asc" {% if currentSort == 'thc_asc' %} selected {% endif %}>THC (croissant)</option>
-							<option value="thc_desc" {% if currentSort == 'thc_desc' %} selected {% endif %}>THC (décroissant)</option>
+							<option value="promo" {% if currentSort == 'promo' %} selected {% endif %}>Promotions</option>
 						</select>
 					</div>
 
@@ -103,8 +102,14 @@
 										{% endif %}
 									</p>
 									<div class="flex justify-between items-center mt-4">
-										<span class="text-green-600 font-bold">{{ fleur.prix }}
-											€</span>
+										{% if fleur.isEnPromo %}
+											<div>
+												<span class="text-sm line-through text-gray-400">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+												<span class="text-red-600 font-bold">{{ fleur.prixPromo|number_format(2, ',', ' ') }}€</span>
+											</div>
+										{% else %}
+											<span class="text-green-600 font-bold">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
+										{% endif %}
 										<a href="{{ path('app_product_detail', {'id': fleur.id}) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm">Voir détails</a>
 									</div>
 								</div>

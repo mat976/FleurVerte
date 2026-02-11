@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -58,8 +59,27 @@ class FleurType extends AbstractType
                     'placeholder' => 'Entrez la quantité en stock'
                 ]
             ])
-            ->add('isPinned', CheckboxType::class, [
-                'label' => 'Épingler ce produit',
+            ->add('promoPercent', IntegerType::class, [
+                'label' => 'Réduction (%)',
+                'required' => false,
+                'attr' => [
+                    'min' => 0,
+                    'max' => 100,
+                    'placeholder' => '0'
+                ]
+            ])
+            ->add('promoStart', DateTimeType::class, [
+                'label' => 'Début de la promo',
+                'required' => false,
+                'widget' => 'single_text',
+            ])
+            ->add('promoEnd', DateTimeType::class, [
+                'label' => 'Fin de la promo',
+                'required' => false,
+                'widget' => 'single_text',
+            ])
+            ->add('promoActive', CheckboxType::class, [
+                'label' => 'Activer la promotion',
                 'required' => false,
                 'attr' => [
                     'class' => 'h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded'

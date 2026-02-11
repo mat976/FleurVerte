@@ -27,7 +27,7 @@ class SearchController extends AbstractController
         $selectedTag = null;
 
         // Récupérer tous les tags pour l'affichage dans le filtre
-        $tags = $tagRepository->findAllSortedByName();
+        $tags = $tagRepository->findAllSorted();
 
         if ($query || $tagId) {
             $options = [

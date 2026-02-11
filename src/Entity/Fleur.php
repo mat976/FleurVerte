@@ -66,12 +66,28 @@ class Fleur
     private ?int $stock = null;
 
     /**
-     * Indique si la fleur est épinglée (mise en avant)
-     * 
-     * @var bool
+     * Pourcentage de réduction promotionnelle (0-100)
+     */
+    #[ORM\Column(type: "integer", options: ["default" => 0])]
+    private int $promoPercent = 0;
+
+    /**
+     * Date de début de la promotion
+     */
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $promoStart = null;
+
+    /**
+     * Date de fin de la promotion
+     */
+    #[ORM\Column(type: "datetime", nullable: true)]
+    private ?\DateTimeInterface $promoEnd = null;
+
+    /**
+     * Indique si la promotion est activée par le fleuriste
      */
     #[ORM\Column(type: "boolean", options: ["default" => false])]
-    private bool $isPinned = false;
+    private bool $promoActive = false;
 
     /**
      * Fleuriste vendant cette fleur
@@ -201,23 +217,102 @@ class Fleur
         return $this;
     }
 
-    /**
-     * Vérifie si la fleur est épinglée
-     */
-    public function getIsPinned(): bool
+    public function getPromoPercent(): int
     {
-        return $this->isPinned;
+        return $this->promoPercent;
+    }
+
+    public function setPromoPercent(int $promoPercent): static
+    {
+        $this->promoPercent = max(0, min(100, $promoPercent));
+        return $this;
+    }
+
+    public function getPromoStart(): ?\DateTimeInterface
+    {
+        return $this->promoStart;
+    }
+
+    public function setPromoStart(?\DateTimeInterface $promoStart): static
+    {
+        $this->promoStart = $promoStart;
+        return $this;
+    }
+
+    public function getPromoEnd(): ?\DateTimeInterface
+    {
+        return $this->promoEnd;
+    }
+
+    public function setPromoEnd(?\DateTimeInterface $promoEnd): static
+    {
+        $this->promoEnd = $promoEnd;
+        return $this;
+    }
+
+    public function isPromoActive(): bool
+    {
+        return $this->promoActive;
+    }
+
+    public function setPromoActive(bool $promoActive): static
+    {
+        $this->promoActive = $promoActive;
+        return $this;
     }
 
     /**
-     * Définit si la fleur est épinglée
-     * 
-     * @param bool $isPinned True si la fleur doit être épinglée
+     * Vérifie si la fleur est actuellement en promotion
      */
-    public function setIsPinned(bool $isPinned): static
+    public function isEnPromo(): bool
     {
-        $this->isPinned = $isPinned;
-        return $this;
+        if (!$this->promoActive || $this->promoPercent <= 0) {
+            return false;
+        }
+
+        $now = new \DateTime();
+
+        if ($this->promoStart !== null && $now < $this->promoStart) {
+            return false;
+        }
+
+        if ($this->promoEnd !== null && $now > $this->promoEnd) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Retourne le prix après réduction promotionnelle
+     */
+    public function getPrixPromo(): float
+    {
+        if (!$this->isEnPromo()) {
+            return $this->prix;
+        }
+
+        return round($this->prix * (1 - $this->promoPercent / 100), 2);
+    }
+
+    /**
+     * Retourne le prix effectif (promo ou normal)
+     */
+    public function getPrixEffectif(): float
+    {
+        return $this->isEnPromo() ? $this->getPrixPromo() : $this->prix;
+    }
+
+    /**
+     * Retourne l'économie réalisée grâce à la promo
+     */
+    public function getEconomie(): float
+    {
+        if (!$this->isEnPromo()) {
+            return 0;
+        }
+
+        return round($this->prix - $this->getPrixPromo(), 2);
     }
 
     /**

@@ -153,4 +153,21 @@ class FleuristeDashboardController extends AbstractController
 
         return $this->redirectToRoute('app_fleuriste_dashboard');
     }
+
+    /**
+     * Active/désactive la promotion d'une fleur
+     */
+    #[Route('/fleur/{id}/toggle-promo', name: 'app_fleuriste_toggle_promo', methods: ['POST'])]
+    public function togglePromo(Fleur $fleur): Response
+    {
+        $this->fleuristeService->checkFlowerOwnership($fleur, $this->getUser());
+
+        $fleur->setPromoActive(!$fleur->isPromoActive());
+        $this->entityManager->flush();
+
+        $status = $fleur->isPromoActive() ? 'activée' : 'désactivée';
+        $this->addFlash('success', "La promotion a été {$status} pour « {$fleur->getNom()} ».");
+
+        return $this->redirectToRoute('app_fleuriste_dashboard');
+    }
 }
