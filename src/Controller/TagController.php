@@ -19,14 +19,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_FLEURISTE')]
 class TagController extends AbstractController
 {
-    private EntityManagerInterface $entityManager;
-    private TagRepository $tagRepository;
-
-    public function __construct(EntityManagerInterface $entityManager, TagRepository $tagRepository)
-    {
-        $this->entityManager = $entityManager;
-        $this->tagRepository = $tagRepository;
-    }
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly TagRepository $tagRepository
+    ) {}
 
     /**
      * Liste tous les tags

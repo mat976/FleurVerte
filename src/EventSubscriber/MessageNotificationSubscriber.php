@@ -14,19 +14,11 @@ use Twig\Environment;
  */
 class MessageNotificationSubscriber implements EventSubscriberInterface
 {
-    private Security $security;
-    private MessageService $messageService;
-    private Environment $twig;
-
-    /**
-     * Constructeur du subscriber
-     */
-    public function __construct(Security $security, MessageService $messageService, Environment $twig)
-    {
-        $this->security = $security;
-        $this->messageService = $messageService;
-        $this->twig = $twig;
-    }
+    public function __construct(
+        private readonly Security $security,
+        private readonly MessageService $messageService,
+        private readonly Environment $twig
+    ) {}
 
     /**
      * Événements auxquels s'abonner

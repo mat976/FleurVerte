@@ -2,17 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Fleur;
 use App\Entity\Commentaire;
+use App\Entity\Fleur;
+use App\Form\CommentaireType;
 use App\Form\FleurType;
 use App\Form\SearchProductType;
-use App\Form\CommentaireType;
 use App\Repository\FleurRepository;
+use App\Service\CommentaireService;
+use App\Service\FleurService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -26,7 +28,9 @@ class ProductController extends AbstractController
 
     public function __construct(
         private readonly FleurRepository $fleurRepository,
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly FleurService $fleurService,
+        private readonly CommentaireService $commentaireService
     ) {}
 
     /**
@@ -48,37 +52,7 @@ class ProductController extends AbstractController
         $sort = $request->query->get('sort', $formData['sort'] ?? 'name_asc');
         $tagId = $request->query->get('tag');
 
-        // Utiliser la nouvelle méthode de recherche qui inclut les tags
-        if (!empty($search) || !empty($tagId)) {
-            $options = [
-                'sort' => $sort,
-                'tag_id' => $tagId
-            ];
-
-            $fleurs = $this->fleurRepository->searchByTermOrTag($search, $options);
-        } else {
-            // Si pas de recherche, récupérer tous les produits avec tri
-            $queryBuilder = $this->fleurRepository->createQueryBuilder('f');
-
-            // Appliquer le tri
-            switch ($sort) {
-                case 'name_desc':
-                    $queryBuilder->orderBy('f.nom', 'DESC');
-                    break;
-                case 'price_asc':
-                    $queryBuilder->orderBy('f.prix', 'ASC');
-                    break;
-                case 'price_desc':
-                    $queryBuilder->orderBy('f.prix', 'DESC');
-                    break;
-                case 'name_asc':
-                default:
-                    $queryBuilder->orderBy('f.nom', 'ASC');
-                    break;
-            }
-
-            $fleurs = $queryBuilder->getQuery()->getResult();
-        }
+        $fleurs = $this->fleurService->search($search, $sort, $tagId);
 
         return $this->render('product/index.html.twig', [
             'fleurs' => $fleurs,
@@ -119,7 +93,6 @@ class ProductController extends AbstractController
      * 
      * @param int $id L'identifiant du produit
      * @param Request $request La requête HTTP
-     * @throws NotFoundHttpException Si le produit n'existe pas
      */
     #[Route('/{id}', name: 'product_detail', requirements: ['id' => '\d+'])]
     public function detail(int $id, Request $request): Response
@@ -130,7 +103,6 @@ class ProductController extends AbstractController
             throw $this->createNotFoundException(self::MESSAGE_NOT_FOUND);
         }
 
-        // Formulaire de commentaire
         $commentaire = new Commentaire();
         $commentaireForm = $this->createForm(CommentaireType::class, $commentaire);
         $commentaireForm->handleRequest($request);
@@ -141,13 +113,7 @@ class ProductController extends AbstractController
                 return $this->redirectToRoute('app_login');
             }
 
-            $commentaire->setUser($this->getUser());
-            $commentaire->setFleur($fleur);
-            $commentaire->setDateCreation(new \DateTime());
-
-            $this->entityManager->persist($commentaire);
-            $this->entityManager->flush();
-
+            $this->commentaireService->create($this->getUser(), $fleur, $commentaire);
             $this->addFlash('success', 'Votre commentaire a été ajouté avec succès !');
             return $this->redirectToRoute('product_detail', ['id' => $id]);
         }
@@ -162,7 +128,7 @@ class ProductController extends AbstractController
      * Supprime un commentaire
      */
     #[Route('/commentaire/{id}/delete', name: 'commentaire_delete', methods: ['POST'])]
-    public function deleteCommentaire(int $id, Request $request): Response
+    public function deleteCommentaire(int $id): Response
     {
         $commentaire = $this->entityManager->getRepository(Commentaire::class)->find($id);
 
@@ -170,17 +136,14 @@ class ProductController extends AbstractController
             throw $this->createNotFoundException('Commentaire non trouvé');
         }
 
-        // Vérifier que l'utilisateur est le propriétaire ou admin
-        if ($commentaire->getUser() !== $this->getUser() && !$this->isGranted('ROLE_ADMIN')) {
-            $this->addFlash('error', 'Vous ne pouvez pas supprimer ce commentaire.');
-            return $this->redirectToRoute('product_detail', ['id' => $commentaire->getFleur()->getId()]);
-        }
-
         $fleurId = $commentaire->getFleur()->getId();
-        $this->entityManager->remove($commentaire);
-        $this->entityManager->flush();
+        $deleted = $this->commentaireService->delete($commentaire, $this->getUser(), $this->isGranted('ROLE_ADMIN'));
 
-        $this->addFlash('success', 'Commentaire supprimé.');
+        $this->addFlash(
+            $deleted ? 'success' : 'error',
+            $deleted ? 'Commentaire supprimé.' : 'Vous ne pouvez pas supprimer ce commentaire.'
+        );
+
         return $this->redirectToRoute('product_detail', ['id' => $fleurId]);
     }
 }

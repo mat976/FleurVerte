@@ -5,17 +5,24 @@
 # Docker
 docker-compose.yml
 docker-compose*.yml
+podman-compose.yml
 Dockerfile
 
-# Symfony
-var/
+# Dependencies (rebuilt in image)
+node_modules/
 vendor/
+var/
+
+# Secrets
 .env.local
 .env.*.local
+.env.test
 
 # IDE
 .idea/
 .vscode/
+*.swp
+*.swo
 
 # Cache and logs
 *.log
@@ -24,3 +31,7 @@ vendor/
 # Tests
 tests/
 phpunit.xml*
+
+# OS
+Thumbs.db
+.DS_Store

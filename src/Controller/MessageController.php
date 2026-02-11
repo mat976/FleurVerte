@@ -2,15 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Client;
 use App\Entity\Conversation;
 use App\Entity\Fleuriste;
 use App\Entity\Message;
 use App\Form\MessageType;
 use App\Repository\ConversationRepository;
-use App\Repository\FleuristeRepository;
-use App\Repository\MessageRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\ConversationService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,21 +21,24 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route('/messages')]
 class MessageController extends AbstractController
 {
+    public function __construct(
+        private readonly ConversationService $conversationService,
+        private readonly ConversationRepository $conversationRepository
+    ) {}
+
     /**
      * Affiche la liste des conversations de l'utilisateur connecté
      */
     #[Route('/', name: 'app_messages_index', methods: ['GET'])]
-    public function index(ConversationRepository $conversationRepository): Response
+    public function index(): Response
     {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $conversations = $conversationRepository->findByUser($user);
-
         return $this->render('message/index.html.twig', [
-            'conversations' => $conversations,
+            'conversations' => $this->conversationRepository->findByUser($user),
         ]);
     }
 
@@ -46,54 +46,26 @@ class MessageController extends AbstractController
      * Affiche une conversation et permet d'envoyer des messages
      */
     #[Route('/conversation/{id}', name: 'app_conversation_show', methods: ['GET', 'POST'])]
-    public function showConversation(
-        Request $request,
-        Conversation $conversation,
-        EntityManagerInterface $entityManager,
-        MessageRepository $messageRepository
-    ): Response {
+    public function showConversation(Request $request, Conversation $conversation): Response
+    {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        // Vérifier que l'utilisateur est bien participant à la conversation
-        if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
-            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
-        ) {
-            throw new AccessDeniedException('Vous n\'avez pas accès à cette conversation.');
-        }
+        $this->conversationService->checkAccess($user, $conversation);
+        $this->conversationService->markMessagesAsRead($conversation, $user);
 
-        // Marquer les messages comme lus
-        foreach ($conversation->getMessages() as $message) {
-            if ($message->getDestinataire() === $user && !$message->isEstLu()) {
-                $message->setEstLu(true);
-                $messageRepository->save($message, false);
-            }
-        }
-        $entityManager->flush();
-
-        // Formulaire pour envoyer un nouveau message
         $message = new Message();
         $message->setExpediteur($user);
         $message->setConversation($conversation);
-
-        // Définir le destinataire en fonction de l'expéditeur
-        if ($user->isClient()) {
-            $message->setDestinataire($conversation->getFleuriste()->getUser());
-        } else {
-            $message->setDestinataire($conversation->getClient()->getUser());
-        }
+        $message->setDestinataire($this->conversationService->getRecipient($user, $conversation));
 
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $conversation->updateDateDerniereActivite();
-            $entityManager->persist($message);
-            $entityManager->persist($conversation);
-            $entityManager->flush();
-
+            $this->conversationService->createMessage($user, $conversation, $message->getContenu());
             return $this->redirectToRoute('app_conversation_show', ['id' => $conversation->getId()]);
         }
 
@@ -107,45 +79,28 @@ class MessageController extends AbstractController
      * Crée une nouvelle conversation avec un fleuriste
      */
     #[Route('/nouveau/{id}', name: 'app_conversation_new', methods: ['GET', 'POST'])]
-    public function newConversation(
-        Request $request,
-        Fleuriste $fleuriste,
-        ConversationRepository $conversationRepository,
-        EntityManagerInterface $entityManager
-    ): Response {
+    public function newConversation(Request $request, Fleuriste $fleuriste): Response
+    {
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login', ['redirect' => $request->getUri()]);
         }
 
-        // Vérifier que l'utilisateur n'est pas un fleuriste qui essaie de se contacter lui-même
         if ($user->isFleuriste() && $user->getFleuriste() === $fleuriste) {
             throw new AccessDeniedException('Vous ne pouvez pas vous envoyer un message à vous-même.');
         }
 
-        // Si l'utilisateur n'est pas un client, on doit le rediriger vers la page de modification du profil
         if (!$user->isClient()) {
-            $this->addFlash('error', 'Vous devez avoir un profil client pour contacter un fleuriste. Veuillez créer un profil client dans vos paramètres de profil.');
+            $this->addFlash('error', 'Vous devez avoir un profil client pour contacter un fleuriste.');
             return $this->redirectToRoute('app_profil_edit');
         }
 
-        $client = $user->getClient();
+        $conversation = $this->conversationService->findOrCreateConversation($user->getClient(), $fleuriste);
 
-        // Vérifier si une conversation existe déjà
-        $existingConversation = $conversationRepository->findOneByClientAndFleuriste($client, $fleuriste);
-        if ($existingConversation) {
-            return $this->redirectToRoute('app_conversation_show', ['id' => $existingConversation->getId()]);
+        if ($conversation->getId()) {
+            return $this->redirectToRoute('app_conversation_show', ['id' => $conversation->getId()]);
         }
 
-        // Créer une nouvelle conversation
-        $conversation = new Conversation();
-        $conversation->setClient($client);
-        $conversation->setFleuriste($fleuriste);
-        $conversation->setTitre('Conversation avec ' . $fleuriste->getNom());
-
-        $entityManager->persist($conversation);
-
-        // Créer le premier message
         $message = new Message();
         $message->setExpediteur($user);
         $message->setDestinataire($fleuriste->getUser());
@@ -155,9 +110,7 @@ class MessageController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($message);
-            $entityManager->flush();
-
+            $this->conversationService->createMessage($user, $conversation, $message->getContenu());
             return $this->redirectToRoute('app_conversation_show', ['id' => $conversation->getId()]);
         }
 
@@ -171,47 +124,21 @@ class MessageController extends AbstractController
      * API: Récupère les nouveaux messages d'une conversation (pour le live polling)
      */
     #[Route('/api/conversation/{id}/messages', name: 'api_messages_get', methods: ['GET'])]
-    public function getMessages(
-        Request $request,
-        Conversation $conversation,
-        MessageRepository $messageRepository,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
+    public function getMessages(Request $request, Conversation $conversation): JsonResponse
+    {
         $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['error' => 'Non autorisé'], 401);
         }
 
-        // Vérifier l'accès
-        if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
-            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
-        ) {
+        try {
+            $this->conversationService->checkAccess($user, $conversation);
+        } catch (\RuntimeException) {
             return new JsonResponse(['error' => 'Accès refusé'], 403);
         }
 
-        // Récupérer le dernier message ID pour ne charger que les nouveaux
         $lastMessageId = $request->query->getInt('lastMessageId', 0);
-
-        $messages = [];
-        foreach ($conversation->getMessages() as $message) {
-            if ($message->getId() > $lastMessageId) {
-                // Marquer comme lu si destinataire
-                if ($message->getDestinataire() === $user && !$message->isEstLu()) {
-                    $message->setEstLu(true);
-                }
-                
-                $messages[] = [
-                    'id' => $message->getId(),
-                    'contenu' => $message->getContenu(),
-                    'dateEnvoi' => $message->getDateEnvoi()->format('H:i'),
-                    'dateEnvoiFull' => $message->getDateEnvoi()->format('d/m/Y H:i'),
-                    'isOwn' => $message->getExpediteur() === $user,
-                    'expediteurNom' => $message->getExpediteur()->getUsername(),
-                ];
-            }
-        }
-        
-        $entityManager->flush();
+        $messages = $this->conversationService->getNewMessages($conversation, $user, $lastMessageId);
 
         return new JsonResponse([
             'messages' => $messages,
@@ -223,24 +150,19 @@ class MessageController extends AbstractController
      * API: Envoie un nouveau message (AJAX)
      */
     #[Route('/api/conversation/{id}/send', name: 'api_message_send', methods: ['POST'])]
-    public function sendMessage(
-        Request $request,
-        Conversation $conversation,
-        EntityManagerInterface $entityManager
-    ): JsonResponse {
+    public function sendMessage(Request $request, Conversation $conversation): JsonResponse
+    {
         $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['error' => 'Non autorisé'], 401);
         }
 
-        // Vérifier l'accès
-        if (($user->isClient() && $conversation->getClient() !== $user->getClient()) ||
-            ($user->isFleuriste() && $conversation->getFleuriste() !== $user->getFleuriste())
-        ) {
+        try {
+            $this->conversationService->checkAccess($user, $conversation);
+        } catch (\RuntimeException) {
             return new JsonResponse(['error' => 'Accès refusé'], 403);
         }
 
-        // Récupérer le contenu du message
         $data = json_decode($request->getContent(), true);
         $contenu = trim($data['contenu'] ?? '');
 
@@ -248,23 +170,7 @@ class MessageController extends AbstractController
             return new JsonResponse(['error' => 'Message vide'], 400);
         }
 
-        // Créer le message
-        $message = new Message();
-        $message->setExpediteur($user);
-        $message->setConversation($conversation);
-        $message->setContenu($contenu);
-
-        // Définir le destinataire
-        if ($user->isClient()) {
-            $message->setDestinataire($conversation->getFleuriste()->getUser());
-        } else {
-            $message->setDestinataire($conversation->getClient()->getUser());
-        }
-
-        $conversation->updateDateDerniereActivite();
-        $entityManager->persist($message);
-        $entityManager->persist($conversation);
-        $entityManager->flush();
+        $message = $this->conversationService->createMessage($user, $conversation, $contenu);
 
         return new JsonResponse([
             'success' => true,
