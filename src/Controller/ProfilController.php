@@ -38,13 +38,18 @@ class ProfilController extends AbstractController
         /** @var User $user */
         $user = $this->getUser();
 
-        $isCurrentlyFleuriste = $user->getFleuriste() !== null && $user->getFleuriste()->isActif();
-        $currentShopName = $user->getFleuriste() ? $user->getFleuriste()->getNom() : '';
+        $fleuriste = $user->getFleuriste();
+        $isCurrentlyFleuriste = $fleuriste !== null;
+        $currentShopName = $fleuriste ? $fleuriste->getNom() : '';
+        $currentSiret = $fleuriste ? $fleuriste->getSiret() : '';
 
         $form = $this->createForm(ProfilType::class, $user);
         $form->get('becomeFleuriste')->setData($isCurrentlyFleuriste ? '1' : '0');
         if ($currentShopName) {
             $form->get('shopName')->setData($currentShopName);
+        }
+        if ($currentSiret) {
+            $form->get('siret')->setData($currentSiret);
         }
 
         $form->handleRequest($request);
@@ -53,7 +58,8 @@ class ProfilController extends AbstractController
             $error = $this->profilService->handleRoleToggle(
                 $user,
                 $form->get('becomeFleuriste')->getData(),
-                $form->get('shopName')->getData()
+                $form->get('shopName')->getData(),
+                $form->get('siret')->getData()
             );
 
             if ($error) {

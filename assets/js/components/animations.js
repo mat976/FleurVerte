@@ -5,6 +5,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Animation pour les éléments qui entrent dans le viewport
+    let ticking = false;
+    
     const animateOnScroll = () => {
         const elements = document.querySelectorAll('.animate-on-scroll');
         
@@ -16,6 +18,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 element.classList.add('animated');
             }
         });
+        ticking = false;
+    };
+
+    // Throttle avec requestAnimationFrame pour optimiser les performances
+    const onScroll = () => {
+        if (!ticking) {
+            window.requestAnimationFrame(animateOnScroll);
+            ticking = true;
+        }
     };
 
     // Animation des cartes de produits
@@ -34,11 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Initialisation des animations
-    animateOnScroll();
+    onScroll();
     initProductCards();
     
-    // Événement de défilement pour les animations au scroll
-    window.addEventListener('scroll', animateOnScroll);
+    // Événement de défilement pour les animations au scroll (avec throttle)
+    window.addEventListener('scroll', onScroll, { passive: true });
 });
 
 export default {};

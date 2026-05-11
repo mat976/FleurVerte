@@ -27,22 +27,22 @@ class CartSessionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Initialise le compteur de panier dans la session à chaque requête
+     * Initialise le compteur de panier dans la session (uniquement si absent)
      */
     public function onKernelRequest(RequestEvent $event): void
     {
-        // Ne pas traiter les sous-requêtes
         if (!$event->isMainRequest()) {
             return;
         }
 
-        // Vérifier si l'utilisateur est connecté
         $token = $this->tokenStorage->getToken();
         if (!$token || !$token->getUser()) {
             return;
         }
 
-        // Initialiser le compteur de panier
-        $this->cartService->initCartCount();
+        $session = $event->getRequest()->getSession();
+        if (!$session->has('cart_count')) {
+            $this->cartService->initCartCount();
+        }
     }
 }

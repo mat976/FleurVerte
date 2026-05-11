@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Conversation;
 use App\Entity\Message;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -78,5 +79,43 @@ class MessageRepository extends ServiceEntityRepository
             ->setParameter('estLu', false)
             ->getQuery()
             ->getSingleScalarResult();
+    }
+
+    /**
+     * Marque tous les messages non lus d'une conversation comme lus pour un utilisateur
+     * Requête batch UPDATE (DQL) au lieu d'itérer en PHP
+     */
+    public function markAsReadByConversationAndUser(Conversation $conversation, User $user): void
+    {
+        $this->createQueryBuilder('m')
+            ->update(Message::class, 'm')
+            ->set('m.estLu', ':true')
+            ->where('m.conversation = :conversation')
+            ->andWhere('m.destinataire = :user')
+            ->andWhere('m.estLu = :false')
+            ->setParameter('conversation', $conversation)
+            ->setParameter('user', $user)
+            ->setParameter('true', true)
+            ->setParameter('false', false)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * Trouve les nouveaux messages après un ID donné avec eager loading
+     * @return Message[]
+     */
+    public function findNewMessagesByConversationAndUser(Conversation $conversation, User $user, int $lastMessageId): array
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.expediteur', 'e')
+            ->addSelect('e')
+            ->where('m.conversation = :conversation')
+            ->andWhere('m.id > :lastMessageId')
+            ->setParameter('conversation', $conversation)
+            ->setParameter('lastMessageId', $lastMessageId)
+            ->orderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 }

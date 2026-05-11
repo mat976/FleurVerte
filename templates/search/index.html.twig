@@ -110,7 +110,7 @@
 										{% else %}
 											<span class="text-green-600 font-bold">{{ fleur.prix|number_format(2, ',', ' ') }}€</span>
 										{% endif %}
-										<a href="{{ path('app_product_detail', {'id': fleur.id}) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm">Voir détails</a>
+										<a href="{{ path('product_detail', {'id': fleur.id}) }}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm">Voir détails</a>
 									</div>
 								</div>
 							</div>

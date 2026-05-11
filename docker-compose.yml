@@ -2,19 +2,24 @@ version: '3.8'
 
 services:
   database:
-    image: mysql:5.7
+    image: postgres:16
     container_name: fleurverte_db
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
-      MYSQL_DATABASE: fleurverte
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: ""
+      POSTGRES_DB: fleurverte
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data:/var/lib/postgresql/data
     restart: unless-stopped
+    networks:
+      - fleurverte_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 20s
+      test: ["CMD-SHELL", "pg_isready -U root -d fleurverte"]
+      interval: 5s
+      timeout: 10s
       retries: 10
 
   app:
@@ -23,17 +28,23 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    networks:
+      - fleurverte_network
     environment:
       APP_ENV: dev
-      DATABASE_URL: "mysql://root:@database:3306/fleurverte?serverVersion=5.7&charset=utf8mb4"
+      DATABASE_URL: "postgresql://root:@database:5432/fleurverte?serverVersion=16&charset=utf8"
     volumes:
       - ./:/app
       - /app/var
     ports:
-      - "8080:8000"
+      - "3010:8000"
     restart: always
     tty: true
     stdin_open: true
 
 volumes:
   db_data:
+
+networks:
+  fleurverte_network:
+    driver: bridge

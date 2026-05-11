@@ -37,6 +37,9 @@ class Commentaire
     #[ORM\Column(type: 'datetime')]
     private ?\DateTimeInterface $dateCreation = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $visible = true;
+
     public function __construct()
     {
         $this->dateCreation = new \DateTime();
@@ -99,6 +102,17 @@ class Commentaire
     public function setDateCreation(\DateTimeInterface $dateCreation): static
     {
         $this->dateCreation = $dateCreation;
+        return $this;
+    }
+
+    public function isVisible(): bool
+    {
+        return $this->visible;
+    }
+
+    public function setVisible(bool $visible): static
+    {
+        $this->visible = $visible;
         return $this;
     }
 }

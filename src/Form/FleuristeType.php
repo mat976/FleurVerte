@@ -81,6 +81,16 @@ class FleuristeType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
+            ->add('siret', TextType::class, [
+                'required' => false,
+                'label' => 'SIRET (non modifiable)',
+                'disabled' => true,
+                'attr' => [
+                    'class' => 'form-control',
+                    'readonly' => true,
+                ],
+                'help' => 'Le numéro SIRET est validé par l\'administration et ne peut pas être modifié ici.',
+            ])
             ->add('images', CollectionType::class, [
                 'entry_type' => FleuristeImageType::class,
                 'allow_add' => true,

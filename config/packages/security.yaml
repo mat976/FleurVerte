@@ -22,19 +22,7 @@ security:
             entry_point: App\Security\AppCustomAuthenticator
             logout:
                 path: app_logout
-                # where to redirect after logout
-                # target: app_any_route
-                # target: app_home
-
-            # Enable CSRF protection
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                enable_csrf: true
-                username_parameter: _email
-                password_parameter: _password
 
     access_control:
-        # Define access control rules here
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/checkout, roles: PUBLIC_ACCESS }
+        - { path: ^/admin, roles: ROLE_ADMIN }

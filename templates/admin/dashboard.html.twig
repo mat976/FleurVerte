@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — Dashboard{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-12">
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+		{# Header #}
+		<div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+			<div>
+				<div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium mb-3">
+					<i class="fas fa-shield-alt"></i> Administration
+				</div>
+				<h1 class="text-4xl font-bold text-gray-900">Dashboard</h1>
+				<p class="text-gray-500 mt-1">Vue d'ensemble de la plateforme FleurVerte.</p>
+			</div>
+			<nav class="flex flex-wrap gap-2">
+				<a href="{{ path('app_admin_fleuristes') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-green-50 hover:border-green-300 transition">
+					<i class="fas fa-store text-green-600"></i> Fleuristes
+				</a>
+				<a href="{{ path('app_admin_commentaires') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-green-50 hover:border-green-300 transition">
+					<i class="fas fa-comments text-blue-600"></i> Commentaires
+				</a>
+				<a href="{{ path('app_admin_commandes') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-green-50 hover:border-green-300 transition">
+					<i class="fas fa-shopping-cart text-purple-600"></i> Commandes
+				</a>
+				<a href="{{ path('app_admin_logs') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-green-50 hover:border-green-300 transition">
+					<i class="fas fa-list-alt text-gray-600"></i> Logs
+				</a>
+			</nav>
+		</div>
+
+		{# KPI — Utilisateurs & fleuristes #}
+		<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+			<div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+				<div class="flex items-center justify-between mb-2">
+					<p class="text-sm text-gray-500">Utilisateurs</p>
+					<span class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+						<i class="fas fa-users text-blue-600"></i>
+					</span>
+				</div>
+				<p class="text-3xl font-bold text-gray-900">{{ nb_users }}</p>
+			</div>
+
+			<div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+				<div class="flex items-center justify-between mb-2">
+					<p class="text-sm text-gray-500">Fleuristes actifs</p>
+					<span class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+						<i class="fas fa-store text-green-600"></i>
+					</span>
+				</div>
+				<p class="text-3xl font-bold text-gray-900">{{ nb_fleuristes }}</p>
+				{% if nb_attente > 0 %}
+					<p class="text-xs text-yellow-600 mt-1"><i class="fas fa-clock mr-1"></i>{{ nb_attente }} en attente</p>
+				{% endif %}
+			</div>
+
+			<div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+				<div class="flex items-center justify-between mb-2">
+					<p class="text-sm text-gray-500">Commentaires</p>
+					<span class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+						<i class="fas fa-comments text-purple-600"></i>
+					</span>
+				</div>
+				<p class="text-3xl font-bold text-gray-900">{{ nb_commentaires }}</p>
+				{% if nb_masques > 0 %}
+					<p class="text-xs text-red-500 mt-1"><i class="fas fa-eye-slash mr-1"></i>{{ nb_masques }} masqués</p>
+				{% endif %}
+			</div>
+
+			<div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+				<div class="flex items-center justify-between mb-2">
+					<p class="text-sm text-gray-500">Chiffre d'affaires</p>
+					<span class="w-10 h-10 bg-yellow-100 rounded-xl flex items-center justify-center">
+						<i class="fas fa-euro-sign text-yellow-600"></i>
+					</span>
+				</div>
+				<p class="text-3xl font-bold text-gray-900">{{ stats_commandes.chiffre_affaires|number_format(2, ',', ' ') }} €</p>
+			</div>
+		</div>
+
+		{# Commandes par statut #}
+		<div class="bg-white rounded-2xl shadow-sm border border-gray-100 mb-8">
+			<div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+				<h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+					<i class="fas fa-shopping-cart text-purple-500"></i> Commandes
+				</h2>
+				<a href="{{ path('app_admin_commandes') }}" class="text-sm text-green-600 hover:underline">Voir tout →</a>
+			</div>
+			<div class="grid grid-cols-2 md:grid-cols-5 divide-x divide-gray-100">
+				{% set statut_colors = {
+					'en_attente': 'yellow',
+					'validees': 'blue',
+					'expediees': 'indigo',
+					'livrees': 'green',
+					'annulees': 'red'
+				} %}
+				{% set statut_labels = {
+					'en_attente': 'En attente',
+					'validees': 'Validées',
+					'expediees': 'Expédiées',
+					'livrees': 'Livrées',
+					'annulees': 'Annulées'
+				} %}
+				{% for key, label in statut_labels %}
+					{% set color = statut_colors[key] %}
+					<div class="p-5 text-center">
+						<p class="text-sm text-gray-500 mb-1">{{ label }}</p>
+						<p class="text-2xl font-bold text-{{ color }}-700">{{ attribute(stats_commandes, key) }}</p>
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+
+		{# Raccourcis modération #}
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+			<a href="{{ path('app_admin_fleuristes') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
+				<div class="flex items-start gap-4">
+					<span class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-yellow-200 transition">
+						<i class="fas fa-clock text-yellow-600 text-lg"></i>
+					</span>
+					<div>
+						<h3 class="font-bold text-gray-900">Valider les fleuristes</h3>
+						<p class="text-sm text-gray-500 mt-1">{{ nb_attente }} demande(s) en attente de validation SIRET.</p>
+					</div>
+				</div>
+			</a>
+
+			<a href="{{ path('app_admin_commentaires') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
+				<div class="flex items-start gap-4">
+					<span class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-blue-200 transition">
+						<i class="fas fa-comments text-blue-600 text-lg"></i>
+					</span>
+					<div>
+						<h3 class="font-bold text-gray-900">Modérer les commentaires</h3>
+						<p class="text-sm text-gray-500 mt-1">{{ nb_masques }} commentaire(s) masqué(s) en attente.</p>
+					</div>
+				</div>
+			</a>
+
+			<a href="{{ path('app_admin_logs') }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition group">
+				<div class="flex items-start gap-4">
+					<span class="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center flex-shrink-0 group-hover:bg-gray-200 transition">
+						<i class="fas fa-list-alt text-gray-600 text-lg"></i>
+					</span>
+					<div>
+						<h3 class="font-bold text-gray-900">Logs système</h3>
+						<p class="text-sm text-gray-500 mt-1">Consulter les dernières actions et connexions.</p>
+					</div>
+				</div>
+			</a>
+		</div>
+
+	</div>
+</div>
+{% endblock %}

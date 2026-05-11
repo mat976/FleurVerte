@@ -20,10 +20,10 @@ class ProfilService
     /**
      * Gère le changement de rôle fleuriste/client
      */
-    public function handleRoleToggle(User $user, string $wantToBeFleuriste, ?string $shopName): ?string
+    public function handleRoleToggle(User $user, string $wantToBeFleuriste, ?string $shopName, ?string $siret = null): ?string
     {
         if ($wantToBeFleuriste === '1') {
-            return $this->activateFleuriste($user, $shopName);
+            return $this->activateFleuriste($user, $shopName, $siret);
         }
 
         $this->deactivateFleuriste($user);
@@ -33,24 +33,41 @@ class ProfilService
     /**
      * Active ou crée le profil fleuriste
      *
+     * Crée le profil en statut "en_attente" (non actif) jusqu'à validation admin.
+     *
      * @return string|null Message d'erreur si échec
      */
-    private function activateFleuriste(User $user, ?string $shopName): ?string
+    private function activateFleuriste(User $user, ?string $shopName, ?string $siret): ?string
     {
         if ($user->getFleuriste() === null) {
             if (empty($shopName)) {
                 return 'Veuillez entrer un nom de boutique pour devenir fleuriste.';
             }
+            if (empty($siret) || !preg_match('/^\d{14}$/', $siret)) {
+                return 'Le numéro SIRET est obligatoire et doit contenir exactement 14 chiffres.';
+            }
 
             $fleuriste = new Fleuriste();
             $fleuriste->setUser($user);
             $fleuriste->setNom($shopName);
-            $fleuriste->setActif(true);
+            $fleuriste->setSiret($siret);
+            $fleuriste->setStatut(Fleuriste::STATUT_EN_ATTENTE);
+            $fleuriste->setActif(false); // en attente de validation admin
             $this->entityManager->persist($fleuriste);
         } else {
-            $user->getFleuriste()->setActif(true);
+            $existing = $user->getFleuriste();
+            // Si déjà validé, permettre la mise à jour du nom
             if ($shopName) {
-                $user->getFleuriste()->setNom($shopName);
+                $existing->setNom($shopName);
+            }
+            // Si SIRET fourni et différent, réinitialiser en attente
+            if ($siret && $existing->getSiret() !== $siret) {
+                if (!preg_match('/^\d{14}$/', $siret)) {
+                    return 'Le numéro SIRET doit contenir exactement 14 chiffres.';
+                }
+                $existing->setSiret($siret);
+                $existing->setStatut(Fleuriste::STATUT_EN_ATTENTE);
+                $existing->setActif(false);
             }
         }
 

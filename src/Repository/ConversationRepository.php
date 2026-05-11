@@ -58,6 +58,12 @@ class ConversationRepository extends ServiceEntityRepository
     public function findByClient(Client $client): array
     {
         return $this->createQueryBuilder('c')
+            ->leftJoin('c.client', 'cl')
+            ->addSelect('cl')
+            ->leftJoin('c.fleuriste', 'fl')
+            ->addSelect('fl')
+            ->leftJoin('fl.user', 'flu')
+            ->addSelect('flu')
             ->andWhere('c.client = :client')
             ->setParameter('client', $client)
             ->orderBy('c.dateDerniereActivite', 'DESC')
@@ -73,6 +79,12 @@ class ConversationRepository extends ServiceEntityRepository
     public function findByFleuriste(Fleuriste $fleuriste): array
     {
         return $this->createQueryBuilder('c')
+            ->leftJoin('c.client', 'cl')
+            ->addSelect('cl')
+            ->leftJoin('cl.user', 'clu')
+            ->addSelect('clu')
+            ->leftJoin('c.fleuriste', 'fl')
+            ->addSelect('fl')
             ->andWhere('c.fleuriste = :fleuriste')
             ->setParameter('fleuriste', $fleuriste)
             ->orderBy('c.dateDerniereActivite', 'DESC')
@@ -101,7 +113,15 @@ class ConversationRepository extends ServiceEntityRepository
      */
     public function findByUser(User $user): array
     {
-        $qb = $this->createQueryBuilder('c');
+        $qb = $this->createQueryBuilder('c')
+            ->leftJoin('c.client', 'cl')
+            ->addSelect('cl')
+            ->leftJoin('cl.user', 'clu')
+            ->addSelect('clu')
+            ->leftJoin('c.fleuriste', 'fl')
+            ->addSelect('fl')
+            ->leftJoin('fl.user', 'flu')
+            ->addSelect('flu');
         
         if ($user->isClient()) {
             $qb->andWhere('c.client = :client')

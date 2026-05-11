@@ -40,8 +40,11 @@ class FleuristeController extends AbstractController
             // Recherche de fleuristes par nom
             $fleuristes = $this->userRepository->createQueryBuilder('u')
                 ->join('u.fleuriste', 'f')
+                ->addSelect('f')
                 ->where('f.nom LIKE :query')
+                ->andWhere('f.actif = :actif')
                 ->setParameter('query', '%' . $query . '%')
+                ->setParameter('actif', true)
                 ->getQuery()
                 ->getResult();
         } else {

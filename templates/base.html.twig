@@ -43,6 +43,11 @@
 								{% endif %}
 							</a>
 						{% endif %}
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_admin_index') }}" class="text-indigo-700 hover:text-indigo-900 font-semibold transition-colors flex items-center gap-1">
+								<i class="fas fa-shield-alt text-sm"></i> Admin
+							</a>
+						{% endif %}
 					</div>
 
 					{# Actions droite #}
@@ -74,6 +79,11 @@
 											<i class="fas fa-store mr-3 text-green-600"></i>Dashboard
 										</a>
 									{% endif %}
+									{% if is_granted('ROLE_ADMIN') %}
+										<a href="{{ path('app_admin_index') }}" class="flex items-center px-4 py-3 text-indigo-700 hover:bg-indigo-50 transition-colors font-semibold">
+											<i class="fas fa-shield-alt mr-3 text-indigo-600"></i>Administration
+										</a>
+									{% endif %}
 									<hr class="my-2 border-gray-100">
 									<a href="{{ path('app_logout') }}" class="flex items-center px-4 py-3 text-red-600 hover:bg-red-50 transition-colors">
 										<i class="fas fa-sign-out-alt mr-3"></i>Déconnexion
@@ -101,6 +111,11 @@
 						<a href="{{ path('app_product') }}" class="px-4 py-3 text-gray-700 hover:bg-green-50 rounded-xl font-medium">Nos Fleurs</a>
 						<a href="{{ path('app_fleuriste_index') }}" class="px-4 py-3 text-gray-700 hover:bg-green-50 rounded-xl font-medium">Fleuristes</a>
 						<a href="{{ path('app_conseils_culture') }}" class="px-4 py-3 text-gray-700 hover:bg-green-50 rounded-xl font-medium">Conseils</a>
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_admin_index') }}" class="px-4 py-3 text-indigo-700 hover:bg-indigo-50 rounded-xl font-semibold flex items-center gap-2">
+								<i class="fas fa-shield-alt"></i> Admin
+							</a>
+						{% endif %}
 						{% if not app.user %}
 							<hr class="border-gray-100">
 							<a href="{{ path('app_login') }}" class="px-4 py-3 text-gray-700 hover:bg-green-50 rounded-xl font-medium">Connexion</a>

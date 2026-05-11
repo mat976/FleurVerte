@@ -36,17 +36,11 @@ class ConversationService
     }
 
     /**
-     * Marque les messages non lus comme lus pour l'utilisateur
+     * Marque les messages non lus comme lus pour l'utilisateur (requête batch)
      */
     public function markMessagesAsRead(Conversation $conversation, User $user): void
     {
-        foreach ($conversation->getMessages() as $message) {
-            if ($message->getDestinataire() === $user && !$message->isEstLu()) {
-                $message->setEstLu(true);
-                $this->messageRepository->save($message, false);
-            }
-        }
-        $this->entityManager->flush();
+        $this->messageRepository->markAsReadByConversationAndUser($conversation, $user);
     }
 
     /**
@@ -102,33 +96,30 @@ class ConversationService
     }
 
     /**
-     * Récupère les nouveaux messages après un ID donné
+     * Récupère les nouveaux messages après un ID donné (requête SQL optimisée)
      *
      * @return array<array<string, mixed>>
      */
     public function getNewMessages(Conversation $conversation, User $user, int $lastMessageId): array
     {
-        $messages = [];
+        $messages = $this->messageRepository->findNewMessagesByConversationAndUser(
+            $conversation,
+            $user,
+            $lastMessageId
+        );
 
-        foreach ($conversation->getMessages() as $message) {
-            if ($message->getId() > $lastMessageId) {
-                if ($message->getDestinataire() === $user && !$message->isEstLu()) {
-                    $message->setEstLu(true);
-                }
-
-                $messages[] = [
-                    'id' => $message->getId(),
-                    'contenu' => $message->getContenu(),
-                    'dateEnvoi' => $message->getDateEnvoi()->format('H:i'),
-                    'dateEnvoiFull' => $message->getDateEnvoi()->format('d/m/Y H:i'),
-                    'isOwn' => $message->getExpediteur() === $user,
-                    'expediteurNom' => $message->getExpediteur()->getUsername(),
-                ];
-            }
+        $result = [];
+        foreach ($messages as $message) {
+            $result[] = [
+                'id' => $message->getId(),
+                'contenu' => $message->getContenu(),
+                'dateEnvoi' => $message->getDateEnvoi()->format('H:i'),
+                'dateEnvoiFull' => $message->getDateEnvoi()->format('d/m/Y H:i'),
+                'isOwn' => $message->getExpediteur() === $user,
+                'expediteurNom' => $message->getExpediteur()->getUsername(),
+            ];
         }
 
-        $this->entityManager->flush();
-
-        return $messages;
+        return $result;
     }
 }

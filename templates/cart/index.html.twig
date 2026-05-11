@@ -77,15 +77,12 @@
 								{% endif %}
 							</div>
 							
-							{# Quantité #}
-							<form action="{{ path('app_cart_update', {'id': item.id}) }}" method="POST" class="flex items-center gap-3">
+							{# Quantité - auto-submit on change #}
+							<form action="{{ path('app_cart_update', {'id': item.id}) }}" method="POST" class="cart-update-form">
 								<div class="flex items-center bg-gray-50 rounded-xl overflow-hidden">
-									<input type="number" name="quantity" value="{{ item.quantity }}" min="1" 
-										class="w-16 py-2 text-center bg-transparent border-0 focus:ring-0 font-semibold text-gray-700">
+									<input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+										class="w-16 py-2 text-center bg-transparent border-0 focus:ring-0 font-semibold text-gray-700 quantity-input">
 								</div>
-								<button type="submit" class="w-10 h-10 bg-green-100 hover:bg-green-200 text-green-600 rounded-xl flex items-center justify-center transition-colors">
-									<i class="fas fa-sync-alt text-sm"></i>
-								</button>
 							</form>
 							
 							{# Total ligne #}
@@ -119,10 +116,10 @@
 									Vider
 								</button>
 							</form>
-							<button class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-lg hover:-translate-y-0.5">
+							<a href="{{ path('app_checkout') }}" class="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-xl font-semibold transition-all hover:shadow-lg hover:-translate-y-0.5">
 								<i class="fas fa-credit-card"></i>
 								Payer {{ total|number_format(2, ',', ' ') }}€
-							</button>
+							</a>
 						</div>
 					</div>
 				</div>
@@ -138,4 +135,20 @@
 		{% endif %}
 	</div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+<script>
+	function initCartAutoSubmit() {
+		document.querySelectorAll('.quantity-input').forEach(function(input) {
+			input.addEventListener('change', function() {
+				this.closest('form').submit();
+			});
+		});
+	}
+
+	document.addEventListener('DOMContentLoaded', initCartAutoSubmit);
+	document.addEventListener('turbo:load', initCartAutoSubmit);
+</script>
 {% endblock %}

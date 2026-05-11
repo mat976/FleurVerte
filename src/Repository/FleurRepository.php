@@ -28,6 +28,9 @@ class FleurRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('f')
             ->leftJoin('f.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('f.fleuriste', 'fl')
+            ->addSelect('fl')
             ->distinct();
 
         // Recherche par nom, description ou tag
@@ -72,6 +75,10 @@ class FleurRepository extends ServiceEntityRepository
         $now = new \DateTime();
 
         return $this->createQueryBuilder('f')
+            ->leftJoin('f.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('f.fleuriste', 'fl')
+            ->addSelect('fl')
             ->where('f.promoActive = true')
             ->andWhere('f.promoPercent > 0')
             ->andWhere('f.promoStart IS NULL OR f.promoStart <= :now')
@@ -90,6 +97,10 @@ class FleurRepository extends ServiceEntityRepository
     public function findLatest(int $limit = 6): array
     {
         return $this->createQueryBuilder('f')
+            ->leftJoin('f.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('f.fleuriste', 'fl')
+            ->addSelect('fl')
             ->where('f.stock > 0')
             ->orderBy('f.id', 'DESC')
             ->setMaxResults($limit)

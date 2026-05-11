@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — Fleuristes{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-12">
+	<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+		{# Header #}
+		<div class="mb-8">
+			<div class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium mb-4">
+				<i class="fas fa-shield-alt"></i> Administration
+			</div>
+			<h1 class="text-4xl font-bold text-gray-900">Gestion des fleuristes</h1>
+			<p class="text-gray-500 mt-2">Validez les numéros SIRET et gérez les comptes vendeurs.</p>
+		</div>
+
+		{# Flash #}
+		{% for msg in app.flashes('success') %}
+			<div class="bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-2xl mb-6"><i class="fas fa-check-circle mr-2"></i>{{ msg }}</div>
+		{% endfor %}
+		{% for msg in app.flashes('error') %}
+			<div class="bg-red-50 border border-red-200 text-red-800 px-6 py-4 rounded-2xl mb-6"><i class="fas fa-exclamation-triangle mr-2"></i>{{ msg }}</div>
+		{% endfor %}
+
+		{# Stats #}
+		<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+			<div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6">
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-sm text-yellow-700">En attente</p>
+						<p class="text-3xl font-bold text-yellow-900">{{ en_attente|length }}</p>
+					</div>
+					<i class="fas fa-clock text-yellow-400 text-3xl"></i>
+				</div>
+			</div>
+			<div class="bg-green-50 border border-green-200 rounded-2xl p-6">
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-sm text-green-700">Actifs</p>
+						<p class="text-3xl font-bold text-green-900">{{ actifs|length }}</p>
+					</div>
+					<i class="fas fa-check-circle text-green-400 text-3xl"></i>
+				</div>
+			</div>
+			<div class="bg-red-50 border border-red-200 rounded-2xl p-6">
+				<div class="flex items-center justify-between">
+					<div>
+						<p class="text-sm text-red-700">Refusés</p>
+						<p class="text-3xl font-bold text-red-900">{{ refuses|length }}</p>
+					</div>
+					<i class="fas fa-times-circle text-red-400 text-3xl"></i>
+				</div>
+			</div>
+		</div>
+
+		{# Section en attente #}
+		<section class="bg-white rounded-2xl shadow-sm mb-8 overflow-hidden">
+			<div class="px-6 py-4 bg-yellow-50 border-b border-yellow-200">
+				<h2 class="text-xl font-bold text-yellow-900 flex items-center gap-2">
+					<i class="fas fa-clock"></i>
+					Demandes en attente ({{ en_attente|length }})
+				</h2>
+			</div>
+			{% if en_attente is empty %}
+				<div class="p-12 text-center text-gray-400">
+					<i class="fas fa-inbox text-5xl mb-3"></i>
+					<p>Aucune demande en attente.</p>
+				</div>
+			{% else %}
+				<div class="divide-y divide-gray-100">
+					{% for f in en_attente %}
+						<div class="p-6 flex flex-col md:flex-row md:items-center gap-4 hover:bg-gray-50 transition">
+							<div class="flex-1">
+								<h3 class="font-bold text-gray-900 text-lg">{{ f.nom ?? 'Sans nom' }}</h3>
+								<p class="text-sm text-gray-500">{{ f.user.username }} — {{ f.user.email }}</p>
+								<div class="mt-2 flex items-center gap-2 text-sm">
+									<span class="font-mono bg-gray-100 px-2 py-1 rounded">SIRET : {{ f.siret ?? 'non renseigné' }}</span>
+								</div>
+							</div>
+							<div class="flex gap-2">
+								<form method="post" action="{{ path('app_admin_fleuriste_approuver', {'id': f.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('admin_fleuriste_' ~ f.id) }}">
+									<button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-xl font-medium transition">
+										<i class="fas fa-check mr-1"></i> Approuver
+									</button>
+								</form>
+								<form method="post" action="{{ path('app_admin_fleuriste_refuser', {'id': f.id}) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('admin_fleuriste_' ~ f.id) }}">
+									<button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-medium transition"
+										onclick="return confirm('Refuser ce fleuriste ?')">
+										<i class="fas fa-times mr-1"></i> Refuser
+									</button>
+								</form>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</section>
+
+		{# Section actifs #}
+		<section class="bg-white rounded-2xl shadow-sm mb-8 overflow-hidden">
+			<div class="px-6 py-4 bg-green-50 border-b border-green-200">
+				<h2 class="text-xl font-bold text-green-900 flex items-center gap-2">
+					<i class="fas fa-check-circle"></i>
+					Fleuristes actifs ({{ actifs|length }})
+				</h2>
+			</div>
+			{% if actifs is empty %}
+				<div class="p-8 text-center text-gray-400">Aucun fleuriste actif.</div>
+			{% else %}
+				<div class="divide-y divide-gray-100">
+					{% for f in actifs %}
+						<div class="p-4 flex items-center gap-4 hover:bg-gray-50">
+							<div class="flex-1">
+								<p class="font-medium text-gray-900">{{ f.nom }}</p>
+								<p class="text-sm text-gray-500">{{ f.user.email }} — <span class="font-mono">{{ f.siret }}</span></p>
+							</div>
+							<form method="post" action="{{ path('app_admin_fleuriste_refuser', {'id': f.id}) }}">
+								<input type="hidden" name="_token" value="{{ csrf_token('admin_fleuriste_' ~ f.id) }}">
+								<button type="submit" class="text-red-500 hover:text-red-700 text-sm"
+									onclick="return confirm('Révoquer ce fleuriste ?')">
+									<i class="fas fa-ban"></i> Révoquer
+								</button>
+							</form>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		</section>
+
+		{# Section refusés #}
+		{% if refuses is not empty %}
+			<section class="bg-white rounded-2xl shadow-sm overflow-hidden">
+				<div class="px-6 py-4 bg-red-50 border-b border-red-200">
+					<h2 class="text-xl font-bold text-red-900 flex items-center gap-2">
+						<i class="fas fa-times-circle"></i>
+						Refusés ({{ refuses|length }})
+					</h2>
+				</div>
+				<div class="divide-y divide-gray-100">
+					{% for f in refuses %}
+						<div class="p-4 flex items-center gap-4 hover:bg-gray-50">
+							<div class="flex-1">
+								<p class="font-medium text-gray-900">{{ f.nom }}</p>
+								<p class="text-sm text-gray-500">{{ f.user.email }} — <span class="font-mono">{{ f.siret ?? 'N/A' }}</span></p>
+							</div>
+							<form method="post" action="{{ path('app_admin_fleuriste_approuver', {'id': f.id}) }}">
+								<input type="hidden" name="_token" value="{{ csrf_token('admin_fleuriste_' ~ f.id) }}">
+								<button type="submit" class="text-green-600 hover:text-green-800 text-sm">
+									<i class="fas fa-undo"></i> Réactiver
+								</button>
+							</form>
+						</div>
+					{% endfor %}
+				</div>
+			</section>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

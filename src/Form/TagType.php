@@ -5,7 +5,7 @@ namespace App\Form;
 use App\Entity\Tag;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\ColorType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -33,12 +33,25 @@ class TagType extends AbstractType
                     'class' => 'shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md'
                 ]
             ])
-            ->add('couleur', ColorType::class, [
+            ->add('couleur', ChoiceType::class, [
                 'label' => 'Couleur',
-                'required' => false,
+                'required' => true,
+                'choices' => [
+                    'Rouge' => '#EF4444',
+                    'Orange' => '#F97316',
+                    'Jaune' => '#EAB308',
+                    'Vert' => '#22C55E',
+                    'Bleu' => '#3B82F6',
+                    'Violet' => '#8B5CF6',
+                    'Rose' => '#EC4899',
+                    'Gris' => '#6B7280',
+                ],
                 'attr' => [
                     'class' => 'h-10 w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500'
-                ]
+                ],
+                'choice_attr' => function($choice, $key, $value) {
+                    return ['style' => 'background-color:' . $value . '; color: ' . ($value === '#EAB308' || $value === '#22C55E' ? '#000' : '#fff')];
+                },
             ])
         ;
     }

@@ -16,5 +16,3 @@ import './js/components/interactive-effects.js';
 
 // Import page-specific scripts
 import './js/pages/product-animations.js';
-
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');

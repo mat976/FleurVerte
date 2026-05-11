@@ -21,5 +21,20 @@ class FleuristeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    // Vous pouvez conserver les autres méthodes commentées si vous pensez les utiliser plus tard
+    /**
+     * Retourne les fleuristes ayant un statut donné (ex: en_attente)
+     *
+     * @return Fleuriste[]
+     */
+    public function findByStatut(string $statut): array
+    {
+        return $this->createQueryBuilder('f')
+            ->innerJoin('f.user', 'u')
+            ->addSelect('u')
+            ->where('f.statut = :statut')
+            ->setParameter('statut', $statut)
+            ->orderBy('f.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -1,0 +1,11 @@
+parameters:
+    stripe_public_key:      '%env(STRIPE_PUBLIC_KEY)%'
+    stripe_webhook_secret:  '%env(STRIPE_WEBHOOK_SECRET)%'
+
+services:
+    stripe.client:
+        class: 'Stripe\StripeClient'
+        arguments:
+            - '%env(STRIPE_SECRET_KEY)%'
+
+    Stripe\StripeClient: '@stripe.client'

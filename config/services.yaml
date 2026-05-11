@@ -24,3 +24,7 @@ services:
     App\Service\ProfilService:
         arguments:
             $avatarsDirectory: '%avatars_directory%'
+
+    App\Controller\StripeController:
+        arguments:
+            $stripeWebhookSecret: '%stripe_webhook_secret%'

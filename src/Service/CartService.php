@@ -126,12 +126,14 @@ class CartService
     /**
      * Calcule le montant total du panier
      * 
+     * @param CartItem[]|null $cartItems Articles déjà récupérés (évite une double requête)
      * @return float Le montant total du panier
      */
-    public function getTotal(): float
+    public function getTotal(?array $cartItems = null): float
     {
+        $items = $cartItems ?? $this->getCartItems();
         $total = 0;
-        foreach ($this->getCartItems() as $item) {
+        foreach ($items as $item) {
             $total += $item->getTotal();
         }
         return $total;

@@ -6,6 +6,7 @@ use App\Repository\FleuristeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entité représentant un fleuriste
@@ -80,6 +81,26 @@ class Fleuriste
      */
     #[ORM\Column(type: 'boolean')]
     private bool $actif = true;
+
+    public const STATUT_EN_ATTENTE = 'en_attente';
+    public const STATUT_ACTIF = 'actif';
+    public const STATUT_REFUSE = 'refuse';
+
+    /**
+     * Numéro SIRET (14 chiffres)
+     */
+    #[ORM\Column(length: 14, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^\d{14}$/',
+        message: 'Le SIRET doit contenir exactement 14 chiffres.'
+    )]
+    private ?string $siret = null;
+
+    /**
+     * Statut de validation par l'admin : en_attente, actif, refuse
+     */
+    #[ORM\Column(length: 20, options: ['default' => self::STATUT_EN_ATTENTE])]
+    private string $statut = self::STATUT_EN_ATTENTE;
 
     /**
      * Collection des fleurs proposées par le fleuriste
@@ -246,6 +267,46 @@ class Fleuriste
     {
         $this->actif = $actif;
         return $this;
+    }
+
+    public function getSiret(): ?string
+    {
+        return $this->siret;
+    }
+
+    public function setSiret(?string $siret): self
+    {
+        $this->siret = $siret;
+        return $this;
+    }
+
+    public function getStatut(): string
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(string $statut): self
+    {
+        if (!in_array($statut, [self::STATUT_EN_ATTENTE, self::STATUT_ACTIF, self::STATUT_REFUSE], true)) {
+            throw new \InvalidArgumentException("Statut invalide: {$statut}");
+        }
+        $this->statut = $statut;
+        return $this;
+    }
+
+    public function isEnAttente(): bool
+    {
+        return $this->statut === self::STATUT_EN_ATTENTE;
+    }
+
+    public function isValide(): bool
+    {
+        return $this->statut === self::STATUT_ACTIF;
+    }
+
+    public function isRefuse(): bool
+    {
+        return $this->statut === self::STATUT_REFUSE;
     }
 
     /**

@@ -27,7 +27,7 @@ class CartItem
      * 
      * @var User|null Relation Many-To-One vers l'entité User
      */
-    #[ORM\ManyToOne(inversedBy: 'cartItems')]
+    #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 

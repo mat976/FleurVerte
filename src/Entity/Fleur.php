@@ -376,12 +376,16 @@ class Fleur
     public function getImageUrl(): string
     {
         if ($this->imageName) {
-            return '/uploads/fleurs/' . $this->imageName;
+            $path = __DIR__ . '/../../public/uploads/fleurs/' . $this->imageName;
+            if (file_exists($path)) {
+                return '/uploads/fleurs/' . $this->imageName;
+            }
         }
 
-        // Image aléatoire par défaut
+        // Image par défaut basée sur l'ID (déterministe)
         $images = ['flower1.jpg', 'flower2.jpg', 'flower3.jpg', 'flower4.jpg', 'flower5.jpg', 'flower6.jpg', 'flower7.jpg', 'flower8.jpg', 'flower9.jpg', 'flower10.jpg', 'flower11.jpg', 'flower12.jpg'];
-        return '/img/flowerimg/' . $images[array_rand($images)];
+        $index = $this->id ? ($this->id % count($images)) : 0;
+        return '/img/flowerimg/' . $images[$index];
     }
 
     /**

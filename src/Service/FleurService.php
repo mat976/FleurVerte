@@ -24,7 +24,11 @@ class FleurService
             ]);
         }
 
-        $queryBuilder = $this->fleurRepository->createQueryBuilder('f');
+        $queryBuilder = $this->fleurRepository->createQueryBuilder('f')
+            ->leftJoin('f.tags', 't')
+            ->addSelect('t')
+            ->leftJoin('f.fleuriste', 'fl')
+            ->addSelect('fl');
 
         match ($sort) {
             'name_desc' => $queryBuilder->orderBy('f.nom', 'DESC'),

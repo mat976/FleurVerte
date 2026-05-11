@@ -170,28 +170,38 @@ class AppFixture extends Fixture
             $manager->persist($client);
         }
 
-        // Tags
+        // Tags - palette restreinte à 8 couleurs lisibles
+        $palette = [
+            '#EF4444', // Rouge
+            '#F97316', // Orange
+            '#EAB308', // Jaune
+            '#22C55E', // Vert
+            '#3B82F6', // Bleu
+            '#8B5CF6', // Violet
+            '#EC4899', // Rose
+            '#6B7280', // Gris
+        ];
         $tagNames = [
-            'Rose' => '#E11D48',
+            'Rose' => '#EF4444',
             'Tulipe' => '#EC4899',
             'Lys' => '#6B7280',
-            'Orchidée' => '#7C3AED',
-            'Jasmin' => '#D97706',
+            'Orchidée' => '#8B5CF6',
+            'Jasmin' => '#F97316',
             'Lavande' => '#8B5CF6',
-            'Pivoine' => '#DB2777',
-            'Marguerite' => '#059669',
-            'Tournesol' => '#CA8A04',
-            'Iris' => '#2563EB',
-            'Lilas' => '#9333EA',
-            'Oeillet' => '#F472B6',
-            'Gerbera' => '#EA580C',
+            'Pivoine' => '#EF4444',
+            'Marguerite' => '#22C55E',
+            'Tournesol' => '#EAB308',
+            'Iris' => '#3B82F6',
+            'Lilas' => '#8B5CF6',
+            'Oeillet' => '#EC4899',
+            'Gerbera' => '#F97316',
             'Freesia' => '#EAB308',
-            'Dahlia' => '#DC2626',
-            'Chrysanthème' => '#B45309',
-            'Camélia' => '#BE185D',
+            'Dahlia' => '#EF4444',
+            'Chrysanthème' => '#F97316',
+            'Camélia' => '#EF4444',
             'Hortensia' => '#3B82F6',
-            'Magnolia' => '#4B5563',
-            'Bruyère' => '#A855F7'
+            'Magnolia' => '#6B7280',
+            'Bruyère' => '#8B5CF6'
         ];
 
         $tags = [];

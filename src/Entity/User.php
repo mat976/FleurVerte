@@ -186,8 +186,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
         
-        // Ajouter ROLE_FLEURISTE automatiquement si l'utilisateur a un profil fleuriste actif
-        if ($this->fleuriste !== null && $this->fleuriste->isActif()) {
+        // Ajouter ROLE_FLEURISTE automatiquement si l'utilisateur a un profil fleuriste actif et validé
+        if ($this->fleuriste !== null && $this->fleuriste->isActif() && $this->fleuriste->isValide()) {
             $roles[] = 'ROLE_FLEURISTE';
         }
         

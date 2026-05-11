@@ -48,7 +48,9 @@ class AuthApiController extends AbstractController
             ], 401);
         }
 
-        // Generate a simple token (in production, use JWT or similar)
+        // NOTE: WIP. Le token retourné ici n'est PAS persisté ni validé côté serveur.
+        // L'endpoint /api/me fonctionne uniquement via la session (cookie) pour le moment.
+        // Pour une vraie API stateless, intégrer LexikJWTAuthenticationBundle.
         $token = bin2hex(random_bytes(32));
 
         return $this->json([
@@ -60,7 +62,8 @@ class AuthApiController extends AbstractController
                 'email' => $user->getEmail(),
                 'roles' => $user->getRoles(),
             ],
-            'token' => $token
+            'token' => $token,
+            'token_note' => 'WIP: token non persisté, utiliser la session pour /api/me'
         ]);
     }
 

@@ -85,20 +85,20 @@ RUN addgroup -S appgroup && adduser -S appuser -G appgroup \
 RUN mkdir -p var/cache var/log public/uploads/avatars public/uploads/fleurs \
     && chown -R appuser:appgroup var/ public/uploads/
 
-EXPOSE 10000
+EXPOSE 8000
 
 # Switch to non-root user
 USER appuser
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:${PORT:-10000}/ || exit 1
+    CMD curl -f http://localhost:8000/ || exit 1
 
 # Start: schema update → fixtures if empty → serve
 CMD ["sh", "-c", "\
   echo 'Waiting for database...' && \
   for i in 1 2 3 4 5; do \
-    php bin/console doctrine:schema:update --force --no-interaction && break; \
+    php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && break; \
     echo \"Attempt $i failed, retrying in 5s...\" && sleep 5; \
   done && \
   USER_COUNT=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) as cnt FROM \"user\"' 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo '0') && \
@@ -109,4 +109,4 @@ CMD ["sh", "-c", "\
   else \
     echo 'Users exist, skipping fixtures'; \
   fi && \
-  symfony serve --no-tls --port=${PORT:-10000} --allow-http --allow-all-ip"]
+  symfony serve --no-tls --port=8000 --allow-http --allow-all-ip"]

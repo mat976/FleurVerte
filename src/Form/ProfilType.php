@@ -46,6 +46,17 @@ class ProfilType extends AbstractType
                     'placeholder' => 'Ex: Ma Belle Boutique Florale',
                 ],
             ])
+            ->add('siret', TextType::class, [
+                'label' => 'Numéro SIRET (14 chiffres)',
+                'mapped' => false,
+                'required' => false,
+                'attr' => [
+                    'placeholder' => '12345678901234',
+                    'maxlength' => 14,
+                    'pattern' => '\d{14}',
+                ],
+                'help' => 'Votre SIRET sera vérifié par un administrateur avant activation de votre compte fleuriste.',
+            ])
 
             ->add('avatarName', TextType::class, [
                 'label' => 'Avatar sélectionné',
