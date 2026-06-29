@@ -70,6 +70,8 @@ COPY public/ public/
 COPY src/ src/
 COPY templates/ templates/
 COPY .env .env
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # Copy built frontend assets from node stage
 COPY --from=node_stage /build/public/build/ public/build/
@@ -92,21 +94,7 @@ USER appuser
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/ || exit 1
+    CMD curl -f "http://localhost:${PORT:-8000}/" || exit 1
 
-# Start: schema update → fixtures if empty → serve
-CMD ["sh", "-c", "\
-  echo 'Waiting for database...' && \
-  for i in 1 2 3 4 5; do \
-    php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration && break; \
-    echo \"Attempt $i failed, retrying in 5s...\" && sleep 5; \
-  done && \
-  USER_COUNT=$(php bin/console doctrine:query:sql 'SELECT COUNT(*) as cnt FROM \"user\"' 2>/dev/null | grep -oE '[0-9]+' | tail -1 || echo '0') && \
-  echo \"User count: $USER_COUNT\" && \
-  if [ \"$USER_COUNT\" = \"0\" ] || [ -z \"$USER_COUNT\" ]; then \
-    echo 'No users found, loading fixtures...' && \
-    php bin/console doctrine:fixtures:load --no-interaction; \
-  else \
-    echo 'Users exist, skipping fixtures'; \
-  fi && \
-  symfony serve --no-tls --port=8000 --allow-http --allow-all-ip"]
+# Start: run migrations → seed once if empty → serve
+CMD ["entrypoint.sh"]

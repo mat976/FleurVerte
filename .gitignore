@@ -3,12 +3,14 @@
 /.env.local
 /.env.local.php
 /.env.*.local
-/.env
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
+
+# Local test database (sqlite)
+/data/
 
 ###> phpunit/phpunit ###
 /phpunit.xml

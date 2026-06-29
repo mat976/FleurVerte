@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: Lint & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_pgsql
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install NPM dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Lint YAML / Twig / container
+        run: |
+          php bin/console lint:yaml config --parse-tags
+          php bin/console lint:twig templates
+          php bin/console lint:container
+
+      - name: Prepare test database
+        run: |
+          mkdir -p data var
+          php bin/console doctrine:schema:create --env=test
+
+      - name: Run PHPUnit
+        run: php bin/phpunit --testdox
