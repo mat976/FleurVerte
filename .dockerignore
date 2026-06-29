@@ -2,11 +2,15 @@
 .git
 .gitignore
 
-# Docker
-docker-compose.yml
+# Docker (build context only needs the app, not the orchestration files)
 docker-compose*.yml
-podman-compose.yml
 Dockerfile
+
+# Dev tooling / docs not needed in the image
+Makefile
+database/
+docs/
+README.md
 
 # Dependencies (rebuilt in image)
 node_modules/

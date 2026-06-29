@@ -89,28 +89,26 @@ Une application e‑commerce/marketplace moderne pour fleurs et fleuristes, dév
 
 ### Option 1: Avec Docker (recommandé)
 1) Prérequis: Docker & Docker Compose
-2) Lancer l'application complète: `docker-compose up -d`
-3) Accéder à l'application: http://localhost:8000
+2) Lancer l'application complète: `make up` (ou `docker compose up -d --build`)
+3) Accéder à l'application: http://localhost:3010
 
-Tout est automatiquement configuré: PHP 8.2, MySQL 5.7, Symfony serve, et les dépendances sont installées dans le conteneur.
+Tout est automatiquement configuré: PHP 8.2, PostgreSQL 16, Symfony serve, et les dépendances sont installées dans le conteneur.
 
 ### Option 2: Installation locale
 1) Prérequis: PHP 8.2+, Composer, Node.js 18+, npm, Docker & Docker Compose, Symfony CLI.
-2) Dépendances:
-   - Composer: `composer install`
-   - NPM: `npm install`
-3) Base de données (Docker): `docker-compose up -d database` (uniquement le service database)
-4) Config .env (voir section ci‑dessous). Par défaut: MySQL 5.7 local.
-5) Créer schéma & migrations: `php bin/console doctrine:database:create` puis `php bin/console doctrine:migrations:migrate -n`
-6) Lancer l'app en dev:
-   - Option A (tout‑en‑un): `npm run start` (watch + symfony serve)
-   - Option B: `symfony serve` et, en parallèle, `npm run watch`
+2) Dépendances: `make install` (équivaut à `composer install` + `npm ci`)
+3) Base de données (Docker): `docker compose up -d database` (uniquement le service PostgreSQL)
+4) Config .env (voir section ci‑dessous). Par défaut: PostgreSQL 16 local.
+5) Créer schéma & charger les fixtures: `make db-reset`
+6) Lancer l'app en dev: `make dev` (serveur PHP sur http://localhost:3010)
+
+Astuce: `make help` liste toutes les cibles disponibles (install, dev, test, lint, up, down…).
 
 ## Configuration & variables d’environnement
 Extraits du .env (défaut dev):
 - APP_ENV=dev
 - APP_SECRET=… (changer en prod)
-- DATABASE_URL="mysql://root:@127.0.0.1:3306/fleurverte?serverVersion=5.7&charset=utf8mb4"
+- DATABASE_URL="postgresql://root:@127.0.0.1:5432/fleurverte?serverVersion=16&charset=utf8"
 - MESSENGER_TRANSPORT_DSN=doctrine://default?auto_setup=0
 - MAILER_DSN=null://null (à adapter en prod)
 Ne jamais committer de secrets de prod. En production, utiliser `composer dump-env prod` et un vrai secret.
@@ -122,53 +120,41 @@ Ne jamais committer de secrets de prod. En production, utiliser `composer dump-e
 - Docker Compose
 
 ### Services disponibles
-- **app**: Serveur Symfony (PHP 8.2) accessible sur http://localhost:8000
-- **database**: MySQL 5.7 accessible sur localhost:3306
+- **app**: Serveur Symfony (PHP 8.2) accessible sur http://localhost:3010
+- **database**: PostgreSQL 16 accessible sur localhost:5432
+
+Les fichiers Docker sont regroupés ainsi: `Dockerfile` (image de prod multi‑stage), `docker-compose.yml` (stack de dev), `docker/entrypoint.sh` (script de démarrage du conteneur).
 
 ### Démarrage complet
 ```bash
-# Démarrer tous les services (app + database)
-docker-compose up -d
+make up            # docker compose up -d --build
 ```
 
 ### Démarrage de la base de données uniquement
 ```bash
-# Démarrer uniquement MySQL
-docker-compose up -d database
+docker compose up -d database
 ```
 
-### Paramètres de connexion MySQL
+### Paramètres de connexion PostgreSQL
 - **Host**: 127.0.0.1 (depuis l'hôte) ou database (depuis le conteneur app)
-- **Port**: 3306
+- **Port**: 5432
 - **Database**: fleurverte
 - **User**: root
 - **Password**: (vide)
-- **Version**: MySQL 5.7
+- **Version**: PostgreSQL 16
 
 ### Commandes utiles
 ```bash
-# Démarrer les conteneurs
-docker-compose up -d
-
-# Arrêter les conteneurs
-docker-compose down
-
-# Voir les logs
-docker-compose logs
-
-# Voir les logs du serveur Symfony
-docker-compose logs app
-
-# Accéder au shell MySQL
-docker-compose exec database mysql -u root fleurverte
-
-# Accéder au shell du conteneur app
-docker-compose exec app sh
+make up                              # Démarrer les conteneurs
+make down                            # Arrêter les conteneurs
+make logs                            # Logs du conteneur app
+docker compose exec database psql -U root fleurverte   # Shell PostgreSQL
+docker compose exec app sh           # Shell du conteneur app
 ```
 
 ## Base de données
-- Création/mise à jour: Doctrine Migrations.
-- Import de données d'exemple (optionnel): vous pouvez utiliser `fleur.sql` si nécessaire.
+- Création/mise à jour: Doctrine Migrations + fixtures (`make db-reset`).
+- Import de données d'exemple (optionnel): dump PostgreSQL disponible dans `database/fleur_postgres.sql`.
 
 ## Frontend (assets)
 - Webpack Encore (config: config/packages/webpack_encore.yaml → manifest public/build/manifest.json).
@@ -184,8 +170,18 @@ docker-compose exec app sh
   - Prod: `npm run build` (Encore production)
 - Doctrine:
   - Migrations: `php bin/console doctrine:migrations:diff` / `migrate`
-  - Fixtures (si ajoutées plus tard) : `php bin/console doctrine:fixtures:load` (non présent par défaut)
-- Tests: `php bin/phpunit`
+  - Fixtures: `php bin/console doctrine:fixtures:load` (ou `make db-reset`)
+- Tests: `make test` (build assets + base de test + PHPUnit) ou `php bin/phpunit`
+- Lint: `make lint` (composer validate + lint yaml/twig/container)
+
+### Organisation des tests
+```
+tests/
+├── Unit/         # Tests unitaires purs (ex: Entity)
+├── Integration/  # Tests avec la base de données / le conteneur
+└── Functional/   # Tests fonctionnels HTTP (WebTestCase)
+```
+Suites PHPUnit: `php bin/phpunit --testsuite Unit|Integration|Functional`.
 
 ## 📁 Architecture & Structure détaillée
 
